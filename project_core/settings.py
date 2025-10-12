@@ -32,10 +32,29 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# https://github.com/joke2k/django-environ, python-decouple
 
+
+def env_list(key, default=""):
+    """
+    Return a list of values from a comma-separated environment variable.
+
+    Args:
+        key (str): The name of the environment variable to read.
+        default (str): Optional fallback value if the variable isn't set.
+
+    Returns:
+        list: A list of strings, stripped of spaces and empty values.
+    """
+    return [x.strip() for x in os.getenv(key, default).split(",") if x.strip()]
+
+
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
+
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
