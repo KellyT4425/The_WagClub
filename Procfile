@@ -1,1 +1,1 @@
-web: gunicorn The_Wagclub.wsgi
+web: gunicorn project_core.wsgi:application
