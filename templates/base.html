@@ -29,7 +29,43 @@
   </head>
   <body>
     <header class="container-fluid fixed-top">
-      <h1>The_Wagclub</h1>
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <a href="{% url 'home' %}"
+             class="nav-link paw-logo-link navbar-brand d-flex align-items-center">
+            <img src="{% static 'images/paw-icon.svg' %}"
+                 alt="Logo"
+                 width="40"
+                 height="auto"
+                 class="img-fluid me-2">
+            <span class="fs-3 fs-md-2 mt-1">The_Wagclub</span>
+          </a>
+          <ul class="nav justify-content-end">
+            <li class="nav-item">
+              <a class="nav-link d-flex flex-column align-items-center text-dark text-decoration-none"
+                 href="#">
+                <img src="{% static 'images\user-svgrepo.svg' %}"
+                     alt="user-logo"
+                     class="img-fluid mb-1"
+                     height="auto"
+                     width="35">
+                <span>Account</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex flex-column align-items-center text-dark text-decoration-none"
+                 href="#">
+                <img src="{% static 'images\cart-shopping-svgrepo-com.svg' %}"
+                     alt="shopping-cart"
+                     class="img-fluid mb-1"
+                     height="auto"
+                     width="35">
+                <span>Cart</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     </header>
     {% if messages %}<div class="message-container"></div>{% endif %}
     {% block page_header %}
