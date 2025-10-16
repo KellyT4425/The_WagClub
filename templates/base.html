@@ -2,47 +2,42 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-
-    <script
-      src="https://kit.fontawesome.com/61038baed8.js"
-      crossorigin="anonymous"
-    ></script>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-    ></script>
-
-    <title>The_Wagclub</title>
+    {% block meta %}
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="description" content="" />
+      <meta name="keywords" content="" />
+    {% endblock meta %}
+    {% block corecss %}
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous" />
+    {% endblock corecss %}
+    {% block corejs %}
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+              integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+              crossorigin="anonymous"></script>
+    {% endblock corejs %}
+    <script src="https://kit.fontawesome.com/61038baed8.js"
+            crossorigin="anonymous"></script>
+    <title>The_Wagclub
+      {% block extra_title %}
+      {% endblock extra_title %}
+    </title>
   </head>
   <body>
-    <header>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col">
-            <!-- https://www.svgrepo.com/ -->
-            <link
-              rel="icon"
-              href="{% static 'images/paw-logo.svg' %}"
-              type="image/svg+xml"
-            />
-            <h1>The_Wagclub</h1>
-          </div>
-        </div>
-      </div>
+    <header class="container-fluid fixed-top">
+      <h1>The_Wagclub</h1>
     </header>
+    {% if messages %}<div class="message-container"></div>{% endif %}
+    {% block page_header %}
+      <!-- EXTRA HEADING FOR TOP OF EACH PAGE -->
+    {% endblock page_header %}
+    {% block content %}
+    {% endblock content %}
+    {% block postloadjs %}
+    {% endblock postloadjs %}
   </body>
 </html>
