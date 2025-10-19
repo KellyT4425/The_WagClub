@@ -10,6 +10,7 @@
       <meta name="keywords" content="" />
     {% endblock meta %}
     {% block corecss %}
+      <link href="{% static 'css/base.css' %}" rel="stylesheet">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
             rel="stylesheet"
             integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
@@ -29,7 +30,7 @@
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid">
           <!-- Brand -->
           <a class="navbar-brand d-flex align-items-center"
@@ -112,12 +113,31 @@
         </div>
       </nav>
     </header>
-    {% if messages %}<div class="message-container"></div>{% endif %}
-    {% block page_header %}
-      <!-- EXTRA HEADING FOR TOP OF EACH PAGE -->
-    {% endblock page_header %}
-    {% block content %}
-    {% endblock content %}
+    <div class="main-container">
+      <main>
+        {% if messages %}<div class="message-container"></div>{% endif %}
+        {% block page_header %}
+          <!-- EXTRA HEADING FOR TOP OF EACH PAGE -->
+        {% endblock page_header %}
+        {% block content %}
+        {% endblock content %}
+      </main>
+      <footer class="foot-bar">
+        <div class="row">
+          <div class="col-2">
+            <a class="social-media" href="https://www.instagram.com/">
+              <i class="fa-brands fa-instagram text-black text-decoration-none pt-2"></i>
+            </a>
+          </div>
+          <div class="col-2">
+            <span class="reviews">Reviews</span>
+          </div>
+          <div class="col-2">
+            <span class="contact-form">Contact</span>
+          </div>
+        </div>
+      </footer>
+    </div>
     {% block postloadjs %}
     {% endblock postloadjs %}
   </body>
