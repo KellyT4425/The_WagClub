@@ -79,6 +79,20 @@ footer i {
     /* soft shadow */
 }
 
+.card-img-top {
+    height: 220px;
+    /* adjust height to taste: 180px–250px looks good */
+    width: 100%;
+    /* makes image fill the card width */
+    object-fit: cover;
+    /* crops the image nicely instead of squishing it */
+    object-position: center;
+    /* keeps focus centered */
+    border-top-left-radius: 0.5rem;
+    /* match your card’s rounding */
+    border-top-right-radius: 0.5rem;
+}
+
 @media (max-width: 768px) {
     .home-img {
         padding-bottom: 3rem;
