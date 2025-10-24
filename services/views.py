@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Service, ServiceCategory
+from django.shortcuts import render
+from .models import Service
 
 
 # Create your views here.

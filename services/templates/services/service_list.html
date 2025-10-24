@@ -2,7 +2,7 @@
 {% load static %}
 {% block page_header %}
     <div class="text-center">
-        <h2 class="service-page headings">Services</h2>
+        <h2 class="service-page heading">Services</h2>
     </div>
 {% endblock page_header %}
 {% block content %}
@@ -20,7 +20,7 @@
                                      alt="{{ s.alt_text|default:s.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center">{{ s.name }}</h5>
+                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
@@ -35,7 +35,9 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="#" class="card-link btn btn-sm btn-outline-primary">Cart</a>
+                                <a href="#" class="card-link btn btn-sm">
+                                    <img src="{% static 'images\add-to-cart.svg' %}">
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -57,7 +59,7 @@
                                      alt="{{ s.alt_text|default:s.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center">{{ s.name }}</h5>
+                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
@@ -72,7 +74,9 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="#" class="card-link btn btn-sm btn-outline-primary">Cart</a>
+                                <a href="#" class="card-link btn btn-sm">
+                                    <img src="{% static 'images\add-to-cart.svg' %}">
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
                                      alt="{{ s.alt_text|default:s.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center">{{ s.name }}</h5>
+                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
@@ -109,7 +113,9 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="#" class="card-link btn btn-sm btn-outline-primary">Cart</a>
+                                <a href="#" class="card-link btn btn-sm">
+                                    <img src="{% static 'images\add-to-cart.svg' %}">
+                                </a>
                             </div>
                         </div>
                     </div>

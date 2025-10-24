@@ -76,6 +76,7 @@ INSTALLED_APPS = [
 
     # Apps
     'services',
+    'orders',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
