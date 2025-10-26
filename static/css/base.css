@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Patrick+Hand+SC&display=swap');
+
+
 body {
     font-family: "Lato", sans-serif;
     font-weight: 400;
@@ -5,9 +8,10 @@ body {
 }
 
 .heading {
-    font-family: "Indie Flower", cursive;
-    font-weight: 400;
+    font-family: "Patrick Hand SC", cursive;
+    font-weight: 600;
     font-style: normal;
+    letter-spacing: 2px;
 }
 
 .home-img {
