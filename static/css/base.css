@@ -9,7 +9,7 @@ body {
 
 .heading {
     font-family: "Patrick Hand SC", cursive;
-    font-weight: 600;
+    font-weight: 800;
     font-style: normal;
     letter-spacing: 2px;
 }
@@ -35,13 +35,20 @@ nav .main-nav {
     background: #fff;
 }
 
+.hero-text {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 11rem;
+
+}
+
 .hero-text-box {
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.6);
     /* white with 70% opacity */
     border-radius: 1rem;
     /* smooth corners */
-    padding: 2rem 3rem;
-    display: inline-block;
+    padding: 2rem 4rem;
+    /*display: inline-block;*/
     /* shrink-wrap around text */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     /* soft drop shadow */
