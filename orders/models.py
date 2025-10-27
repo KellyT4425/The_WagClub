@@ -10,30 +10,36 @@ VOUC_STATUS = [
     ("REDEEMED", "REDEEMED"),
     ("EXPIRED", "EXPIRED")
 ]
+
 User = get_user_model()
-
-
-class Order(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="orders")
-    item = models.ForeignKey(
-        Service, on_delete=models.SET_NULL, null=True, related_name="service_name")
-
-
-class OrderItem(models.Model):
-    service = models.ForeignKey(
-        Service, on_delete=models.PROTECT, related_name="order_items")
-    orders = models.ForeignKey(Order, on_delete=models.CASCADE)
 
 
 def default_expiry():
     return timezone.now() + relativedelta(months=18)
 
 
-class Voucher(models.Model):
-    service_order_itm = models.ForeignKey(Service, on_delete=models.CASCADE)
+class Order(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="voucher")
+        # adding plural suggests one user many "orders".
+        User, on_delete=models.CASCADE, related_name="orders")
+    service = models.ForeignKey(
+        Service, on_delete=models.SET_NULL, null=True, related_name="orders")
+
+
+class OrderItem(models.Model):
+    service = models.ForeignKey(
+        Service, on_delete=models.PROTECT, related_name="order_items")
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="items")
+
+
+class Voucher(models.Model):
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE, related_name="vouchers")
+    order_item = models.OneToOneField(
+        "OrderItem", on_delete=models.CASCADE, related_name="voucher")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="vouchers")
     code = models.CharField(max_length=16, unique=True)
     qr_img_path = models.ImageField(
         upload_to='vouchers/qr_codes/', null=True, blank=True)
