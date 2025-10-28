@@ -24,7 +24,7 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     /* text near bottom */
-    min-height: 100vh;
+    min-height: 80vh;
     /* stretch to full screen */
     padding-bottom: 15rem;
     /* how far above paws */
@@ -36,23 +36,23 @@ nav .main-nav {
 }
 
 .hero-text {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1000px;
+
+}
+
+.hero-container {
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding-bottom: 11rem;
-
+    text-align: center;
+    min-height: 100vh;
+    padding: 1rem;
 }
 
-.hero-text-box {
-    background-color: rgba(255, 255, 255, 0.6);
-    /* white with 70% opacity */
-    border-radius: 1rem;
-    /* smooth corners */
-    padding: 2rem 4rem;
-    /*display: inline-block;*/
-    /* shrink-wrap around text */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    /* soft drop shadow */
-}
 
 .foot-bar {
     background: #fff;
@@ -110,7 +110,7 @@ footer i {
     border-top-right-radius: 0.5rem;
 }
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
     .home-img {
         padding-bottom: 3rem;
         margin-right: 30rem;
