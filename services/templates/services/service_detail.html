@@ -2,8 +2,17 @@
 {% load static %}
 {% block page_header %}
     <div class="text-center">
-        <h2 class="service-page headings">Services</h2>
+        <h2 class="service-page headings">Service Details</h2>
     </div>
 {% endblock page_header %}
 {% block content %}
+    <div class="service-detail">
+        <h1>{{ service.name }}</h1>
+        {% if service.img_path %}<img src="{{ service.img_path.url }}" alt="{{ service.alt_text }}">{% endif %}
+        <p class="description">{{ service.description }}</p>
+        <p class="price">€{{ service.price }}</p>
+        <p class="duration">Duration: {{ service.duration_hours }} hours</p>
+        <a href="{% url 'create_checkout_session' service.id %}"
+           class="buy-now-button">Buy Now</a>
+    </div>
 {% endblock content %}

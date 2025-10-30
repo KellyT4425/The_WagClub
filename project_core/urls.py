@@ -26,6 +26,7 @@ urlpatterns = [
     path('', views.home, name="home"),
     path('services/', views.service_list, name="service_list"),
     path('orders/', include(('orders.urls', 'cart'), namespace='orders')),
+    path('checkout/', include('orders.urls')),
 ]
 
 if settings.DEBUG:

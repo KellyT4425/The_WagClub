@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import stripe
 from pathlib import Path
 import dj_database_url
 import dotenv
@@ -191,6 +192,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STRIPE_RESTRICTED_KEY = os.getenv('STRIPE_API_KEY')
+stripe.api_key = STRIPE_RESTRICTED_KEY
+
+PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK')
 
 
 # Default primary key field type

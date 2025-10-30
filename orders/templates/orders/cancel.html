@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_header %}
+    <div class="text-center">
+        <h2 class="service-page heading">CANCEL CONFIRMATION</h2>
+    </div>
+{% endblock page_header %}
+{% block content %}
+    <div class="cancel-page">
+        <h1>Payment Canceled</h1>
+        <p>Your payment was canceled. No charges have been made.</p>
+        <p>If you experienced any issues or have questions, please contact us.</p>
+        <a href="{% url 'home' %}" class="button">Return to Home</a>
+    </div>
+{% endblock content %}
