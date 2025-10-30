@@ -103,7 +103,7 @@
               <!-- Cart -->
               <li class="nav-item nav-cart">
                 <a class="nav-link d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
-                   href="#">
+                   href="{% url 'orders:cart' %}">
                   <i class="fa-solid fa-cart-shopping fa-lg mb-1"></i>
                   <span class="small mt-1">
                     {% if grand_total %}

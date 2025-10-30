@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Voucher
+from .models import Voucher, Order
 
 # Create your views here.
 
@@ -19,3 +19,8 @@ def voucher_invoice(request, code):
     }
 
     return render(request, 'voucher/invoice.html', context)
+
+
+def cart(request):
+
+    return render(request, 'orders/cart.html')
