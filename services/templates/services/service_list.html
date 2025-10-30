@@ -35,9 +35,17 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="{% url 'orders:cart' %}" class="card-link btn btn-sm">
-                                    <img src="{% static 'images\add-to-cart.svg' %}">
-                                </a>
+                                <form action="{% url 'orders:add_to_cart' %}"
+                                      method="post"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="service_id" value="{{ s.id }}">
+                                    <button type="submit"
+                                            class="btn btn-sm"
+                                            aria-label="Add {{ s.name }} to cart">
+                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -74,9 +82,17 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="#" class="card-link btn btn-sm">
-                                    <img src="{% static 'images\add-to-cart.svg' %}">
-                                </a>
+                                <form action="{% url 'orders:add_to_cart' %}"
+                                      method="post"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="service_id" value="{{ s.id }}">
+                                    <button type="submit"
+                                            class="btn btn-sm"
+                                            aria-label="Add {{ s.name }} to cart">
+                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -113,9 +129,17 @@
                             </ul>
                             <div class="card-body">
                                 <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
-                                <a href="#" class="card-link btn btn-sm">
-                                    <img src="{% static 'images\add-to-cart.svg' %}">
-                                </a>
+                                <form action="{% url 'orders:add_to_cart' %}"
+                                      method="post"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="service_id" value="{{ s.id }}">
+                                    <button type="submit"
+                                            class="btn btn-sm"
+                                            aria-label="Add {{ s.name }} to cart">
+                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

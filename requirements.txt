@@ -39,6 +39,7 @@ python-decouple==3.8
 python-dotenv==1.1.1
 pytokens==0.2.0
 PyYAML==6.0.2
+qrcode==8.2
 regex==2024.11.6
 requests==2.32.3
 requests-oauthlib==2.0.0
@@ -47,6 +48,7 @@ sentry-sdk==2.29.1
 setuptools==80.9.0
 six==1.17.0
 sqlparse==0.5.3
+stripe==13.1.0
 tqdm==4.67.1
 typing_extensions==4.14.0
 tzdata==2025.2

@@ -1,18 +1,22 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from . import views
-from .views import voucher_invoice, cart
+
 
 app_name = "orders"
+
 urlpatterns = [
+    path('cart/', views.cart, name='cart'),
+    path("cart/add/", views.add_to_cart, name="add_to_cart"),
+    path('cart/remove/<int:item_id>/',
+         views.remove_from_cart, name='remove_from_cart'),
     path('voucher/invoice/<str:code>/',
-         voucher_invoice, name='voucher_invoice'),
-    path('webhook/', views.stripe_webhook, name='stripe_webhook'),
-    path('', views.cart, name='cart'),
+         views.voucher_invoice, name='voucher_invoice'),
+    path('checkout/webhook/', views.stripe_webhook, name='stripe_webhook'),
+
     # Add a path for creating checkout sessions
-    path('create-checkout-session/<int:service_id>/', views.create_checkout_session,
+    path('checkout/create-session/', views.create_checkout_session,
          name='create_checkout_session'),
-    # Add success and cancel pages
-    path('success/', views.success_view, name='checkout_success'),
-    path('cancel/', views.cancel_view, name='checkout_cancel'),
+    # Change the names to match what you're using in the reverse() function
+    path('success/', views.success_view, name='success'),
+    path('cancel/', views.cancel_view, name='cancel'),
 ]

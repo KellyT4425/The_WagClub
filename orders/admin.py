@@ -5,3 +5,4 @@ from .models import Order, OrderItem, Voucher
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(Voucher)
+admin.site.site_header = "Order Management Admin"

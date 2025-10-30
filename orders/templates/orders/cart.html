@@ -2,8 +2,47 @@
 {% load static %}
 {% block page_header %}
     <div class="text-center">
-        <h2 class="service-page heading">CART</h2>
+        <h2 class="service-page heading">Your CART</h2>
     </div>
 {% endblock page_header %}
 {% block content %}
+    <form action="{% url 'orders:create_checkout_session' %}" method="post">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>€{{ item.product.price|floatformat:2 }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>€{{ item.total_price|floatformat:2 }}</td>
+                                    <td>
+                                        <a href="#">Remove</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        <h4>Total Amount: €{{ total_amount|floatformat:2 }}</h4>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock content %}

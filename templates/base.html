@@ -100,20 +100,13 @@
                     </li>
                   {% endif %}
                 </ul>
-              </li>
-              <!-- Cart -->
-              <li class="nav-item nav-cart">
-                <a class="nav-link d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
-                   href="{% url 'orders:cart' %}">
-                  <i class="fa-solid fa-cart-shopping fa-lg mb-1"></i>
-                  <span class="small mt-1">
-                    {% if grand_total %}
-                      €{{ grand_total|floatformat:2 }}
-                    {% else %}
-                      €0.00
-                    {% endif %}
-                  </span>
-                </a>
+                <li class="nav-item">
+                  <a class="nav-link d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
+                     href="{% url 'orders:cart' %}">
+                    <i class="fa-solid fa-cart-shopping fa-lg mb-1"></i>
+                    <span class="small mt-1">€{{ cart_total|floatformat:2 }}</span>
+                  </a>
+                </li>
               </li>
             </ul>
           </div>

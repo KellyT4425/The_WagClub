@@ -8,7 +8,7 @@
 {% block content %}
     <div class="success-page">
         <h1>Payment Successful!</h1>
-        {% if voucher %}
+        {% if if voucher.qr_img_path %}
             <div class="voucher-details">
                 <h2>Your Voucher Details</h2>
                 <p>
@@ -16,11 +16,17 @@
                 </p>
                 <p>Service: {{ voucher.service.name }}</p>
                 <p>Value: €{{ voucher.order.amount }}</p>
-                <p>Keep this code safe - you'll need it to redeem your service.</p>
+                <p>Keep this qr_code safe - you'll need it to redeem your service.</p>
             </div>
             <p>We've also sent these details to your email.</p>
         {% else %}
-            <p>Your payment was successful. You'll receive your voucher details by email.</p>
+            <p>
+                Your payment was successful. You'll receive your voucher details by email and a copy will be set to your Account Wallet
+            </p>
+            <div class="qr-code">
+                <img src="{{ voucher.qr_img_path.url }}" alt="Voucher QR Code">
+                <p>Scan this QR code to redeem your service</p>
+            </div>
         {% endif %}
         <a href="{% url 'home' %}" class="button">Return to Home</a>
     </div>
