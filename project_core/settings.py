@@ -31,7 +31,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # https://github.com/joke2k/django-environ, python-decouple
 
@@ -127,7 +127,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
         conn_max_age=600,
-        ssl_require=False
+        ssl_require=False,
     )
 }
 

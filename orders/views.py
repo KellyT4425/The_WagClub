@@ -21,33 +21,40 @@ User = get_user_model()
 
 def create_checkout_session(request):
     if request.method != "POST":
-        return redirect("orders:cart")
+        cart = request.session.get("cart", {})
 
-    cart = request.session.get("cart", {})
     if not cart:
         messages.error(request, "Your cart is empty.")
         return redirect("orders:cart")
 
     line_items = []
-    for _sid, item in cart.items():
-        price_cents = int(Decimal(str(item["price"])) * 100)
+    for item_id, item_data in cart.items():
+        price_cents = int(Decimal(str(item_data["price"])) * 100)
         line_items.append({
             "price_data": {
                 "currency": "eur",
-                "product_data": {"name": item["name"]},
+                "product_data": {"name": item_data["name"]},
                 "unit_amount": price_cents,
             },
-            "quantity": int(item["quantity"]),
+            "quantity": item_data["quantity"],
         })
 
-    checkout_session = stripe.checkout.Session.create(
-        line_items=line_items,
-        mode="payment",
-        success_url=request.build_absolute_uri(reverse("orders:success")),
-        cancel_url=request.build_absolute_uri(reverse("orders:cancel")),
-    )
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=line_items,
+                mode='payment',
+                success_url=request.build_absolute_uri(
+                    reverse('orders:success')),
+                cancel_url=request.build_absolute_uri(reverse('orders:cart')),
+            )
+            return redirect(checkout_session.url, code=303)
+        except Exception as e:
+            messages.error(
+                request, f"Error creating checkout session: {str(e)}")
+            return redirect('orders:cart')
 
-    return redirect(checkout_session.url)
+    return redirect('orders:cart')
 
 
 @csrf_exempt  # Stripe isn't a browser, so skip CSRF protection
@@ -220,36 +227,41 @@ def add_to_cart(request):
     return redirect(request.META.get("HTTP_REFERER", "orders:cart"))
 
 
+def remove_from_cart(request, item_id):
+    cart = request.session.get("cart", {})
+
+    print(f"Current cart contents: {cart}")
+
+    if item_id in cart:
+        del cart[item_id]
+        request.session["cart"] = cart
+        request.session.modified = True
+        messages.info(request, "Item removed from cart successfully.")
+    else:
+        # Add specific message if item wasn't found
+        messages.error(request, f"Item {item_id} was not found in your cart.")
+
+    return redirect("orders:cart")
+
+
 def cart(request):
     """Build the context shape your template expects."""
-    cart_src = request.session.get(
+    cart = request.session.get(
         "cart", {})  # { "12": {name, price, quantity}, ... }
     cart_items = []
     total_amount = 0.0
 
-    for sid, item in cart_src.items():
-        line_total = float(item["price"]) * int(item["quantity"])
-        total_amount += line_total
+    # Fetch the products and create cart items
+    for item_id, item_data in cart.items():
+        item_total = float(item_data["price"]) * int(item_data["quantity"])
+        total_amount += item_total
+
         cart_items.append({
-            "id": int(sid),
-            "product": {               # ✅ your template expects product.*
-                "name": item["name"],
-                "price": float(item["price"]),
-            },
-            "quantity": int(item["quantity"]),
-            "total_price": line_total,  # ✅ your template expects this field
+            "id": item_id,  # Keep the ID for removal
+            "name": item_data["name"],
+            "price": item_data["price"],
+            "quantity": item_data["quantity"],
         })
 
     context = {"cart_items": cart_items, "total_amount": total_amount}
     return render(request, "orders/cart.html", context)
-
-
-def remove_from_cart(request, item_id):
-    cart = request.session.get("cart", {})
-    key = str(item_id)
-    if key in cart:
-        del cart[key]
-        request.session["cart"] = cart
-        request.session.modified = True
-        messages.info(request, "Removed item from cart.")
-    return redirect("orders:cart")
