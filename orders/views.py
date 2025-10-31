@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from services.models import Service
-from .models import Voucher, Order, OrderItem, VOUC_STATUS
+from .models import Voucher, Order, OrderItem
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
