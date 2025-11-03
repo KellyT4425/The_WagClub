@@ -1,9 +1,111 @@
+<!-- templates/voucher/invoice.html -->
 {% extends "base.html" %}
 {% load static %}
-{% block page_header %}
-    <div class="text-center">
-        <h2 class="service-page heading">INVOICE</h2>
-    </div>
-{% endblock page_header %}
 {% block content %}
-{% endblock content %}
+    <div class="container mt-4">
+        <!-- Print button that only shows on screen, not when printing -->
+        <div class="text-end mb-4 no-print">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Invoice
+            </button>
+            <a href="{% url 'orders:voucher_detail' voucher.code %}"
+               class="btn btn-secondary ms-2">Back to Details</a>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <!-- Invoice Header -->
+                <div class="invoice-header row">
+                    <div class="col-6">
+                        <div class="invoice-company">The WagClub</div>
+                        <p>
+                            123 Main Street
+                            <br>
+                            Dublin, Ireland
+                            <br>
+                            Phone: +353 123 4567
+                        </p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h4>VOUCHER #{{ voucher.code }}</h4>
+                        <p>
+                            Issue Date: {{ voucher.issued_at|date:"F j, Y" }}
+                            <br>
+                            Expiry Date: {{ voucher.expires_at|date:"F j, Y" }}
+                        </p>
+                    </div>
+                </div>
+                <!-- Invoice Title -->
+                <div class="invoice-title">SERVICE VOUCHER</div>
+                <!-- Customer Information -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h5>Customer:</h5>
+                        <p>
+                            {{ user.first_name }} {{ user.last_name }}
+                            <br>
+                            {{ user.email }}
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Status:</h5>
+                        <p>
+                            {% if voucher.status == "ISSUED" %}
+                                <span class="badge bg-success">ACTIVE</span>
+                            {% elif voucher.status == "REDEEMED" %}
+                                <span class="badge bg-secondary">REDEEMED</span>
+                                <br>
+                                Redeemed on: {{ voucher.redeemed_at|date:"F j, Y" }}
+                            {% else %}
+                                <span class="badge bg-danger">EXPIRED</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <!-- Service Details -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th class="text-end">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ service.name }}</td>
+                            <td>{{ service.description|truncatewords:30 }}</td>
+                            <td class="text-end">€{{ service.price|floatformat:2 }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="2" class="text-end">Total:</th>
+                            <th class="text-end">€{{ service.price|floatformat:2 }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!-- QR Code -->
+                <div class="qr-code-container">
+                    {% if voucher.qr_img_path %}
+                        <img src="{{ voucher.qr_img_path.url }}"
+                             alt="QR Code"
+                             style="max-width: 200px">
+                        <p class="mt-2">Voucher Code: {{ voucher.code }}</p>
+                    {% else %}
+                        <p>No QR code available</p>
+                    {% endif %}
+                </div>
+                <!-- Terms and Conditions -->
+                <div class="mt-5">
+                    <h5>Terms and Conditions:</h5>
+                    <ul>
+                        <li>This voucher must be presented at the time of service.</li>
+                        <li>Valid until the expiry date shown above.</li>
+                        <li>Non-transferable and cannot be exchanged for cash.</li>
+                        <li>For bookings and inquiries, please call +353 123 4567.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

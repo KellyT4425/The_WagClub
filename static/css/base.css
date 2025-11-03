@@ -110,6 +110,49 @@ footer i {
     border-top-right-radius: 0.5rem;
 }
 
+@media print {
+    .no-print {
+        display: none;
+    }
+
+    body {
+        font-size: 12pt;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .card {
+        border: none;
+    }
+}
+
+/* Invoice styling */
+.invoice-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.invoice-company {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.invoice-title {
+    font-size: 28px;
+    color: #333;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.qr-code-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
 /*@media (max-width: 768px) {
     .home-img {
         padding-bottom: 3rem;

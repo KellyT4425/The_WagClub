@@ -25,7 +25,7 @@ class Order(models.Model):
     service = models.ForeignKey(
         Service, on_delete=models.SET_NULL, null=True, related_name="orders")
     is_paid = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
 
 class OrderItem(models.Model):
@@ -49,3 +49,6 @@ class Voucher(models.Model):
     issued_at = models.DateTimeField(auto_now_add=True)
     redeemed_at = models.DateTimeField(null=True)
     expires_at = models.DateTimeField(default=default_expiry)
+
+    class Meta:
+        ordering = ['-issued_at']

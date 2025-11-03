@@ -1,0 +1,61 @@
+<!-- In templates/orders/voucher_detail.html -->
+{% extends "base.html" %}
+{% load static %}
+{% block page_header %}
+    <div class="text-center">
+        <h2 class="service-page heading">Voucher Details</h2>
+    </div>
+{% endblock page_header %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header {% if voucher.status == 'ISSUED' %}bg-success{% elif voucher.status == 'REDEEMED' %}bg-secondary{% else %}bg-danger{% endif %} text-white">
+                        <h4 class="mb-0">{{ voucher.service.name }} Voucher</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Existing voucher details code -->
+                        <!-- QR code display -->
+                        <div class="text-center mb-4">
+                            {% if voucher.qr_img_path %}
+                                <img src="{{ voucher.qr_img_path.url }}"
+                                     alt="QR Code"
+                                     class="img-fluid"
+                                     style="max-width: 200px">
+                            {% else %}
+                                <p class="text-muted">No QR code available</p>
+                            {% endif %}
+                        </div>
+                        <!-- Voucher details -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>Voucher Code:</strong>
+                            </div>
+                            <div class="col-8">{{ voucher.code }}</div>
+                        </div>
+                        <!-- Other voucher details... -->
+                    </div>
+                    <!-- Footer with buttons -->
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'orders:my_wallet' %}" class="btn btn-secondary">Back to Wallet</a>
+                            <div>
+                                <!-- Add the Print Invoice button -->
+                                <a href="{% url 'orders:voucher_invoice' voucher.code %}"
+                                   class="btn btn-info me-2"
+                                   target="_blank">
+                                    <i class="fas fa-file-invoice"></i> Print Invoice
+                                </a>
+                                <!-- Existing print button (for direct browser printing) -->
+                                <button class="btn btn-primary" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print Voucher
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -14,6 +14,7 @@ import stripe
 from pathlib import Path
 import dj_database_url
 import dotenv
+from django.contrib.messages import constants as messages
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +30,10 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',  # Bootstrap uses danger instead of error
+    messages.DEBUG: 'secondary',
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,6 +100,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Use session-based message storage
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 ROOT_URLCONF = 'project_core.urls'
 
@@ -199,7 +207,7 @@ STRIPE_RESTRICTED_KEY = os.getenv('STRIPE_API_KEY')
 stripe.api_key = STRIPE_RESTRICTED_KEY
 
 PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
-STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK')
+STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK', '')
 
 
 # Default primary key field type

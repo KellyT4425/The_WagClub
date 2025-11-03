@@ -9,9 +9,11 @@ urlpatterns = [
     path("cart/add/", views.add_to_cart, name="add_to_cart"),
     path('cart/remove/<str:item_id>/',
          views.remove_from_cart, name='remove_from_cart'),
+
     path('voucher/invoice/<str:code>/',
          views.voucher_invoice, name='voucher_invoice'),
     path('checkout/webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path('voucher/<str:code>/', views.voucher_detail, name='voucher_detail'),
 
     # Add a path for creating checkout sessions
     path('checkout/create-session/', views.create_checkout_session,
@@ -19,4 +21,5 @@ urlpatterns = [
     # Change the names to match what you're using in the reverse() function
     path('success/', views.success_view, name='success'),
     path('cancel/', views.cancel_view, name='cancel'),
+    path('my-wallet/', views.my_wallet, name='my_wallet'),
 ]
