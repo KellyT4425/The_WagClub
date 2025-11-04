@@ -6,28 +6,43 @@
     </div>
 {% endblock page_header %}
 {% block content %}
-    <div class="success-page">
-        <h1>Payment Successful!</h1>
-        {% if voucher.qr_img_path %}
-            <div class="voucher-details">
-                <h2>Your Voucher Details</h2>
-                <p>
-                    Voucher Code: <strong>{{ voucher.code }}</strong>
-                </p>
-                <p>Service: {{ voucher.service.name }}</p>
-                <p>Value: €{{ voucher.order.amount }}</p>
-                <p>Keep this qr_code safe - you'll need it to redeem your service.</p>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Thank you for your order!</h3>
+                <p>Your payment was processed successfully.</p>
+                {% if vouchers %}
+                    <h4 class="mt-4">Your Vouchers</h4>
+                    <div class="row voucher-container">
+                        {% for voucher in vouchers %}
+                            <div class="col-md-4 mb-4">
+                                <div class="card voucher-card">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ voucher.service.name }}</h5>
+                                        <p class="card-text">Code: {{ voucher.code }}</p>
+                                        {% if voucher.qr_img_path %}
+                                            <img src="{{ voucher.qr_img_path.url }}"
+                                                 alt="QR Code"
+                                                 class="img-fluid voucher-qr">
+                                        {% else %}
+                                            <p class="text-danger">QR code not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4">
+                        <p>
+                            You can find all your vouchers in <a href="{% url 'orders:my_wallet' %}" class="btn btn-primary">My Wallet</a>
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning mt-4">
+                        <p>No vouchers were generated for this order. If you believe this is an error, please contact support.</p>
+                    </div>
+                {% endif %}
             </div>
-            <p>We've also sent these details to your email.</p>
-        {% else %}
-            <p>
-                Your payment was successful. You'll receive your voucher details by email and a copy will be set to your Account Wallet
-            </p>
-            <div class="qr-code">
-                <img src="{{ voucher.qr_img_path.url }}" alt="Voucher QR Code">
-                <p>Scan this QR code to redeem your service</p>
-            </div>
-        {% endif %}
-        <a href="{% url 'home' %}" class="button">Return to Home</a>
+        </div>
     </div>
 {% endblock content %}

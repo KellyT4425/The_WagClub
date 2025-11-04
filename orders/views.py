@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import stripe
 import uuid
+import ast
 import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
@@ -203,27 +204,123 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
+def generate_qr_code(voucher):
+    import qrcode
+    from io import BytesIO
+    from django.core.files.base import ContentFile
+
+    # Generate QR code with voucher data
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(f"VOUCHER:{voucher.code}")
+    qr.make(fit=True)
+
+    # Create image from QR code
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    # Save to voucher
+    voucher.qr_code.save(
+        f"voucher_{voucher.code}.png", ContentFile(buffer.getvalue()))
+
+
 def success_view(request):
-    """Display success page after successful checkout"""
-    # Try to get the most recent paid order for this user
-    if request.user.is_authenticated:
-        recent_order = Order.objects.filter(
-            user=request.user,
-            is_paid=True
-        ).order_by('-created_at').first()
+    # Verify session data or URL parameters for the Stripe session ID
+    session_id = request.GET.get(
+        'session_id')
+    try:
+        if session_id:
+            # Retrieve the Stripe session to verify payment
+            stripe_session = stripe.checkout.Session.retrieve(session_id)
 
-        recent_voucher = None
-        if recent_order:
-            recent_voucher = Voucher.objects.filter(order=recent_order).first()
+        # Get user ID from metadata
+        user_id = stripe_session.metadata.get('user_id')
 
-        context = {
-            'order': recent_order,
-            'voucher': recent_voucher,
-        }
-    else:
-        context = {}
+        if user_id and stripe_session.payment_status == 'paid':
+            user = User.objects.get(id=user_id)
 
-    return render(request, 'orders/success.html', context)
+            # Parse cart items from metadata
+            cart_items_str = stripe_session.metadata.get('cart_items', '[]')
+            cart_items = ast.literal_eval(cart_items_str)
+
+            # Create order
+            order = Order.objects.create(
+                user=user,
+                is_paid=True,
+                created_at=timezone.now()
+            )
+
+            # Create order items and vouchers
+            for item_data in cart_items:
+                service_id = item_data.get('id')
+                quantity = int(item_data.get('quantity', 1))
+                service = Service.objects.get(id=service_id)
+
+                # Create order item
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    service=service,
+                    quantity=quantity,
+                    price=float(item_data.get('price', service.price))
+                )
+
+                # Generate vouchers (one per quantity)
+                for i in range(quantity):
+                    # Generate unique code
+                    voucher_code = str(uuid.uuid4())[:16]
+
+                    # Create voucher
+                    voucher = Voucher(
+                        service=service,
+                        order_item=order_item,
+                        user=user,
+                        code=voucher_code,
+                        status="ISSUED"
+                    )
+
+                    # Generate QR code
+                    qr = qrcode.QRCode(
+                        version=1,
+                        error_correction=qrcode.constants.ERROR_CORRECT_L,
+                        box_size=10,
+                        border=4,
+                    )
+                    qr.add_data(voucher_code)
+                    qr.make(fit=True)
+
+                    img = qr.make_image(fill_color="black", back_color="white")
+                    buffer = BytesIO()
+                    img.save(buffer, format="PNG")
+                    buffer.seek(0)
+
+                    # Save QR code to voucher
+                    voucher.qr_img_path.save(
+                        f"voucher_qr_{voucher_code}.png",
+                        ContentFile(buffer.getvalue()),
+                        save=False
+                    )
+
+                    # Save voucher
+                    voucher.save()
+
+            # Clear cart
+            if 'cart' in request.session:
+                del request.session['cart']
+                request.session.modified = True
+
+            return render(request, 'orders/success.html', {
+                'order': order,
+                'vouchers': Voucher.objects.filter(order_item__order=order)
+            })
+
+    except Exception as e:
+        messages.error(request, f"Error processing payment: {str(e)}")
+        return render(request, 'orders/success.html')
 
 
 def cancel_view(request):
