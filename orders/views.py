@@ -38,10 +38,14 @@ def create_checkout_session(request):
         line_items.append({
             "price_data": {
                 "currency": "eur",
-                "product_data": {"name": item_data["name"], "metadata": {
-                    "service_id": item_id, "user_id": str(request.user.id)}
+                "product_data": {
+                    "name": item_data["name"],
+                    "metadata": {
+                        "service_id": item_id,
+                        "user_id": str(request.user.id)
+                    }
                 },
-                "unit_amount": price_cents,
+                "unit_amount": price_cents,  # Amount in cents
             },
             "quantity": item_data["quantity"],
         })
@@ -60,7 +64,7 @@ def create_checkout_session(request):
             mode='payment',
             customer_email=request.user.email if request.user.is_authenticated else None,
             success_url=request.build_absolute_uri(
-                reverse('orders:success')),
+                reverse('orders:success')) + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri(reverse('orders:cart')),
             metadata={
                 'user_id': request.user.id if request.user.is_authenticated else None,
@@ -71,6 +75,8 @@ def create_checkout_session(request):
 
         return redirect(checkout_session.url, code=303)
     except Exception as e:
+        import traceback
+        print(traceback.format_exc())  # DEBUG LOGGING
         messages.error(
             request, f"Error creating checkout session: {str(e)}")
         return redirect('orders:cart')
@@ -78,10 +84,11 @@ def create_checkout_session(request):
 
 @csrf_exempt  # Stripe isn't a browser, so skip CSRF protection
 def stripe_webhook(request):
-    with open('webhook_log.txt', 'a') as f:
-        f.write(f"\n\n--- Webhook received at {timezone.now()} ---\n")
-        f.write(f"Headers: {request.headers}\n")
-        f.write(f"Body: {request.body.decode('utf-8')[:500]}...\n")
+    import logging
+    logger = logging.getLogger('stripe')
+    # LOG INCOMING PAYLOAD
+    logger.info(f"Webhook received: {request.body.decode('utf-8')}")
+
     STRIPE_WEBHOOK = settings.STRIPE_WEBHOOK
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
@@ -112,7 +119,6 @@ def stripe_webhook(request):
             user = User.objects.get(id=user_id)
 
             try:
-                import ast
                 cart_items_str = session.metadata.get('cart_items', '[]')
                 cart_items = ast.literal_eval(cart_items_str)
             except (ValueError, SyntaxError) as e:
@@ -131,20 +137,21 @@ def stripe_webhook(request):
                 try:
                     # Get item details
                     service_id = item_data.get('id')
-                    quantity = int(item_data.get('quantity', 1))
+                    total_quantity = int(item_data.get('quantity', 1))
+                    price = float(item_data.get('price', service.price))
 
                     # Get service
                     service = Service.objects.get(id=service_id)
 
-                    # Generate vouchers - one per quantity
-                    for i in range(quantity):
+                    order_item = OrderItem.objects.create(
+                        order=order,
+                        service=service,
+                        quantity=total_quantity,
+                        price=price
+                    )
 
-                        order_item = OrderItem.objects.create(
-                            order=order,
-                            service=service,
-                            quantity=quantity,
-                            price=float(item_data.get('price', service.price))
-                        )
+                    # Generate vouchers - one per quantity
+                    for i in range(total_quantity):
                         # Generate a unique voucher code
                         voucher_code = str(uuid.uuid4())[:16]
 

@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 
+
 # Create your models here.
 VOUC_STATUS = [
     ("ISSUED", "ISSUED"),
@@ -33,6 +34,8 @@ class OrderItem(models.Model):
         Service, on_delete=models.PROTECT, related_name="order_items")
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name="items")
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 
 class Voucher(models.Model):
