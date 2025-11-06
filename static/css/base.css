@@ -110,6 +110,31 @@ footer i {
     border-top-right-radius: 0.5rem;
 }
 
+.display-box {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    min-height: 30vh;
+    max-width: 80vw;
+    position: fixed;
+    display: flex;
+    top: 50%;
+    left: 50%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    border-radius: 1em;
+    background-color: rgba(210, 185, 152, 0.5);
+}
+
+.btn.browse-now-button {
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn.browse-now-button:hover {
+    text-decoration: underline;
+}
+
 @media print {
     .no-print {
         display: none;

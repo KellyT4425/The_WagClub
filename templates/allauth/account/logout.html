@@ -6,17 +6,19 @@
     </div>
 {% endblock page_header %}
 {% block content %}
-    <h3>
-        Your Leaving So Soon <i class="fa-solid fa-dog"></i>
-    </h3>
-    <p>Are you sure you want to sign out?</p>
-    {% element alert type="info" %}
-    <p>
-        Did You Check Out Our Weekly <em>Offers</em> Before You Go!
-    </p>
-{% endelement %}
-{% url 'account_logout' as action_url %}
-{% element form method="post" action=action_url no_visible_fields=True %}
+    <div class="container text-center display-box">
+        <h3 class="heading">
+            Your Leaving So Soon <i class="fa-solid fa-dog"></i>
+        </h3>
+        <p>Are you sure you want to sign out?</p>
+        {% element alert type="info" %}
+        <p>
+            Did You Check Out Our Weekly <em>Offers</em> Before You Go!
+        </p>
+    {% endelement %}
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+</div>
 {% slot body %}
 {% csrf_token %}
 {{ redirect_field }}
