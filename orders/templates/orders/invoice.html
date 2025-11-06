@@ -11,12 +11,12 @@
             <a href="{% url 'orders:voucher_detail' voucher.code %}"
                class="btn btn-secondary ms-2">Back to Details</a>
         </div>
-        <div class="card">
+        <div class="card invoice-card">
             <div class="card-body">
                 <!-- Invoice Header -->
                 <div class="invoice-header row">
                     <div class="col-6">
-                        <div class="invoice-company">The WagClub</div>
+                        <div class="invoice-company heading">The WagClub</div>
                         <p>
                             123 Main Street
                             <br>
@@ -26,7 +26,7 @@
                         </p>
                     </div>
                     <div class="col-6 text-end">
-                        <h4>VOUCHER #{{ voucher.code }}</h4>
+                        <h4>Voucher: #{{ voucher.code }}</h4>
                         <p>
                             Issue Date: {{ voucher.issued_at|date:"F j, Y" }}
                             <br>
@@ -35,18 +35,18 @@
                     </div>
                 </div>
                 <!-- Invoice Title -->
-                <div class="invoice-title">SERVICE VOUCHER</div>
+                <div class="invoice-title align-center">SERVICE VOUCHER</div>
                 <!-- Customer Information -->
                 <div class="row mb-4">
                     <div class="col-6">
                         <h5>Customer:</h5>
                         <p>
-                            {{ user.first_name }} {{ user.last_name }}
+                            Name: {{ user.first_name|add:" "|add:user.last_name }}
                             <br>
                             {{ user.email }}
                         </p>
                     </div>
-                    <div class="col-6">
+                    <div class="align-center col-5">
                         <h5>Status:</h5>
                         <p>
                             {% if voucher.status == "ISSUED" %}

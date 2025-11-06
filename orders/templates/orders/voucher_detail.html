@@ -33,6 +33,14 @@
                                 <strong>Voucher Code:</strong>
                             </div>
                             <div class="col-8">{{ voucher.code }}</div>
+                            <div class="col-4">
+                                <strong>Service:</strong>
+                            </div>
+                            <div class="col-8">{{ voucher.service }}</div>
+                            <div class="col-4">
+                                <strong>:</strong>
+                            </div>
+                            <div class="col-8">{{ voucher.service }}</div>
                         </div>
                         <!-- Other voucher details... -->
                     </div>
@@ -45,7 +53,7 @@
                                 <a href="{% url 'orders:voucher_invoice' voucher.code %}"
                                    class="btn btn-info me-2"
                                    target="_blank">
-                                    <i class="fas fa-file-invoice"></i> Print Invoice
+                                    <i class="fas fa-file-invoice"></i> View Invoice
                                 </a>
                                 <!-- Existing print button (for direct browser printing) -->
                                 <button class="btn btn-primary" onclick="window.print()">

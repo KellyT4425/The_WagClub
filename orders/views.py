@@ -338,7 +338,7 @@ def cancel_view(request):
 def voucher_invoice(request, code):
 
     try:
-        voucher = Voucher.objects.get(code=code)
+        voucher = Voucher.objects.get(code=code, user=request.user)
         if request.user != voucher.user and not request.user.is_staff:
             return redirect('orders:my_wallet')
     except Voucher.DoesNotExist:
@@ -351,7 +351,7 @@ def voucher_invoice(request, code):
 
     }
 
-    return render(request, 'voucher/invoice.html', context)
+    return render(request, 'orders/invoice.html', context)
 
 
 def voucher_detail(request, code):
