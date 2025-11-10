@@ -456,7 +456,7 @@ def remove_from_cart(request, item_id):
 def cart(request):
     """Build the context shape your template expects."""
     cart = request.session.get(
-        "cart", {})  # { "12": {name, price, quantity}, ... }
+        "cart", {})
     cart_items = []
     total_amount = 0.0
 

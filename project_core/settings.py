@@ -36,7 +36,7 @@ MESSAGE_TAGS = {
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # https://github.com/joke2k/django-environ, python-decouple
 
@@ -72,6 +72,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_filters',
 
+    'cloudinary_storage',
+    'cloudinary',
+
     # Crispy forms
     'crispy_forms',
     'crispy_bootstrap5',
@@ -83,6 +86,7 @@ INSTALLED_APPS = [
     # Apps
     'services',
     'orders',
+
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -216,8 +220,15 @@ stripe.api_key = STRIPE_RESTRICTED_KEY
 PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK', '')
 
-
+CLOUDINARY_STORAGE = {
+    'CLOUDINARY_CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'CLOUDINARY_API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'CLOUDINARY_API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
