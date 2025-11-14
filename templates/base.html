@@ -11,11 +11,11 @@
     {% endblock meta %}
     <!--     -->
     {% block corecss %}
-      <link href="{% static 'css/base.css' %}" rel="stylesheet">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous" />
+      <link href="{% static 'css/base.css' %}" rel="stylesheet">
     {% endblock corecss %}
     <!--     -->
     {% block corejs %}
@@ -41,7 +41,7 @@
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg bg-white">
+      <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
           <!-- Brand -->
           <a class="navbar-brand d-flex align-items-center"
@@ -65,123 +65,144 @@
           </button>
           <!-- Navbar Content -->
           <div class="collapse navbar-collapse" id="mainNavbar">
-            <!-- Right side: Account + Cart -->
-            <ul class="navbar-nav ms-auto align-items-center gap-2 gap-lg-3 pt-2">
-              <!-- Account dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
-                   href="#"
-                   id="user-account"
-                   role="button"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                  <i class="fas fa-user fa-lg mb-1"></i>
-                  <span class="small mt-1">Account</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="user-account">
-                  {% if request.user.is_authenticated %}
-                    {% if request.user.is_superuser %}
+            {% with current=request.resolver_match.url_name ns=request.resolver_match.namespace %}
+              <ul class="navbar-nav ms-auto align-items-center gap-2 gap-lg-3 pt-2">
+                <!-- Account dropdown -->
+                <li class="nav-item dropdown">
+                  {# If any account-related page is active, highlight the toggle #}
+                  <a class="nav-link dropdown-toggle d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1 {% if current in 'account_login account_signup' or current == 'my_wallet' and ns == 'orders' %}active{% endif %}"
+                     href="#"
+                     id="user-account"
+                     role="button"
+                     data-bs-toggle="dropdown"
+                     aria-expanded="false">
+                    <i class="fas fa-user fa-lg mb-1"></i>
+                    <span class="small mt-1">Account</span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="user-account">
+                    {% if request.user.is_authenticated %}
+                      {% if request.user.is_superuser %}
+                        <li>
+                          <a class="dropdown-item" href="{% url 'admin:index' %}"><strong>Management</strong></a>
+                        </li>
+                      {% endif %}
                       <li>
-                        <a class="dropdown-item" href="{% url 'admin:index' %}">Management</a>
+                        <a class="dropdown-item {% if current == 'home' %}active{% endif %}"
+                           href="{% url 'home' %}">Home</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
+                           href="{% url 'service_list' %}">Services</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item {% if current == 'my_wallet' and ns == 'orders' %}active{% endif %}"
+                           href="{% url 'orders:my_wallet' %}">My Wallet</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{% url 'account_logout' %}">Sign Out</a>
+                      </li>
+                    {% else %}
+                      <li>
+                        <a class="dropdown-item {% if current == 'home' %}active{% endif %}"
+                           href="{% url 'home' %}">Home</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
+                           href="{% url 'service_list' %}">Services</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item {% if current == 'account_signup' %}active{% endif %}"
+                           href="{% url 'account_signup' %}">Register</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item {% if current == 'account_login' %}active{% endif %}"
+                           href="{% url 'account_login' %}">Sign in</a>
                       </li>
                     {% endif %}
-                    <li>
-                      <a class="dropdown-item" href="{% url 'service_list' %}">Services</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{% url 'orders:my_wallet' %}">My Wallet</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
-                    </li>
-                  {% else %}
-                    <li>
-                      <a class="dropdown-item" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{% url 'service_list' %}">Services</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{% url 'account_signup' %}">Register</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{% url 'account_login' %}">Login</a>
-                    </li>
-                  {% endif %}
-                </ul>
-                <li class="nav-item">
+                  </ul>
+                </li>
+                <!-- Cart -->
+                <li class="nav-item cart-item">
                   <a class="nav-link d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
                      href="{% url 'orders:cart' %}">
                     <i class="fa-solid fa-cart-shopping fa-lg mb-1"></i>
                     <span class="small mt-1">€{{ cart_total|floatformat:2 }}</span>
                   </a>
                 </li>
-              </li>
-            </ul>
+              </ul>
+            {% endwith %}
           </div>
-        </div>
-      </nav>
-    </header>
-    <div class="main-container">
-      <main>
-        {% block page_header %}
-        {% endblock page_header %}
-        {% block content %}
-        {% endblock content %}
-      </main>
-      <!-- Toasts container -->
-      <div class="toast-container position-fixed top-10 end-0 p-3">
-        {% if messages %}
-          {% for message in messages %}
-            <div class="toast show"
-                 role="alert"
-                 aria-live="assertive"
-                 aria-atomic="true"
-                 data-bs-delay="5000">
-              <div class="toast-header {% if message.tags %}bg-{{ message.tags }}{% else %}bg-info{% endif %} text-white">
-                <strong class="me-auto">
-                  {% if message.tags == 'success' %}
-                    Success!
-                  {% elif message.tags == 'error' %}
-                    Error!
-                  {% elif message.tags == 'warning' %}
-                    Warning!
-                  {% elif message.tags == 'info' %}
-                    Information
-                  {% else %}
-                    Message
-                  {% endif %}
-                </strong>
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="toast"
-                        aria-label="Close"></button>
+        </nav>
+      </header>
+      <div class="main-container">
+        <main>
+          {% block page_header %}
+          {% endblock page_header %}
+          {% block content %}
+          {% endblock content %}
+        </main>
+        <!-- Toasts container -->
+        <div class="toast-container position-fixed top-10 end-0 p-3">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="toast show"
+                   role="alert"
+                   aria-live="assertive"
+                   aria-atomic="true"
+                   data-bs-delay="5000">
+                <div class="toast-header {% if message.tags %}bg-{{ message.tags }}{% else %}bg-info{% endif %} text-white">
+                  <strong class="me-auto">
+                    {% if message.tags == 'success' %}
+                      Success!
+                    {% elif message.tags == 'error' %}
+                      Error!
+                    {% elif message.tags == 'warning' %}
+                      Warning!
+                    {% elif message.tags == 'info' %}
+                      Information
+                    {% else %}
+                      Message
+                    {% endif %}
+                  </strong>
+                  <button type="button"
+                          class="btn-close btn-close-white"
+                          data-bs-dismiss="toast"
+                          aria-label="Close"></button>
+                </div>
+                <div class="toast-body">{{ message }}</div>
               </div>
-              <div class="toast-body">{{ message }}</div>
-            </div>
-          {% endfor %}
-        {% endif %}
-      </div>
-      <!-- Footer -->
-      <footer class="foot-bar">
-        <div class="row">
-          <div class="col-2">
-            <a class="social-media" href="https://www.instagram.com/">
-              <i class="fa-brands fa-instagram text-black text-decoration-none pt-2"></i>
-            </a>
-          </div>
-          <div class="col-2">
-            <span class="reviews">Reviews</span>
-          </div>
-          <div class="col-2">
-            <span class="contact-form">Contact</span>
-          </div>
+            {% endfor %}
+          {% endif %}
         </div>
-      </footer>
-    </div>
-    {% block postloadjs %}
-      <script>
+        <!-- Footer -->
+        <footer class="foot-bar">
+          <div class="container py-3">
+            <div class="row justify-content-between align-items-center text-center text-md-start">
+              <!-- Left: socials + reviews -->
+              <div class="col-12 col-md-4 mb-2 mb-md-0 d-flex justify-content-center justify-content-md-start gap-3">
+                <a class="social-media"
+                   href="https://www.instagram.com/"
+                   target="_blank"
+                   aria-label="Instagram">
+                  <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="{% url 'service_list' %}#reviews"
+                   class="text-decoration-none text-black">Reviews</a>
+                <a href="{% url 'home' %}#contact"
+                   class="text-decoration-none text-black">Contact</a>
+              </div>
+              <!-- Right: address + copyright -->
+              <div class="col-12 col-md-6 small text-muted text-center text-md-end">
+                <p class="mb-1">Willow Lane, Meadow Farm, Killeen, Co. Louth, A91 0XX</p>
+                <p class="mb-0">&copy; 2025 The Wag Club | All rights reserved.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+      {% block postloadjs %}
+        <script>
   // Wait for the DOM to be fully loaded
   document.addEventListener('DOMContentLoaded', function() {
     // Initialize all toasts
@@ -196,7 +217,7 @@
       toast.show();
     });
   });
-      </script>
-    {% endblock postloadjs %}
-  </body>
-</html>
+        </script>
+      {% endblock postloadjs %}
+    </body>
+  </html>

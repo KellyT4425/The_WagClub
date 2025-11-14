@@ -1,62 +1,89 @@
 # The_WagClub
 The_Wag Club is a full-stack Django e-commerce application created as my Code Institute PP5 milestone project. It delivers doggy day care and grooming services through a subscription-style platform while highlighting key development skills such as CRUD functionality, Stripe integration, and user authentication.
 
-## Database Design
+## Title
+One sentence: what the app does, who it’s for.
 
-The database was designed using an entity-relationship diagram (ERD) to map out the core models, relationships, and constraints required to meet the project’s functional requirements. The design balances simplicity for maintainability while also providing scalability for future enhancements.
+Live Site & Repo
 
-### Entities and Relationships
+Deployed URL
 
-- User (Django Auth)
-- Built on Django’s default authentication system.
-- Extended to store first name, last name, and email for personalized communication.
-- Each user can create orders, leave reviews, and receive vouchers.
+GitHub repo
 
-### ServiceCategory
+Screenshots (Desktop & Mobile)
+Three or four images that show home, services, cart/checkout, and a mobile navbar.
 
-- Groups services into logical categories (e.g., Day Care, Grooming, Boarding).
-- Includes slug for clean URLs and an is_active flag for admin control.
+Features (MVP)
 
-### Service
+Browse services with search/filter
 
-- Represents individual offerings within the catalog.
-- Stores details such as name, description, duration, and price.
-- Includes short_text for use in service previews and search results.
-- A is_bundle field allows flexibility in creating package deals.
-- Indexed by (category, price) for faster filtering and sorting.
+Auth (signup/login/logout)
 
-### ServiceImage
+Cart & Stripe checkout
 
-- Provides support for multiple images per service.
-- is_main ensures only one primary image is displayed as the “hero” image.
-- alt_text and sort_order improve accessibility and user experience.
+Wallet/Vouchers (if live)
 
-### Order and OrderItem
+Responsive layout, toasts, accessible forms
 
-- Order records customer purchases, linked to the user.
-- OrderItem stores the specific services purchased, with a snapshot of price to preserve historical accuracy.
-- Together, they form the foundation of the shopping cart and checkout system.
+Information Architecture
 
-### Voucher
+Global nav: Home, Services, Cart, Account
 
-- Generated automatically after successful payment.
-- Linked to both an order and a user.
-- Stores a unique code, file path for download, and issue details for customer confirmation.
-- Supports future features such as redemption tracking and expiry.
+Footer: Reviews, Contact, Socials
 
-### Review
+Design System (tiny)
 
-- Allows authenticated users to leave service feedback.
-- Enforced with a 1–5 rating constraint and an is_approved field for moderation.
-- Strengthens trust and social proof within the platform.
+Fonts: Heading / Body
 
-### ContactMessage
+Colors: hex list (primary, background, text, accent)
 
-- Enables customers to submit enquiries directly through the site.
-- Messages are linked to a user (where applicable) and flagged when handled by admins.
+Spacing: e.g., 0.5rem / 1rem / 2rem
 
-#### Summary
+Components: buttons, cards, forms, toasts
 
-> This schema ensures all key features of the project are supported: subscriptions, Stripe checkout, voucher generation, reviews, and admin management. The separation of concerns (e.g., services, vouchers, reviews) promotes scalability, while constraints and indexes improve data integrity and performance.
+Tech Stack
 
-![]()
+Django 5, Bootstrap 5, Stripe
+
+Crispy Forms (if used), PostgreSQL (if prod)
+
+Data Model (brief)
+
+Service, Category, Order, OrderItem, Voucher (whatever you actually used)
+
+One line per model explaining purpose & key fields
+
+How to Run Locally
+
+Clone
+
+Create venv & install requirements
+
+Set env vars (STRIPE_PUBLIC_KEY, etc.)
+
+python manage.py migrate
+
+python manage.py runserver
+
+Environment Variables
+List each with a one-liner: what it’s for and an example value.
+
+Testing
+
+Manual testing: link to section below (in README or separate TESTING.md)
+
+Automated tests: how to run (see below)
+
+Coverage result (screenshot or percentage)
+
+Known Issues / Future Work
+
+What’s intentionally left out
+
+What you’d do next (1–3 bullets)
+
+Credits
+
+Images (Unsplash links), icons, libraries
+
+License (optional)

@@ -2,7 +2,7 @@
 {% load allauth i18n %}
 {% block page_header %}
     <div class="text-center">
-        <h2 class="service-page heading">Log Out</h2>
+        <h2 class="service-page heading">Sign Out</h2>
     </div>
 {% endblock page_header %}
 {% block content %}
@@ -15,6 +15,7 @@
         <p>
             Did You Check Out Our Weekly <em>Offers</em> Before You Go!
         </p>
+        <!-- ALERT not working -->
     {% endelement %}
     {% url 'account_logout' as action_url %}
     {% element form method="post" action=action_url no_visible_fields=True %}

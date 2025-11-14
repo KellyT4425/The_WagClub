@@ -2,22 +2,18 @@
 {% load static %}
 {% load i18n %}
 {% load allauth account %}
-{% block head_title %}
-    {% trans "Sign In" %}
-{% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-    {% trans "Sign In" %}
-{% endelement %}
-{% if not SOCIALACCOUNT_ONLY %}
-    {% setvar link %}
-    <a href="{{ signup_url }}">
+    <div class="container text-center display-box">
+        <h1 class="heading">Sign In</h1>
+        {% if not SOCIALACCOUNT_ONLY %}
+            {% setvar link %}
+            <a href="{{ signup_url }}">
+            {% endsetvar %}
+            {% setvar end_link %}
+        </a>
     {% endsetvar %}
-    {% setvar end_link %}
-</a>
-{% endsetvar %}
-{% element p %}
-{% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
+    {% element p %}
+    {% blocktranslate %}If you have not created an account yet, then please {{ link }}Register{{ end_link }} first.{% endblocktranslate %}
 {% endelement %}
 {% url 'account_login' as login_url %}
 {% element form form=form method="post" action=login_url tags="entrance,login" %}
@@ -31,6 +27,7 @@
 {% element button type="submit" tags="prominent,login" %}
 {% trans "Sign In" %}
 {% endelement %}
+</div>
 {% endslot %}
 {% endelement %}
 {% endif %}
@@ -59,4 +56,4 @@
     {% if PASSKEY_LOGIN_ENABLED %}
         {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
     {% endif %}
-{% endblock %}
+{% endblock extra_body %}

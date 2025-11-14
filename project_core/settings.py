@@ -86,12 +86,17 @@ INSTALLED_APPS = [
     # Apps
     'services',
     'orders',
+    'core',
 
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+ACCOUNT_FORMS = {
+    "login": "core.forms.CustomLoginForm",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
