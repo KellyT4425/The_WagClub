@@ -19,7 +19,7 @@
                         <!-- QR code display -->
                         <div class="text-center mb-4">
                             {% if voucher.qr_img_path %}
-                                <img src="{{ voucher.qr_img_path.url }}"
+                                <img src="{{ MEDIA_URL }}vouchers/qr_codes/qrcode.png"
                                      alt="QR Code"
                                      class="img-fluid"
                                      style="max-width: 200px">

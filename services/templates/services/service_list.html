@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
+{% block corecss %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=services-debug">
+{% endblock corecss %}
+{% block corejs %}
+    {{ block.super }}
+{% endblock corejs %}
 {% block page_header %}
     <div class="text-center">
         <h2 class="service-page heading">Services</h2>
@@ -10,7 +17,7 @@
     <div>
         <h3 class="text-center heading">Passes</h3>
         <div class="container fun-passes">
-            <div class="row space-row">
+            <div class="row g-4 space-row">
                 {% for s in doggy_daycare_pass %}
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card custom-card">

@@ -361,6 +361,7 @@ def voucher_detail(request, code):
     context = {
         'voucher': voucher,
         'page_title': f'Voucher: {voucher.code}',
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request, 'orders/voucher_detail.html', context)
@@ -393,9 +394,10 @@ def my_wallet(request):
         'redeemed_vouchers': redeemed_vouchers,
         'expired_vouchers': expired_vouchers,
         'page_title': 'My Wallet',
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
-    return render(request, 'orders/my_wallet.html', context)
+    return render(request, "orders/my_wallet.html", context)
 
 
 @login_required

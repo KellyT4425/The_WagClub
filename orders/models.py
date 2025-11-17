@@ -23,8 +23,6 @@ class Order(models.Model):
     user = models.ForeignKey(
         # adding plural suggests one user many "orders".
         User, on_delete=models.CASCADE, related_name="orders")
-    service = models.ForeignKey(
-        Service, on_delete=models.SET_NULL, null=True, related_name="orders")
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 

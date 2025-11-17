@@ -1,103 +1,42 @@
-<!-- templates/orders/my_wallet.html -->
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
-    <div class="text-center">
-        <h2 class="service-page heading">My Wallet</h2>
-    </div>
+    <h2 class="wallet-page-title heading">My Wallet</h2>
 {% endblock page_header %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-12 mb-4">
-                <h3>Active Vouchers</h3>
-                {% if active_vouchers %}
-                    <div class="row">
-                        {% for voucher in active_vouchers %}
-                            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100">
-                                    <div class="card-header bg-success text-white">
-                                        <h5 class="card-title mb-0">{{ voucher.service.name }}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="text-center mb-3">
-                                            {% if voucher.qr_img_path %}
-                                                <img src="{{ voucher.qr_img_path.url }}"
-                                                     alt="QR Code"
-                                                     class="img-fluid"
-                                                     style="max-width: 150px">
-                                            {% else %}
-                                                <p class="text-muted">No QR code available</p>
-                                            {% endif %}
-                                        </div>
-                                        <p class="card-text">
-                                            <strong>Code:</strong> {{ voucher.code }}
-                                        </p>
-                                        <p class="card-text">
-                                            <strong>Expires:</strong> {{ voucher.expires_at|date:"F j, Y" }}
-                                        </p>
-                                    </div>
-                                    <div class="card-footer d-flex justify-content-between">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="window.print()">Print</button>
-                                        <a href="{% url 'orders:voucher_detail' voucher.code %}"
-                                           class="btn btn-sm btn-primary">View Details</a>
-                                    </div>
-                                </div>
+    <div class="container mb-5">
+        <h3 class="voucher-section-title heading">Active Vouchers</h3>
+        <div class="row g-4">
+            {% for voucher in active_vouchers %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="voucher-card">
+                        <div class="voucher-card-header heading">{{ voucher.service.name }}</div>
+                        <div class="voucher-card-body">
+                            <div class="voucher-qr-box">
+                                {# your generated QR image OR the branded QR from static #}
+                                <img src="{{ MEDIA_URL }}vouchers/qr_codes/qrcode.png"
+                                     alt="Voucher QR Code">
+                                {# OR use the custom one you showed: #}
+                                {# <img src="{% static 'images/qrcode.png' %}" alt="Scan voucher QR"> #}
                             </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p>You don't have any active vouchers.</p>
-                {% endif %}
-            </div>
-            {% if redeemed_vouchers %}
-                <div class="col-12 mb-4">
-                    <h3>Redeemed Vouchers</h3>
-                    <div class="row">
-                        {% for voucher in redeemed_vouchers %}
-                            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100 bg-light">
-                                    <div class="card-header bg-secondary text-white">
-                                        <h5 class="card-title mb-0">{{ voucher.service.name }}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            <strong>Code:</strong> {{ voucher.code }}
-                                        </p>
-                                        <p class="card-text">
-                                            <strong>Redeemed:</strong> {{ voucher.redeemed_at|date:"F j, Y" }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
+                            <p>
+                                <strong>Code:</strong> {{ voucher.code }}
+                            </p>
+                            <p>
+                                <strong>Expires:</strong> {{ voucher.expires_at|date:"F j, Y" }}
+                            </p>
+                        </div>
+                        <div class="voucher-card-footer">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
+                            <a href="{% url 'orders:voucher_invoice' voucher.code %}"
+                               class="btn btn-sm btn-primary">View Details</a>
+                        </div>
                     </div>
                 </div>
-            {% endif %}
-            {% if expired_vouchers %}
-                <div class="col-12">
-                    <h3>Expired Vouchers</h3>
-                    <div class="row">
-                        {% for voucher in expired_vouchers %}
-                            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100 bg-light">
-                                    <div class="card-header bg-danger text-white">
-                                        <h5 class="card-title mb-0">{{ voucher.service.name }}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            <strong>Code:</strong> {{ voucher.code }}
-                                        </p>
-                                        <p class="card-text">
-                                            <strong>Expired:</strong> {{ voucher.expires_at|date:"F j, Y" }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
+            {% empty %}
+                <p>No active vouchers yet – go treat your pup!</p>
+            {% endfor %}
         </div>
+        <p class="voucher-helper">Show this QR at reception when you drop off your dog.</p>
     </div>
 {% endblock content %}
