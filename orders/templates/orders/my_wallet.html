@@ -1,23 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
-    <h2 class="wallet-page-title heading">My Wallet</h2>
+    <div class="text-center my-4">
+        <h2 class="service-page heading">My Wallet</h2>
+        <p class="text-muted mb-0">Manage your active vouchers and passes here.</p>
+    </div>
 {% endblock page_header %}
 {% block content %}
     <div class="container mb-5">
-        <h3 class="voucher-section-title heading">Active Vouchers</h3>
-        <div class="row g-4">
+        <!-- TITLE + SUBTEXT -->
+        <div class="text-center mb-4">
+            <h3 class="voucher-section-title heading">Active Vouchers</h3>
+            <p class="text-muted">Your passes and grooming vouchers will appear here.</p>
+        </div>
+        <!-- VOUCHER GRID -->
+        <div class="row g-4 justify-content-center">
             {% for voucher in active_vouchers %}
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="voucher-card">
-                        <div class="voucher-card-header heading">{{ voucher.service.name }}</div>
-                        <div class="voucher-card-body">
+                        <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                        <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
-                                {# your generated QR image OR the branded QR from static #}
                                 <img src="{{ MEDIA_URL }}vouchers/qr_codes/qrcode.png"
                                      alt="Voucher QR Code">
-                                {# OR use the custom one you showed: #}
-                                {# <img src="{% static 'images/qrcode.png' %}" alt="Scan voucher QR"> #}
                             </div>
                             <p>
                                 <strong>Code:</strong> {{ voucher.code }}
@@ -34,9 +39,12 @@
                     </div>
                 </div>
             {% empty %}
-                <p>No active vouchers yet – go treat your pup!</p>
+                <div class="col-12 text-center mt-5">
+                    <p class="text-muted fs-5">No active vouchers yet – go treat your pup!</p>
+                    <a href="{% url 'service_list' %}" class="btn btn-primary mt-3">Browse Services</a>
+                </div>
             {% endfor %}
         </div>
-        <p class="voucher-helper">Show this QR at reception when you drop off your dog.</p>
+        <p class="voucher-helper mt-4">Show this QR at reception when you drop off your dog.</p>
     </div>
 {% endblock content %}

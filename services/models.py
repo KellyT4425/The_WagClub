@@ -38,7 +38,7 @@ class Service(models.Model):
     slug = models.SlugField(max_length=30, unique=True)
     img_path = models.ImageField(upload_to="services/", blank=True, null=True)
     alt_text = models.TextField(max_length=80, blank=True)
-    description = models.TextField(max_length=200)
+    description = models.TextField(max_length=500)
     duration_hours = models.DecimalField(
         max_digits=5, decimal_places=2, default=1.00, help_text="Duration (hours)", blank=True, null=True)
     price = models.DecimalField(max_digits=4, decimal_places=2)

@@ -1,33 +1,27 @@
 {% extends "base.html" %}
-{% load allauth i18n %}
-{% block page_header %}
-    <div class="text-center">
-        <h2 class="service-page heading">Sign Out</h2>
-    </div>
-{% endblock page_header %}
+{% load static %}
 {% block content %}
-    <div class="container text-center display-box">
-        <h3 class="heading">
-            Your Leaving So Soon <i class="fa-solid fa-dog"></i>
-        </h3>
-        <p>Are you sure you want to sign out?</p>
-        {% element alert type="info" %}
-        <p>
-            Did You Check Out Our Weekly <em>Offers</em> Before You Go!
-        </p>
-        <!-- ALERT not working -->
-    {% endelement %}
-    {% url 'account_logout' as action_url %}
-    {% element form method="post" action=action_url no_visible_fields=True %}
-</div>
-{% slot body %}
-{% csrf_token %}
-{{ redirect_field }}
-{% endslot %}
-{% slot actions %}
-{% element button type="submit" class="main-buttons" %}
-{% trans "Log Out" %}
-{% endelement %}
-{% endslot %}
-{% endelement %}
+    <div class="alert alert-warning wag-offer-alert text-center shadow-sm">
+        <strong>Don’t forget!</strong> Check out our special offers — more wag for less!🐾<a href="{% url 'service_list' %}"
+   class="btn btn-primary d-block mx-auto offer-btn-style">OFFERS</a>
+    </div>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="logout-card text-center">
+                    <h2 class="heading mb-3">Leaving So Soon? 🐕</h2>
+                    <p class="mb-4">Are you sure you want to sign out?</p>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        {% if redirect_field_value %}
+                            <input type="hidden"
+                                   name="{{ redirect_field_name }}"
+                                   value="{{ redirect_field_value }}">
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary px-4 py-2">Sign Out</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

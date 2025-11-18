@@ -1,14 +1,26 @@
-{% extends "account/base_entrance.html" %}
+{% extends "base.html" %}
+{% load static %}
 {% load i18n %}
-{% load allauth %}
-{% block head_title %}
-    {% trans "Verify Your Email Address" %}
-{% endblock head_title %}
+{% block page_header %}
+    <div class="text-center mt-4">
+        <h2 class="heading">Verify Your Email</h2>
+    </div>
+{% endblock page_header %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Verify Your Email Address" %}
-    {% endelement %}
-    {% element p %}
-        {% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}
-    {% endelement %}
+    <div class="container my-5 d-flex justify-content-center">
+        <div class="email-verify-card text-center">
+            <h3 class="heading mb-3">Check your inbox 🐾</h3>
+            <p class="mb-3">
+                {% blocktrans %}
+            We’ve sent a verification email to the address you used to sign up.
+            Click the link in that email to activate your account.
+            {% endblocktrans %}
+            </p>
+            <p class="small text-muted">
+                If you don’t see it in a couple of minutes, check your spam or
+                promotions folder.
+            </p>
+            <a href="{% url 'account_login' %}" class="btn btn-primary mt-3">Back to sign in</a>
+        </div>
+    </div>
 {% endblock content %}

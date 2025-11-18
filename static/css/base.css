@@ -131,6 +131,11 @@ main {
     border-top-right-radius: 0.5rem;
 }
 
+.wag-card {
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
 .display-box {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     min-height: 30vh;
@@ -278,7 +283,9 @@ main {
 .voucher-section-title {
     font-weight: 600;
     margin-bottom: 1rem;
+    text-align: center;
 }
+
 
 .voucher-card {
     border: none;
@@ -335,9 +342,89 @@ main {
     margin-top: .5rem;
 }
 
+.wag-offer-alert {
+    background-color: #fff8e6;
+    border: 1px solid #e6d4a8;
+    color: #5a4630;
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+}
+
+.offer-btn-style {
+    max-width: 250px;
+}
+
+/* =======================
+   Logout Page Styling
+   ======================= */
+.logout-page-wrapper {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2rem;
+}
+
+.logout-card {
+    background-color: #ffffff !important;
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    max-width: 480px;
+    width: 100%;
+    display: inline-block;
+    margin-top: 8rem;
+}
+
+.logout-card .heading {
+    font-family: "Patrick Hand SC", cursive;
+    letter-spacing: 2px;
+}
+
+.logout-card p {
+    color: #444;
+    font-size: 0.95rem;
+}
+
+/* =======================
+   Auth Pages Styling
+   ======================= */
+.auth-card {
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: #fff3e2;
+    /* very light warm panel */
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.auth-card h3 {
+    font-family: "Patrick Hand SC", cursive;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* =======================
+   Email Styling
+   ======================= */
+
+.email-verify-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    max-width: 540px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
 
 
 /* Navbar mobile layout fix */
+
 @media (max-width: 992px) {
     #mainNavbar .navbar-nav {
         flex-direction: row;
@@ -354,11 +441,6 @@ main {
 
     #mainNavbar .nav-item .nav-link {
         white-space: nowrap;
-    }
-
-    #mainNavbar .nav-item {
-        flex: 0 0 auto;
-        text-align: left;
     }
 
     .navbar .dropdown-menu {
@@ -380,6 +462,7 @@ main {
         font-size: 1.1rem;
     }
 }
+
 
 /* Hero readability & mobile tweaks */
 @media (max-width: 576px) {
