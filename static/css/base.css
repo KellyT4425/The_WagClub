@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Patrick+Hand+SC&display=swap');
 
+/* ========== GLOBAL TYPOGRAPHY & LAYOUT ========== */
+
 body {
     font-family: "Lato", sans-serif;
     font-weight: 400;
@@ -16,6 +18,18 @@ body {
     letter-spacing: 2px;
 }
 
+main {
+    flex-grow: 1;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ========== HERO / HOME ========== */
+
 .home-img {
     background: url("../images/homepage-hero-img.jpg") no-repeat center center fixed;
     background-size: cover;
@@ -25,10 +39,26 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 80vh;
     padding-bottom: 15rem;
     color: #000;
 }
+
+.hero-text {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1a1a1a;
+    border-radius: 10px;
+}
+
+.hero-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+/* ========== NAVBAR ========== */
 
 .navbar {
     background: #fff !important;
@@ -46,35 +76,14 @@ body {
     color: #c7a77b !important;
 }
 
-/* Toast consistency */
-.toast-header.bg-success {
-    background-color: #c7a77b !important;
+/* Make active links easier to see */
+.nav-link.active,
+.dropdown-item.active {
+    color: #c7a77b !important;
+    font-weight: 600;
 }
 
-.toast-header.bg-info {
-    background-color: #1a1a1a !important;
-    color: #fff;
-}
-
-.toast-header.bg-danger {
-    background-color: #1a1a1a !important;
-    color: #fff;
-}
-
-.hero-text {
-    background: rgba(255, 255, 255, 0.85);
-    color: #1a1a1a;
-    border-radius: 10px;
-}
-
-.hero-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 100vh;
-    padding: 1rem;
-}
+/* ========== FOOTER ========== */
 
 .foot-bar {
     background-color: #ffffff;
@@ -97,15 +106,7 @@ body {
     font-size: 1.3rem;
 }
 
-main {
-    flex-grow: 1;
-}
-
-.main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+/* ========== CARDS / GRID ========== */
 
 .space-row {
     display: flex;
@@ -136,6 +137,8 @@ main {
     background-color: rgba(255, 255, 255, 0.9);
 }
 
+/* ========== DISPLAY BOX (MODALS / PANELS) ========== */
+
 .display-box {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     min-height: 30vh;
@@ -151,6 +154,8 @@ main {
     border-radius: 1em;
     background-color: rgba(210, 185, 152, 0.5);
 }
+
+/* ========== FORMS & BUTTONS ========== */
 
 .form-control {
     border-radius: 6px;
@@ -176,22 +181,46 @@ main {
     color: #fff;
 }
 
-/* Browse Now button */
+/* Browse Now button (brand CTA) */
 .browse-now-button {
-    background-color: #1a1a1a;
+    background: #1a1a1a;
     color: #fff;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color .2s ease;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    transition: background .2s ease;
 }
 
 .browse-now-button:hover,
 .browse-now-button:focus {
-    background-color: #c7a77b;
+    background: #c7a77b;
     color: #fff;
     text-decoration: none;
 }
+
+/* ========== TOASTS ========== */
+
+.toast-header.bg-success {
+    background-color: #c7a77b !important;
+}
+
+.toast-header.bg-info,
+.toast-header.bg-danger {
+    background-color: #1a1a1a !important;
+    color: #fff;
+}
+
+/* Toast offset helper */
+.top-10 {
+    top: 10px;
+}
+
+.toast-container {
+    z-index: 1080;
+}
+
+/* ========== PRINT STYLES ========== */
 
 @media print {
     .no-print {
@@ -212,7 +241,8 @@ main {
     }
 }
 
-/* Invoice styling */
+/* ========== INVOICE STYLING ========== */
+
 .invoice-header {
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
@@ -236,41 +266,8 @@ main {
     margin: 30px 0;
 }
 
-/* Make active links easier to see */
-.nav-link.active,
-.dropdown-item.active {
-    color: #c7a77b !important;
-    font-weight: 600;
-}
-
-/* Toast offset helper */
-.top-10 {
-    top: 10px;
-}
-
-.toast-container {
-    z-index: 1080;
-}
-
-/* Browse Now button (brand CTA) */
-.browse-now-button {
-    background: #1a1a1a;
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    letter-spacing: .03em;
-    transition: background .2s ease;
-}
-
-.browse-now-button:hover,
-.browse-now-button:focus {
-    background: #c7a77b;
-    color: #fff;
-}
-
 /* =======================
-   My Wallet / Vouchers
+   My Wallet / Vouchers (list)
    ======================= */
 
 .wallet-page-title {
@@ -286,7 +283,6 @@ main {
     text-align: center;
 }
 
-
 .voucher-card {
     border: none;
     border-radius: 1rem;
@@ -295,21 +291,18 @@ main {
     background: #ffffff;
 }
 
-/* coloured bar at top of each voucher */
 .voucher-card-header {
     background: #1f7a3a;
-    /* green – voucher/valid */
+    /* valid / issued */
     color: #fff;
     padding: .6rem 1rem;
     font-weight: 600;
 }
 
-/* main body */
 .voucher-card-body {
     padding: 1.25rem 1.25rem 1rem;
 }
 
-/* QR area */
 .voucher-qr-box {
     display: flex;
     align-items: center;
@@ -325,7 +318,6 @@ main {
     border-radius: 12px;
 }
 
-/* footer with buttons */
 .voucher-card-footer {
     display: flex;
     justify-content: space-between;
@@ -334,7 +326,6 @@ main {
     border-top: 1px solid #eee;
 }
 
-/* tiny helper text under cards if you want */
 .voucher-helper {
     font-size: .9rem;
     color: #555;
@@ -342,22 +333,81 @@ main {
     margin-top: .5rem;
 }
 
-.wag-offer-alert {
-    background-color: #fff8e6;
-    border: 1px solid #e6d4a8;
-    color: #5a4630;
-    border-radius: 10px;
-    font-size: 1rem;
-    padding: 0.9rem 1.2rem;
+/* =======================
+   Voucher Detail Page
+   ======================= */
+
+.voucher-detail-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem 4rem;
 }
 
-.offer-btn-style {
-    max-width: 250px;
+.wag-voucher-card {
+    max-width: 540px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+/* coloured header strip */
+.voucher-header {
+    padding: 0.8rem 1.5rem;
+    text-align: center;
+}
+
+/* status colours */
+.issued-bg {
+    background-color: #1f7a3a;
+    color: #fff;
+}
+
+.redeemed-bg {
+    background-color: #7a7a7a;
+    color: #fff;
+}
+
+.expired-bg {
+    background-color: #b53a3a;
+    color: #fff;
+}
+
+/* main body */
+.voucher-body {
+    padding: 1.75rem 2rem 2rem;
+}
+
+/* QR image */
+.voucher-qr {
+    max-width: 210px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 1.25rem;
+    display: block;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
+}
+
+/* status text + details */
+.voucher-status {
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.voucher-details-small p {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
 
 /* =======================
    Logout Page Styling
    ======================= */
+
 .logout-page-wrapper {
     min-height: 70vh;
     display: flex;
@@ -391,6 +441,7 @@ main {
 /* =======================
    Auth Pages Styling
    ======================= */
+
 .auth-card {
     max-width: 480px;
     width: 100%;
@@ -422,8 +473,15 @@ main {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
+.page-center-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem 4rem;
+}
 
-/* Navbar mobile layout fix */
+/* =======================
+   NAVBAR: MOBILE LAYOUT
+   ======================= */
 
 @media (max-width: 992px) {
     #mainNavbar .navbar-nav {
@@ -461,11 +519,19 @@ main {
     .navbar .fa-cart-shopping {
         font-size: 1.1rem;
     }
+
+    .hero-text-box {
+        margin-bottom: 20rem;
+    }
 }
 
+/* =======================
+   GLOBAL MOBILE (≤ 576px)
+   ======================= */
 
-/* Hero readability & mobile tweaks */
 @media (max-width: 576px) {
+
+    /* Hero */
     .home-img {
         background-attachment: scroll;
         min-height: 85vh;
@@ -478,69 +544,10 @@ main {
         padding: 1.25rem;
     }
 
-    #search-bar .input-group {
-        display: block;
-    }
-
-    #search-bar .form-control {
-        width: 100%;
-        margin-bottom: .5rem;
-        border-radius: 999px;
-    }
-
-    #search-bar .btn {
-        width: 100%;
-        border-radius: 999px;
-    }
-
-    .browse-now-button {
-        display: block;
-        width: 100%;
-        padding: .9rem 1rem;
-    }
-
-    .foot-bar {
-        padding: .5rem 0;
-    }
-
-    .foot-bar .row {
-        row-gap: .25rem;
-    }
-
-    .foot-bar p,
-    .foot-bar a {
-        font-size: .95rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .navbar-brand img {
-        width: 32px;
-        height: auto;
-    }
-
-    .navbar-brand .heading {
-        font-size: 1.25rem;
-        letter-spacing: 1px;
-    }
-}
-
-@media (max-width: 992px) {
-    .hero-text-box {
-        margin-bottom: 20rem;
-    }
-}
-
-@media (max-width: 576px) {
     .hero-text-box {
         max-width: 90%;
         margin: 0 auto;
         border-radius: 14px;
-    }
-
-    .hero-text {
-        background: rgba(255, 255, 255, 0.85);
-        padding: 1.25rem;
     }
 
     .hero-text-box h1 {
@@ -550,10 +557,8 @@ main {
     .hero-text-box p {
         font-size: 1rem;
     }
-}
 
-/* Stack search input and button vertically on small screens */
-@media (max-width: 576px) {
+    /* Search bar stacking */
     #search-bar .input-group {
         display: block;
     }
@@ -568,19 +573,15 @@ main {
         width: 100%;
         border-radius: 999px;
     }
-}
 
-/* Make primary CTA comfy on mobile */
-@media (max-width: 576px) {
+    /* CTA button */
     .browse-now-button {
         display: block;
         width: 100%;
         padding: .9rem 1rem;
-        border-radius: 12px;
     }
-}
 
-@media (max-width: 576px) {
+    /* Footer tweaks */
     .foot-bar {
         padding: .5rem 0;
     }
@@ -593,11 +594,25 @@ main {
     .foot-bar a {
         font-size: .95rem;
     }
-}
 
-/* Move the visible area a bit higher */
-@media (max-width: 576px) {
-    .home-img {
-        background-position: 50% 30%;
+    /* Navbar brand shrink */
+    .navbar-brand img {
+        width: 32px;
+        height: auto;
+    }
+
+    .navbar-brand .heading {
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+    }
+
+    /* Voucher detail mobile padding + buttons */
+    .voucher-body {
+        padding: 1.25rem 1.25rem 1.75rem;
+    }
+
+    .voucher-body .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
     }
 }

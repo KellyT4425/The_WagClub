@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_header %}
+    <div class="text-center my-5">
+        <h2 class="heading">Lost Your Way?</h2>
+    </div>
+{% endblock page_header %}
+{% block content %}
+    <div class="d-flex justify-content-center my-5 page-center-wrapper">
+        <div class="wag-card p-4" style="max-width: 520px; width: 100%;">
+            <h3 class="heading text-center mb-3">404 – Page Not Found</h3>
+            <p class="text-center mb-3">
+                That page has wandered off like an overexcited pup. 🐕‍🦺
+                <br>
+                The link might be out of date, or the URL has a typo.
+            </p>
+            <div class="text-center">
+                <a href="{% url 'home' %}" class="btn btn-primary mb-2">Back to Home</a>
+                <br>
+                <a href="{% url 'service_list' %}" class="btn btn-secondary">Browse Daycare & Grooming Services</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

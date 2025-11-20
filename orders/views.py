@@ -4,7 +4,7 @@ from services.models import Service
 from .models import Voucher, Order, OrderItem
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 import stripe
 import uuid
 import ast
@@ -19,6 +19,10 @@ from django.utils import timezone
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 User = get_user_model()
+
+
+def staff_required(user):
+    return user.is_staff or user.is_superuser
 
 
 def create_checkout_session(request):
@@ -340,7 +344,7 @@ def voucher_invoice(request, code):
     try:
         voucher = Voucher.objects.get(code=code, user=request.user)
         if request.user != voucher.user and not request.user.is_staff:
-            return redirect('orders:my_wallet')
+            return redirect('orders:voucher_detail')
     except Voucher.DoesNotExist:
         return render(request, 'orders/vouc_not_found.html', {'code': code})
 
@@ -354,9 +358,16 @@ def voucher_invoice(request, code):
     return render(request, 'orders/invoice.html', context)
 
 
+@login_required
 def voucher_detail(request, code):
     """Display detailed information for a single voucher"""
-    voucher = get_object_or_404(Voucher, code=code, user=request.user)
+    voucher = get_object_or_404(Voucher, code=code)
+
+    # Only the voucher owner OR staff/superuser can view it
+    if request.user != voucher.user and not request.user.is_staff and not request.user.is_superuser:
+        messages.error(
+            request, "You do not have permission to view this voucher.")
+        return redirect("orders:my_wallet")
 
     context = {
         'voucher': voucher,
@@ -365,6 +376,31 @@ def voucher_detail(request, code):
     }
 
     return render(request, 'orders/voucher_detail.html', context)
+
+
+@login_required
+@user_passes_test(staff_required)
+def redeem_voucher(request, code):
+    """Allow staff/admin to redeem an ISSUED voucher."""
+    voucher = get_object_or_404(Voucher, code=code)
+
+    if request.method != "POST":
+        messages.error(
+            request, "Voucher can only be redeemed with a POST request.")
+        return redirect("orders:voucher_detail", code=code)
+
+    if voucher.status != "ISSUED":
+        messages.warning(
+            request, "This voucher cannot be redeemed (already used or expired).")
+        return redirect("orders:voucher_detail", code=code)
+
+    # Mark as redeemed
+    voucher.status = "REDEEMED"
+    voucher.redeemed_at = timezone.now()
+    voucher.save()
+
+    messages.success(request, f"Voucher {voucher.code} has been redeemed.")
+    return redirect("orders:voucher_detail", code=code)
 
 
 @login_required

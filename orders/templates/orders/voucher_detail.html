@@ -1,4 +1,3 @@
-<!-- orders/voucher_detail.html -->
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
@@ -7,60 +6,56 @@
     </div>
 {% endblock page_header %}
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="card">
-                    <div class="card-header {% if voucher.status == 'ISSUED' %}bg-success{% elif voucher.status == 'REDEEMED' %}bg-secondary{% else %}bg-danger{% endif %} text-white">
-                        <h4 class="mb-0">{{ voucher.service.name }} Voucher</h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- Existing voucher details code -->
-                        <!-- QR code display -->
-                        <div class="text-center mb-4">
-                            {% if voucher.qr_img_path %}
-                                <img src="{{ MEDIA_URL }}vouchers/qr_codes/qrcode.png"
-                                     alt="QR Code"
-                                     class="img-fluid"
-                                     style="max-width: 200px">
-                            {% else %}
-                                <p class="text-muted">No QR code available</p>
-                            {% endif %}
-                        </div>
-                        <!-- Voucher details -->
-                        <div class="row mb-3">
-                            <div class="col-4">
-                                <strong>Voucher Code:</strong>
-                            </div>
-                            <div class="col-8">{{ voucher.code }}</div>
-                            <div class="col-4">
-                                <strong>Service:</strong>
-                            </div>
-                            <div class="col-8">{{ voucher.service }}</div>
-                            <div class="col-4">
-                                <strong>Customer:</strong>
-                            </div>
-                            <div class="col-8">{{ voucher.user }}</div>
-                        </div>
-                        <!-- Other voucher details... -->
-                    </div>
-                    <!-- Footer with buttons -->
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'orders:my_wallet' %}" class="btn btn-secondary">Back to Wallet</a>
-                            <div>
-                                <a href="{% url 'orders:voucher_invoice' voucher.code %}"
-                                   class="btn btn-info me-2"
-                                   target="_blank">
-                                    <i class="fas fa-file-invoice"></i> View Invoice
-                                </a>
-                                <!-- Existing print button (for direct browser printing) -->
-                                <button class="btn btn-primary" onclick="window.print()">
-                                    <i class="fas fa-print"></i> Print Voucher
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    <div class="voucher-detail-wrapper">
+        <div class="wag-voucher-card">
+            <!-- Header bar with status colour -->
+            <div class="voucher-header {% if voucher.status == 'ISSUED' %} issued-bg {% elif voucher.status == 'REDEEMED' %} redeemed-bg {% else %} expired-bg {% endif %}">
+                <h3 class="heading mb-0">{{ voucher.service.name }} Voucher</h3>
+            </div>
+            <!-- Body -->
+            <div class="voucher-body text-center">
+                {% if voucher.qr_img_path %}
+                    <img src="{{ voucher.qr_img_path.url }}"
+                         alt="QR Code for voucher {{ voucher.code }}"
+                         class="voucher-qr">
+                {% endif %}
+                <p class="voucher-status">
+                    <strong>Status:</strong> {{ voucher.status }}
+                </p>
+                {% if request.user.is_staff and voucher.status == "ISSUED" %}
+                    <form method="post" action="{% url 'orders:redeem_voucher' voucher.code %}">
+                        {% csrf_token %}
+                        <button class="btn btn-dark mt-2">Redeem Voucher</button>
+                    </form>
+                {% elif voucher.status == "REDEEMED" %}
+                    <p class="text-success mt-2 mb-0">This voucher has already been redeemed.</p>
+                    {% if voucher.redeemed_at %}
+                        <p class="small text-muted mb-0">Redeemed at: {{ voucher.redeemed_at|date:"d M Y, H:i" }}</p>
+                    {% endif %}
+                {% elif voucher.status == "EXPIRED" %}
+                    <p class="text-danger mt-2 mb-0">This voucher has expired.</p>
+                {% endif %}
+                <hr>
+                <div class="text-start mt-3 voucher-details-small">
+                    <p>
+                        <strong>Voucher Code:</strong> {{ voucher.code }}
+                    </p>
+                    <p>
+                        <strong>Service:</strong> {{ voucher.service }}
+                    </p>
+                    <p>
+                        <strong>Customer:</strong> {{ voucher.user }}
+                    </p>
+                    <p>
+                        <strong>Expires:</strong> {{ voucher.expires_at|date:"d M Y" }}
+                    </p>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'orders:my_wallet' %}"
+                       class="btn btn-secondary me-1 mb-2">← Back to Wallet</a>
+                    <a href="{% url 'orders:voucher_invoice' voucher.code %}"
+                       class="btn btn-info me-1 mb-2">View Invoice</a>
+                    <button onclick="window.print()" class="btn btn-dark mb-2">Print Voucher</button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_header %}
+    <div class="text-center">
+        <h2 class="heading">Whoops… That’s On Us</h2>
+    </div>
+{% endblock page_header %}
+{% block content %}
+    <div class="d-flex justify-content-center my-5 page-center-wrapper">
+        <div class="wag-card p-4" style="max-width: 520px; width: 100%;">
+            <h3 class="heading text-center mb-3">500 – Server Error</h3>
+            <p class="text-center mb-3">
+                Something went wrong on our side. Your dog did nothing wrong. 🐾
+                <br>
+                The team has been notified (or will be, once you check the logs!).
+            </p>
+            <p class="text-center mb-4">If this keeps happening, please try again later or contact us.</p>
+            <div class="text-center">
+                <a href="{% url 'home' %}" class="btn btn-primary mb-2">Back to Home</a>
+                <br>
+                <a href="{% url 'orders:my_wallet' %}" class="btn btn-secondary">Go to My Wallet</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

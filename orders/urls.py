@@ -14,6 +14,8 @@ urlpatterns = [
          views.voucher_invoice, name='voucher_invoice'),
     path('checkout/webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('voucher/<str:code>/', views.voucher_detail, name='voucher_detail'),
+    path("voucher/<str:code>/redeem/",
+         views.redeem_voucher, name="redeem_voucher"),
 
     # Add a path for creating checkout sessions
     path('checkout/create-session/', views.create_checkout_session,
