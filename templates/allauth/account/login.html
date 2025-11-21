@@ -5,7 +5,8 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock head_title %}
 
 {% block content %}
-  <h1 class="heading mb-3 text-center">{% trans "Sign In" %}</h1>
+  <h1 class="heading mb-2 text-center">{% trans "Sign In" %}</h1>
+  <p class="text-muted text-center mb-4">Welcome back to The Wag Club. Log in to book passes, view vouchers, and keep tails wagging.</p>
 
   {% if not SOCIALACCOUNT_ONLY %}
     {% setvar link %}<a href="{{ signup_url }}">{% endsetvar %}

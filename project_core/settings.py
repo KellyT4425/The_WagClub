@@ -25,7 +25,10 @@ dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "change-me-in-production-please",  # Safe default for local development
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -36,7 +39,7 @@ MESSAGE_TAGS = {
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 # https://github.com/joke2k/django-environ, python-decouple
 
@@ -59,6 +62,14 @@ ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
+if DEBUG:
+    # Ensure local/dev hosts work even if env var is empty
+    if not ALLOWED_HOSTS:
+        ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
+    else:
+        for host in ["127.0.0.1", "localhost", "testserver"]:
+            if host not in ALLOWED_HOSTS:
+                ALLOWED_HOSTS.append(host)
 # Application definition
 
 
@@ -235,10 +246,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_RESTRICTED_KEY = os.getenv('STRIPE_API_KEY')
-stripe.api_key = STRIPE_RESTRICTED_KEY
-
-PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK', '')
+
+# Avoid setting a None API key when Stripe isn't configured locally
+stripe.api_key = STRIPE_RESTRICTED_KEY or STRIPE_SECRET_KEY
 
 CLOUDINARY_STORAGE = {
     'CLOUDINARY_CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
