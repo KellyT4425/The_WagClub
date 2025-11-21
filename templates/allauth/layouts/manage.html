@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{# Management layout for authenticated account pages #}
+{% block page_header %}{% endblock page_header %}
+
+{% block content %}
+  <div class="page-center-wrapper">
+    <div class="auth-card shadow-sm">
+      {% block manage_content %}{% endblock manage_content %}
+    </div>
+  </div>
+{% endblock content %}

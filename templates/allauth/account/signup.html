@@ -1,46 +1,42 @@
-{% extends "base.html" %}
+{% extends "allauth/account/base_entrance.html" %}
 {% load static %}
 {% load allauth i18n %}
-{% block head_title %}
-    {% trans "register" %}
-{% endblock head_title %}
+
+{% block head_title %}{% trans "Register" %}{% endblock head_title %}
+
 {% block content %}
-    {% element h1 %}
-    {% trans "Register" %}
-{% endelement %}
-{% setvar link %}
-<a href="{{ login_url }}">
-{% endsetvar %}
-{% setvar end_link %}
-</a>
-{% endsetvar %}
-{% element p %}
-{% blocktranslate %}Already have an account? Then please {{ link }}Sign In{{ end_link }}.{% endblocktranslate %}
-{% endelement %}
-{% if not SOCIALACCOUNT_ONLY %}
+  <h1 class="heading mb-3 text-center">{% trans "Register" %}</h1>
+
+  {% setvar link %}<a href="{{ login_url }}">{% endsetvar %}
+  {% setvar end_link %}</a>{% endsetvar %}
+  <p class="text-muted text-center mb-4">
+    {% blocktranslate %}Already have an account? Then please {{ link }}Sign In{{ end_link }}.{% endblocktranslate %}
+  </p>
+
+  {% if not SOCIALACCOUNT_ONLY %}
     {% url 'account_signup' as action_url %}
     {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-    {% slot body %}
-    {% csrf_token %}
-    {% element fields form=form unlabeled=True %}
-{% endelement %}
-{{ redirect_field }}
-{% endslot %}
-{% slot actions %}
-{% element button tags="prominent,signup" type="submit" %}
-{% trans "Sign Up" %}
-{% endelement %}
-{% endslot %}
-{% endelement %}
-{% endif %}
-{% if PASSKEY_SIGNUP_ENABLED %}
-    {% element hr %}
-{% endelement %}
-{% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
-{% trans "Sign up using a passkey" %}
-{% endelement %}
-{% endif %}
-{% if SOCIALACCOUNT_ENABLED %}
+      {% slot body %}
+        {% csrf_token %}
+        {% element fields form=form unlabeled=True %}{% endelement %}
+        {{ redirect_field }}
+      {% endslot %}
+      {% slot actions %}
+        {% element button tags="prominent,signup" type="submit" %}
+          {% trans "Sign Up" %}
+        {% endelement %}
+      {% endslot %}
+    {% endelement %}
+  {% endif %}
+
+  {% if PASSKEY_SIGNUP_ENABLED %}
+    {% element hr %}{% endelement %}
+    {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+      {% trans "Sign up using a passkey" %}
+    {% endelement %}
+  {% endif %}
+
+  {% if SOCIALACCOUNT_ENABLED %}
     {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-{% endif %}
+  {% endif %}
 {% endblock content %}

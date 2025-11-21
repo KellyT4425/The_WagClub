@@ -37,6 +37,40 @@ The end result feels like a modern companion for a real dog-care business — so
 | 🚀 **Deployment**     | Heroku (Python buildpack, Postgres add-on, config vars)                          |
 | 🐙 **Version Control**| Git & GitHub                                                                       |
 
+## Getting Started (Local Development)
+
+1. **Clone & install dependencies**
+   ```bash
+   python -m venv .venv && source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. **Create a `.env` from the template**
+   ```bash
+   cp .env.example .env
+   ```
+   Update the Stripe keys with test credentials and, if you plan to use Postgres locally, set `DATABASE_URL`.
+
+3. **Apply migrations & run the server**
+   ```bash
+   python manage.py migrate
+   python manage.py runserver
+   ```
+
+With `DEBUG=True` (the default in `.env.example`), the project uses SQLite and will start with permissive hosts (`127.0.0.1`, `localhost`).
+
+## Configuration Reference
+
+Key environment variables expected by the app:
+
+- **SECRET_KEY**: Django secret key (a safe default is provided for local dev; override in production).
+- **DEBUG**: `True` for local development; set to `False` in production.
+- **ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS**: Comma-separated lists for deployment.
+- **DATABASE_URL**: Postgres connection string (required when `DEBUG=False`).
+- **Stripe**: `STRIPE_SECRET_KEY`, `STRIPE_API_KEY` (restricted key), `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK`.
+- **Email**: `EMAIL_BACKEND` (defaults to console), host, port, TLS, credentials, and `DEFAULT_FROM_EMAIL`.
+- **Cloudinary**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (optional for local runs).
+
 ## Minimum Viable Product (MVP)
 The Wag Club MVP is a focused, practical web application that delivers the essential digital tools a dog daycare & grooming business needs to operate smoothly — without unnecessary complexity. It replaces manual tracking with a streamlined system where customers can purchase passes, view their vouchers, and redeem them using auto-generated QR codes.
 
@@ -432,7 +466,7 @@ python manage.py migrate
 python manage.py runserver
 
 Environment Variables
-List each with a one-liner: what it’s for and an example value.
+List each with a one-liner: what it's for and an example value.
 
 Testing
 
@@ -444,12 +478,20 @@ Coverage result (screenshot or percentage)
 
 Known Issues / Future Work
 
-What’s intentionally left out
+What's intentionally left out
 
-What you’d do next (1–3 bullets)
+What you'd do next (1-3 bullets)
 
 Credits
 
 Images (Unsplash links), icons, libraries
 
 License (optional)
+
+## Testing
+
+- **Automated**: `python manage.py test` (uses in-memory SQLite test DB). Adds coverage for:
+  - Checkout session creation flow and Stripe metadata injection (`orders.tests.OrderViewsTests`).
+  - Stripe webhook order/voucher creation with QR generation for cart items.
+  - Success view display without duplicating orders, and voucher access control.
+  - Service listing populates Passes/Packages/Offers categories (`services.tests.ServiceListViewTests`).

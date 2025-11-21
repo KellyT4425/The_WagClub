@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{# Shared entrance layout for auth-facing screens #}
+{% block page_header %}{% endblock page_header %}
+
+{% block content %}
+  <div class="page-center-wrapper">
+    <div class="auth-card shadow-sm">
+      {% block entrance_content %}{% endblock entrance_content %}
+    </div>
+  </div>
+{% endblock content %}

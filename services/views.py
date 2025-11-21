@@ -11,11 +11,11 @@ def home(request):
 
 def service_list(request):
     passes = Service.objects.filter(
-        is_active=True, category__slug="doggy_daycare_pass").select_related("category").order_by("price")
+        is_active=True, category__name="Passes").select_related("category").order_by("price")
     packages = Service.objects.filter(
-        is_active=True, category__slug="doggy_grooming_packs").select_related("category").order_by("price")
+        is_active=True, category__name="Packages").select_related("category").order_by("price")
     offers = Service.objects.filter(
-        is_active=True, category__slug="pet_offers").select_related("category").order_by("price")
+        is_active=True, category__name="Offers").select_related("category").order_by("price")
 
     context = {
         "doggy_daycare_pass": passes,

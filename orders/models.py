@@ -39,8 +39,8 @@ class OrderItem(models.Model):
 class Voucher(models.Model):
     service = models.ForeignKey(
         Service, on_delete=models.CASCADE, related_name="vouchers")
-    order_item = models.OneToOneField(
-        "OrderItem", on_delete=models.CASCADE, related_name="voucher")
+    order_item = models.ForeignKey(
+        "OrderItem", on_delete=models.CASCADE, related_name="vouchers")
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="vouchers")
     code = models.CharField(max_length=16, unique=True)

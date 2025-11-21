@@ -36,7 +36,7 @@ MESSAGE_TAGS = {
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # https://github.com/joke2k/django-environ, python-decouple
 
@@ -120,7 +120,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR / 'templates'),
-            os.path.join(BASE_DIR / 'templates', 'allauth'),
+            os.path.join(BASE_DIR / 'core', 'templates', 'allauth'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
