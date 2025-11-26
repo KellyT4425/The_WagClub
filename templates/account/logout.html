@@ -3,8 +3,7 @@
 {% block content %}
   <div class="alert alert-warning wag-offer-alert text-center shadow-sm mb-3">
     <strong>Don't forget!</strong> Check out our special offers – more wag for less!
-    <a href="{% url 'service_list' %}"
-       class="btn btn-primary ms-2 offer-btn-style">Offers</a>
+    <a href="{% url 'service_list' %}" class="btn btn-primary ms-2 offer-btn-style">Offers</a>
   </div>
   <div class="logout-page-wrapper">
     <div class="logout-card text-center wag-card">
@@ -19,8 +18,7 @@
         {% endif %}
         <button type="submit" class="btn btn-primary px-4 py-2 w-100">Sign Out</button>
       </form>
-      <a href="{% url 'service_list' %}"
-         class="btn btn-outline-secondary mt-3 w-100">Back to services</a>
+      <a href="{% url 'service_list' %}" class="btn btn-outline-secondary mt-3 w-100">Back to services</a>
     </div>
   </div>
 {% endblock content %}

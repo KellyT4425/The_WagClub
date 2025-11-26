@@ -13,6 +13,58 @@
     </div>
 {% endblock page_header %}
 {% block content %}
+    {% if search_query %}
+        <div class="container mb-4">
+            <div class="alert alert-info shadow-sm">
+                Showing results for "<strong>{{ search_query }}</strong>". {% if search_results %}Found {{ search_results|length }} service{{ search_results|length|pluralize }}.{% else %}No services match your search yet.{% endif %}
+            </div>
+        </div>
+        {% if search_results %}
+            <div class="container mb-5">
+                <div class="row g-4 space-row">
+                    {% for s in search_results %}
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <div class="card custom-card">
+                                {% if s.img_path %}
+                                    <img src="{{ s.img_path.url }}"
+                                         class="card-img-top"
+                                         alt="{{ s.alt_text|default:s.name }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        Duration:
+                                        {% if s.duration_hours %}
+                                            {{ s.duration_hours|floatformat:2 }}h
+                                        {% else %}
+                                            8.30am - 18.30pm(daily)
+                                        {% endif %}
+                                    </li>
+                                    <li class="list-group-item">Price: ?{{ s.price|floatformat:2 }}</li>
+                                </ul>
+                                <div class="card-body">
+                                    <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
+                                    <form action="{% url 'orders:add_to_cart' %}"
+                                          method="post"
+                                          class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="service_id" value="{{ s.id }}">
+                                        <button type="submit"
+                                                class="btn btn-sm"
+                                                aria-label="Add {{ s.name }} to cart">
+                                            <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
     <!-- Passes -->
     <div>
         <h3 class="text-center heading">Passes</h3>

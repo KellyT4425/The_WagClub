@@ -107,6 +107,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 ACCOUNT_FORMS = {
     "login": "core.forms.CustomLoginForm",
+    "signup": "core.forms.CustomSignupForm",
 }
 
 MIDDLEWARE = [
@@ -196,7 +197,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'email2*',
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'email2*', 'first_name*', 'last_name*',
                          'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_MIN_LENGTH = 4

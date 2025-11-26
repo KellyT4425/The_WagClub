@@ -58,6 +58,50 @@ main {
     padding: 1rem;
 }
 
+/* Transparent/glass wrapper for hero text + search */
+.hero-text-box {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 18px;
+}
+
+/* Hero search bar styling */
+#search-bar {
+    background: rgba(0, 0, 0, 0.68);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 0.65rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+#search-bar .form-control {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+#search-bar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+#search-bar .btn {
+    background: linear-gradient(135deg, #f7e9d5, #e2c9a1);
+    color: #1a1a1a;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22);
+}
+
+#search-bar .btn:hover,
+#search-bar .btn:focus {
+    background: linear-gradient(135deg, #fff3e1, #edd7b6);
+    color: #111;
+}
+
 /* ========== NAVBAR ========== */
 
 .navbar {
@@ -469,7 +513,7 @@ main {
    ======================= */
 
 .logout-page-wrapper {
-    min-height: 70vh;
+    min-height: 50vh;
     display: flex;
     align-items: center;
     justify-content: center;
