@@ -14,35 +14,44 @@
   <div class="container my-4">
     <div class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
-        <div class="card shadow-sm border-0 wag-card auth-card">
+        <div class="card shadow-sm border-0 wag-card auth-card text-center p-4 p-md-5">
           {% if confirmation %}
             {% user_display confirmation.email_address.user as user_display %}
             {% if can_confirm %}
-              <h4 class="heading mb-2 text-center">{% trans "Almost there!" %}</h4>
-              <p class="text-muted mb-3 text-center">
+              <div class="d-flex justify-content-center mb-3">
+                <span class="badge bg-dark">Step 2 of 2</span>
+              </div>
+              <h4 class="heading mb-2">{% trans "Confirm your email" %}</h4>
+              <p class="text-muted mb-3">
                 {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> belongs to {{ user_display }}.{% endblocktrans %}
               </p>
               {% url 'account_confirm_email' confirmation.key as action_url %}
-              <form method="post" action="{{ action_url }}" class="text-center">
+              <form method="post" action="{{ action_url }}" class="text-start">
                 {% csrf_token %}
                 {{ redirect_field }}
                 {% if form and form.non_field_errors %}
-                  <div class="alert alert-danger small text-start">
+                  <div class="alert alert-danger small">
                     {{ form.non_field_errors }}
                   </div>
                 {% endif %}
                 <button type="submit" class="btn btn-primary w-100 py-2 mt-2">{% trans 'Confirm Email' %}</button>
               </form>
+              <p class="small text-muted mt-3 mb-0">
+                {% trans "If this isn't your email, go back and update it." %}
+              </p>
             {% else %}
-              <p class="text-danger mb-0 text-center">
+              <p class="text-danger mb-2">
                 {% blocktrans with confirmation.email_address.email as email %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
               </p>
+              <a href="{% url 'account_email' %}" class="btn btn-outline-secondary w-100 py-2 mt-2">{% trans "Manage emails" %}</a>
             {% endif %}
           {% else %}
             {% url 'account_email' as email_url %}
-            <p class="text-muted mb-0 text-center">
+            <h4 class="heading mb-2">{% trans "Link invalid or expired" %}</h4>
+            <p class="text-muted">
               {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">request a new confirmation link</a>.{% endblocktrans %}
             </p>
+            <a href="{{ email_url }}" class="btn btn-primary w-100 py-2 mt-2">{% trans "Request new link" %}</a>
           {% endif %}
         </div>
       </div>

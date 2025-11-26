@@ -6,6 +6,7 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from services.models import ServiceCategory, Service
 from .models import Order, OrderItem, Voucher
@@ -159,3 +160,71 @@ class OrderViewsTests(TestCase):
             reverse("orders:voucher_detail", args=[voucher.code]))
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("orders:my_wallet"), response["Location"])
+
+    def test_my_wallet_groups_vouchers_by_status(self):
+        order = Order.objects.create(user=self.user, is_paid=True)
+        order_item = OrderItem.objects.create(
+            order=order, service=self.service, quantity=1, price=self.service.price
+        )
+        issued = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="issuedcode",
+            status="ISSUED",
+        )
+        redeemed = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="redeemedcode",
+            status="REDEEMED",
+            redeemed_at=timezone.now(),
+        )
+        expired = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="expiredcode",
+            status="EXPIRED",
+            expires_at=timezone.now(),
+        )
+
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.get(reverse("orders:my_wallet"))
+        self.assertEqual(response.status_code, 200)
+        # Active section shows issued
+        self.assertContains(response, issued.code)
+        # Redeemed/expired sections show their codes
+        self.assertContains(response, redeemed.code)
+        self.assertContains(response, expired.code)
+
+    def test_scan_voucher_redeem_requires_staff(self):
+        order = Order.objects.create(user=self.user, is_paid=True)
+        order_item = OrderItem.objects.create(
+            order=order, service=self.service, quantity=1, price=self.service.price
+        )
+        voucher = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="scanme",
+            status="ISSUED",
+        )
+
+        # Non-staff cannot redeem
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        voucher.refresh_from_db()
+        self.assertEqual(voucher.status, "ISSUED")
+        self.assertEqual(response.status_code, 302)
+
+        # Staff can redeem
+        staff = User.objects.create_user(
+            username="staff", email="staff@example.com", password="pass1234", is_staff=True
+        )
+        self.client.login(username="staff", password="pass1234")
+        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        voucher.refresh_from_db()
+        self.assertEqual(voucher.status, "REDEEMED")
+        self.assertEqual(response.status_code, 302)

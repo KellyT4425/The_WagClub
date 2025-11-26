@@ -1,9 +1,9 @@
-from django.contrib import admin
 from django.urls import path
 from services import views
 
 app_name = "services"
-urlpatterns = [
-    path('services/', views.service_list, name="service_list"),
 
+urlpatterns = [
+    path("", views.service_list, name="service_list"),
+    path("<slug:slug>/", views.service_detail, name="service_detail"),
 ]

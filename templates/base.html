@@ -113,7 +113,7 @@
                       </li>
                       <li>
                         <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
-                           href="{% url 'service_list' %}">Services</a>
+                           href="{% url 'services:service_list' %}">Services</a>
                       </li>
                       <li>
                         <a class="dropdown-item {% if current == 'my_wallet' and ns == 'orders' %}active{% endif %}"
@@ -129,7 +129,7 @@
                       </li>
                       <li>
                         <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
-                           href="{% url 'service_list' %}">Services</a>
+                           href="{% url 'services:service_list' %}">Services</a>
                       </li>
                       <li>
                         <a class="dropdown-item {% if current == 'account_signup' %}active{% endif %}"
@@ -208,7 +208,7 @@
                  aria-label="Instagram">
                 <i class="fa-brands fa-instagram"></i>
               </a>
-              <a href="{% url 'service_list' %}#reviews"
+              <a href="{% url 'services:service_list' %}#reviews"
                  class="text-decoration-none text-black">Reviews</a>
               <a href="{% url 'home' %}#contact"
                  class="text-decoration-none text-black">Contact</a>

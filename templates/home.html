@@ -15,7 +15,7 @@
                             </p>
                             <form method="get"
                                   id="search-bar"
-                                  action="{% url 'service_list' %}"
+                                  action="{% url 'services:service_list' %}"
                                   class="mb-3">
                                 {% csrf_token %}
                                 <div class="input-group">
@@ -29,7 +29,7 @@
                                     </button>
                                 </div>
                             </form>
-                            <a href="{% url 'service_list' %}"
+                            <a href="{% url 'services:service_list' %}"
                                class="btn browse-now-button btn-lg w-100 w-md-auto px-4 py-3">Browse Now</a>
                         </div>
                     </div>

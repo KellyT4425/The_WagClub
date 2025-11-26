@@ -489,9 +489,9 @@ Images (Unsplash links), icons, libraries
 License (optional)
 
 ## Testing
+Tests are run with `python manage.py test` (uses the test SQLite DB). Current coverage includes:
 
-- **Automated**: `python manage.py test` (uses in-memory SQLite test DB). Adds coverage for:
-  - Checkout session creation flow and Stripe metadata injection (`orders.tests.OrderViewsTests`).
-  - Stripe webhook order/voucher creation with QR generation for cart items.
-  - Success view display without duplicating orders, and voucher access control.
-  - Service listing populates Passes/Packages/Offers categories (`services.tests.ServiceListViewTests`).
+- Checkout session creation flow and Stripe metadata injection (`orders.tests.OrderViewsTests`).
+- Stripe webhook order/voucher creation with QR generation for cart items.
+- Success view display without duplicating orders, and voucher access control.
+- Service listing populates Passes/Packages/Offers categories (`services.tests.ServiceListViewTests`).

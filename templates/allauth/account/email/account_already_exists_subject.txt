@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Account Already Exists{% endblocktrans %}
+{% blocktrans %}We found an existing Wag Club account{% endblocktrans %}
 {% endautoescape %}

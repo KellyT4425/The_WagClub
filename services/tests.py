@@ -33,7 +33,7 @@ class ServiceListViewTests(TestCase):
         )
 
     def test_service_list_displays_by_category_names(self):
-        response = self.client.get(reverse("service_list"))
+        response = self.client.get(reverse("services:service_list"))
         self.assertEqual(response.status_code, 200)
 
         # Ensure each category's service appears in the rendered page

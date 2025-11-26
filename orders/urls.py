@@ -16,6 +16,8 @@ urlpatterns = [
     path('voucher/<str:code>/', views.voucher_detail, name='voucher_detail'),
     path("voucher/<str:code>/redeem/",
          views.redeem_voucher, name="redeem_voucher"),
+    path("voucher/<str:code>/scan/",
+         views.scan_voucher, name="scan_voucher"),
 
     # Add a path for creating checkout sessions
     path('checkout/create-session/', views.create_checkout_session,

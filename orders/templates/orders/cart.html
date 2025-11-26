@@ -1,73 +1,72 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
-    <div class="text-center my-5">
-        <h2 class="service-page heading">Your Cart</h2>
-        <p class="text-muted mb-0">Review your passes and packages before you checkout.</p>
-    </div>
+  <div class="text-center my-5">
+    <h2 class="service-page heading">Your Cart</h2>
+    <p class="text-muted mb-0">Review your passes and packages before you checkout.</p>
+  </div>
 {% endblock page_header %}
 {% block content %}
-    <div class="alert alert-warning wag-offer-alert text-center shadow-sm d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2">
-        <span>?? <strong>Don't forget!</strong> Check out our special offers - more wag for less!</span>
-        <a href="{% url 'service_list' %}" class="btn btn-primary btn-sm px-3">Offers</a>
-    </div>
-    <div class="container mb-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
-                {# EMPTY CART STATE #}
-                {% if not cart_items %}
-                    <div class="card shadow-sm border-0 wag-card">
-                        <div class="card-body text-center py-5">
-                            <h4 class="mb-3">Your cart is empty</h4>
-                            <p class="text-muted mb-4">Add a daycare pass or grooming package to get started.</p>
-                            <a href="{% url 'service_list' %}" class="btn btn-primary">Browse Services</a>
-                        </div>
-                    </div>
-                {% else %}
-                    {# CART TABLE #}
-                    <form action="{% url 'orders:create_checkout_session' %}" method="post">
-                        {% csrf_token %}
-                        <div class="card shadow-sm border-0 wag-card">
-                            <div class="card-body">
-                                <h4 class="mb-3">Items in your cart</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover align-middle mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th scope="col">Service</th>
-                                                <th scope="col" class="text-end">Price</th>
-                                                <th scope="col" class="text-center">Qty</th>
-                                                <th scope="col" class="text-center">Remove</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for item in cart_items %}
-                                                <tr>
-                                                    <td>{{ item.name }}</td>
-                                                    <td class="text-end">?{{ item.price|floatformat:2 }}</td>
-                                                    <td class="text-center">{{ item.quantity }}</td>
-                                                    <td class="text-center">
-                                                        <a href="{% url 'orders:remove_from_cart' item.id %}"
-                                                           class="btn btn-sm btn-outline-danger">Remove</a>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
-                                    <a href="{% url 'service_list' %}" class="btn btn-outline-secondary">Continue Shopping</a>
-                                    <div class="text-end ms-auto">
-                                        <p class="mb-1 text-muted">Total Amount</p>
-                                        <h4 class="mb-3">{{ € total_amount|floatformat:2 }}</h4>
-                                        <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                {% endif %}
+  <div class="alert alert-warning wag-offer-alert shadow-sm d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2 text-center">
+    <span>?? <strong>Don't forget!</strong> Check out our special offers - more wag for less!</span>
+    <a href="{% url 'services:service_list' %}" class="btn btn-primary btn-sm px-3">Offers</a>
+  </div>
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        {# EMPTY CART STATE #}
+        {% if not cart_items %}
+          <div class="card shadow-sm border-0 wag-card">
+            <div class="card-body text-center py-5">
+              <h4 class="mb-3">Your cart is empty</h4>
+              <p class="text-muted mb-4">Add a daycare pass or grooming package to get started.</p>
+              <a href="{% url 'services:service_list' %}" class="btn btn-primary">Browse Services</a>
             </div>
-        </div>
+          </div>
+        {% else %}
+          {# CART TABLE #}
+          <form action="{% url 'orders:create_checkout_session' %}" method="post">
+            {% csrf_token %}
+            <div class="card shadow-sm border-0 wag-card">
+              <div class="card-body">
+                <h4 class="mb-3">Items in your cart</h4>
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col">Service</th>
+                        <th scope="col" class="text-end">Price</th>
+                        <th scope="col" class="text-center">Qty</th>
+                        <th scope="col" class="text-center">Remove</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in cart_items %}
+                        <tr>
+                          <td>{{ item.name }}</td>
+                          <td class="text-end">€{{ item.price|floatformat:2 }}</td>
+                          <td class="text-center">{{ item.quantity }}</td>
+                          <td class="text-center">
+                            <a href="{% url 'orders:remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
+                  <a href="{% url 'services:service_list' %}" class="btn btn-outline-secondary">Continue Shopping</a>
+                  <div class="text-end ms-auto">
+                    <p class="mb-1 text-muted">Total Amount</p>
+                    <h4 class="mb-3">€{{ total_amount|floatformat:2 }}</h4>
+                    <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        {% endif %}
+      </div>
     </div>
+  </div>
 {% endblock content %}

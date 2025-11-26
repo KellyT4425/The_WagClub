@@ -8,28 +8,27 @@
 {% endblock page_header %}
 {% block content %}
     <div class="container mb-5">
-        <!-- TITLE + SUBTEXT -->
+        <!-- Active -->
         <div class="text-center mb-4">
             <h3 class="voucher-section-title heading">Active Vouchers</h3>
             <p class="text-muted">Your passes and grooming vouchers will appear here.</p>
         </div>
-        <!-- VOUCHER GRID -->
         <div class="row g-4 justify-content-center">
             {% for voucher in active_vouchers %}
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="voucher-card">
+                    <div class="voucher-card h-100">
                         <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
                         <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
-                                <img src="{{ MEDIA_URL }}vouchers/qr_codes/qrcode.png"
-                                     alt="Voucher QR Code">
+                                {% if voucher.qr_img_path %}
+                                    <img src="{{ voucher.qr_img_path.url }}" alt="Voucher QR Code">
+                                {% else %}
+                                    <span class="text-muted small">QR not available</span>
+                                {% endif %}
                             </div>
-                            <p>
-                                <strong>Code:</strong> {{ voucher.code }}
-                            </p>
-                            <p>
-                                <strong>Expires:</strong> {{ voucher.expires_at|date:"F j, Y" }}
-                            </p>
+                            <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
+                            <p class="mb-1"><strong>Status:</strong> Active</p>
+                            <p class="mb-0"><strong>Expires:</strong> {{ voucher.expires_at|date:"F j, Y" }}</p>
                         </div>
                         <div class="voucher-card-footer">
                             <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
@@ -39,12 +38,64 @@
                     </div>
                 </div>
             {% empty %}
-                <div class="col-12 text-center mt-5">
-                    <p class="text-muted fs-5">No active vouchers yet – go treat your pup!</p>
-                    <a href="{% url 'service_list' %}" class="btn btn-primary mt-3">Browse Services</a>
+                <div class="col-12 text-center mt-4">
+                    <p class="text-muted fs-5">No active vouchers yet - go treat your pup!</p>
+                    <a href="{% url 'services:service_list' %}" class="btn btn-primary mt-3">Browse Services</a>
                 </div>
             {% endfor %}
         </div>
         <p class="voucher-helper mt-4">Show this QR at reception when you drop off your dog.</p>
+
+        <!-- Redeemed -->
+        {% if redeemed_vouchers %}
+            <div class="text-center my-4">
+                <h3 class="voucher-section-title heading">Redeemed Vouchers</h3>
+            </div>
+            <div class="row g-4 justify-content-center">
+                {% for voucher in redeemed_vouchers %}
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="voucher-card h-100">
+                            <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                            <div class="voucher-card-body text-center">
+                                <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
+                                <p class="mb-1 text-success"><strong>Status:</strong> Redeemed</p>
+                                {% if voucher.redeemed_at %}
+                                    <p class="mb-0 small text-muted">Redeemed at: {{ voucher.redeemed_at|date:"F j, Y" }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="voucher-card-footer">
+                                <a href="{% url 'orders:voucher_detail' voucher.code %}"
+                                   class="btn btn-sm btn-outline-secondary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Expired -->
+        {% if expired_vouchers %}
+            <div class="text-center my-4">
+                <h3 class="voucher-section-title heading">Expired Vouchers</h3>
+            </div>
+            <div class="row g-4 justify-content-center">
+                {% for voucher in expired_vouchers %}
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="voucher-card h-100">
+                            <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                            <div class="voucher-card-body text-center">
+                                <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
+                                <p class="mb-1 text-danger"><strong>Status:</strong> Expired</p>
+                                <p class="mb-0 small text-muted">Expired: {{ voucher.expires_at|date:"F j, Y" }}</p>
+                            </div>
+                            <div class="voucher-card-footer">
+                                <a href="{% url 'orders:voucher_detail' voucher.code %}"
+                                   class="btn btn-sm btn-outline-secondary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock content %}

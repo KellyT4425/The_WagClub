@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Service
 
 
@@ -7,10 +7,12 @@ from .models import Service
 
 
 def home(request):
+    """Homepage view."""
     return render(request, 'home.html')
 
 
 def service_list(request):
+    """List services by category with optional search filtering."""
     query = request.GET.get("q", "").strip()
 
     # Base queryset
@@ -56,3 +58,11 @@ def service_list(request):
     }
 
     return render(request, "services/service_list.html", context)
+
+
+def service_detail(request, slug):
+    """Display details for a single service."""
+    service = get_object_or_404(
+        Service.objects.select_related("category"), slug=slug, is_active=True
+    )
+    return render(request, "services/service_detail.html", {"service": service})

@@ -1,1 +1,9 @@
-{% include "account/email/email_confirmation_message.txt" %}
+Hi {{ user.get_full_name|default:user.username }},
+
+Welcome to The Wag Club! Please confirm your email so we can activate your account and keep your vouchers safe:
+
+{{ activate_url }}
+
+If you didn’t create this account, you can ignore this email.
+
+The Wag Club Team

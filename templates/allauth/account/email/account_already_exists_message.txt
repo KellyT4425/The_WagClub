@@ -1,13 +1,17 @@
 {% extends "account/email/base_message.txt" %}
 {% load i18n %}
 
-{% block content %}{% autoescape off %}{% blocktrans %}You are receiving this email because you or someone else tried to signup for an
-account using email address:
+{% block content %}{% autoescape off %}{% blocktrans %}
+Hi,
+
+We noticed someone tried to sign up to The Wag Club with this email:
 
 {{ email }}
 
-However, an account using that email address already exists.  In case you have
-forgotten about this, please use the password forgotten procedure to recover
-your account:
+An account already exists with this address. If you forgot your password, you can reset it here:
+{{ password_reset_url }}
 
-{{ password_reset_url }}{% endblocktrans %}{% endautoescape %}{% endblock content %}
+If this wasn’t you, you can ignore this email.
+
+The Wag Club Team
+{% endblocktrans %}{% endautoescape %}{% endblock content %}

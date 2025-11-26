@@ -27,6 +27,7 @@ def staff_required(user):
 
 @login_required
 def create_checkout_session(request):
+    """Create a Stripe Checkout session from the current cart."""
     if request.method != "POST":
         return redirect("orders:cart")
 
@@ -89,6 +90,7 @@ def create_checkout_session(request):
 
 @csrf_exempt  # Stripe isn't a browser, so skip CSRF protection
 def stripe_webhook(request):
+    """Handle Stripe webhook events and create orders/vouchers on payment success."""
     import logging
     logger = logging.getLogger('stripe')
     # LOG INCOMING PAYLOAD
@@ -217,9 +219,7 @@ def stripe_webhook(request):
 
 
 def generate_qr_code(voucher):
-    """
-    Helper to generate and attach a QR image for a voucher.
-    """
+    """Generate and attach a QR image for a voucher."""
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -239,9 +239,7 @@ def generate_qr_code(voucher):
 
 @login_required
 def success_view(request):
-    """
-    Display checkout success without re-creating orders/vouchers (handled by webhook).
-    """
+    """Show the success page; orders/vouchers are created via webhook."""
     session_id = request.GET.get('session_id')
     if not session_id:
         messages.error(request, "Missing Stripe session; please try again or contact support.")
@@ -276,12 +274,12 @@ def success_view(request):
 
 
 def cancel_view(request):
-    """Display page when checkout is canceled"""
+    """Display page when checkout is canceled."""
     return render(request, 'orders/cancel.html')
 
 
 def voucher_invoice(request, code):
-
+    """Render an invoice for a voucher owned by the current user."""
     try:
         voucher = Voucher.objects.get(code=code, user=request.user)
         if request.user != voucher.user and not request.user.is_staff:
@@ -301,7 +299,7 @@ def voucher_invoice(request, code):
 
 @login_required
 def voucher_detail(request, code):
-    """Display detailed information for a single voucher"""
+    """Display detailed information for a single voucher."""
     voucher = get_object_or_404(Voucher, code=code)
 
     # Only the voucher owner OR staff/superuser can view it
@@ -345,8 +343,37 @@ def redeem_voucher(request, code):
 
 
 @login_required
+def scan_voucher(request, code):
+    """Staff-facing scan/verify view. Staff can redeem; others only view status."""
+    voucher = get_object_or_404(Voucher, code=code)
+
+    if request.method == "POST":
+        if not (request.user.is_staff or request.user.is_superuser):
+            messages.error(request, "You do not have permission to redeem vouchers.")
+            return redirect("orders:scan_voucher", code=code)
+
+        if voucher.status != "ISSUED":
+            messages.warning(
+                request, "This voucher cannot be redeemed (already used or expired)."
+            )
+            return redirect("orders:scan_voucher", code=code)
+
+        voucher.status = "REDEEMED"
+        voucher.redeemed_at = timezone.now()
+        voucher.save()
+        messages.success(request, f"Voucher {voucher.code} has been redeemed.")
+        return redirect("orders:scan_voucher", code=code)
+
+    context = {
+        "voucher": voucher,
+        "can_redeem": request.user.is_staff or request.user.is_superuser,
+    }
+    return render(request, "orders/scan_voucher.html", context)
+
+
+@login_required
 def my_wallet(request):
-    """Display all of a user's vouchers in their wallet"""
+    """Display all of a user's vouchers grouped by status."""
 
     # Get active (issued) vouchers
     active_vouchers = Voucher.objects.filter(
@@ -379,6 +406,7 @@ def my_wallet(request):
 
 @login_required
 def add_to_cart(request):
+    """Add a service to the session cart."""
     if request.method != "POST":
         return redirect("orders:cart")
 
@@ -416,6 +444,7 @@ def add_to_cart(request):
 
 
 def remove_from_cart(request, item_id):
+    """Remove an item from the session cart."""
     cart = request.session.get("cart", {})
 
     print(f"Current cart contents: {cart}")
@@ -433,7 +462,7 @@ def remove_from_cart(request, item_id):
 
 
 def cart(request):
-    """Build the context shape your template expects."""
+    """Display the current session cart."""
     cart = request.session.get(
         "cart", {})
     cart_items = []

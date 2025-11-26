@@ -17,23 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from services import views as service_views
-from orders import views as orders_views
 from django.conf import settings
 from django.conf.urls.static import static
 
 app_name = "orders"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('', service_views.home, name="home"),
-    path('services/', service_views.service_list, name="service_list"),
-    path('orders/', include('orders.urls', namespace='orders')),
+    path("admin/", admin.site.urls),
+    path("accounts/", include("allauth.urls")),
+    path("", service_views.home, name="home"),
+    path("services/", include("services.urls", namespace="services")),
+    path("orders/", include("orders.urls", namespace="orders")),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = "core.views.custom_404"
 handler500 = "core.views.custom_500"

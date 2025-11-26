@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n allauth %}
+
+{% block page_header %}
+  <div class="text-center my-4">
+    <h2 class="service-page heading">{% trans "Verify Your Email Address" %}</h2>
+    <p class="text-muted mb-0">{% trans "We need to confirm your email before continuing." %}</p>
+  </div>
+{% endblock page_header %}
+
+{% block content %}
+  <div class="container my-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 wag-card auth-card p-4 p-md-5">
+          {% url 'account_email' as email_url %}
+          <p class="text-muted">
+            {% blocktrans %}This part of the site requires us to verify that you are who you claim to be. For this purpose, we require that you verify ownership of your email address.{% endblocktrans %}
+          </p>
+          <p class="text-muted">
+            {% blocktrans %}We have sent an email to you for verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise contact us if you do not receive it within a few minutes.{% endblocktrans %}
+          </p>
+          <p class="text-muted mb-0">
+            {% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your email address</a>.{% endblocktrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
