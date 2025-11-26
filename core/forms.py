@@ -22,6 +22,16 @@ username_validator = RegexValidator(
 
 
 class CustomSignupForm(SignupForm):
+    username = forms.CharField(
+        max_length=10,
+        required=True,
+        validators=[username_validator],
+        widget=forms.TextInput(attrs={
+            "pattern": r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$",
+            "title": "Only letters and numbers are allowed."
+        })
+    )
+
     first_name = forms.CharField(
         max_length=30,
         required=True,
@@ -38,16 +48,6 @@ class CustomSignupForm(SignupForm):
         widget=forms.TextInput(attrs={
             "pattern": r"[A-Za-z ]+",
             "title": "Only letters and spaces are allowed."
-        })
-    )
-
-    username = forms.CharField(
-        max_length=10,
-        required=True,
-        validators=[username_validator],
-        widget=forms.TextInput(attrs={
-            "pattern": r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$",
-            "title": "Only letters and numbers are allowed."
         })
     )
 

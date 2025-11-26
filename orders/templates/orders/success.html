@@ -1,48 +1,62 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
-    <div class="text-center">
-        <h2 class="service-page heading">SUCCESS CONFIRMATION</h2>
-    </div>
+  <div class="text-center my-4">
+    <h2 class="service-page heading">Payment successful</h2>
+    <p class="text-muted mb-0">Your vouchers are ready to use.</p>
+  </div>
 {% endblock page_header %}
 {% block content %}
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h3>Thank you for your order!</h3>
-                <p>Your payment was processed successfully.</p>
-                {% if vouchers %}
-                    <h4 class="mt-4">Your Vouchers</h4>
-                    <div class="row voucher-container">
-                        {% for voucher in vouchers %}
-                            <div class="col-md-4 mb-4">
-                                <div class="card voucher-card">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title">{{ voucher.service.name }}</h5>
-                                        <p class="card-text">Code: {{ voucher.code }}</p>
-                                        {% if voucher.qr_img_path %}
-                                            <img src="{{ voucher.qr_img_path.url }}"
-                                                 alt="QR Code"
-                                                 class="img-fluid voucher-qr">
-                                        {% else %}
-                                            <p class="text-danger">QR code not available</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div class="mt-4">
-                        <p>
-                            You can find all your vouchers in <a href="{% url 'orders:my_wallet' %}" class="btn btn-primary">My Wallet</a>
-                        </p>
-                    </div>
-                {% else %}
-                    <div class="alert alert-warning mt-4">
-                        <p>No vouchers were generated for this order. If you believe this is an error, please contact support.</p>
-                    </div>
-                {% endif %}
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        <div class="card shadow-sm border-0 wag-card p-4 p-md-5">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mb-4">
+            <div>
+              <h3 class="heading mb-1">Thank you for your order!</h3>
+              <p class="text-muted mb-1">Payment processed and vouchers issued.</p>
+              {% if order %}
+                <p class="small text-muted mb-0">Order #{{ order.id }}{% if order.created_at %} • {{ order.created_at|date:"M d, Y H:i" }}{% endif %}</p>
+              {% endif %}
             </div>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{% url 'orders:my_wallet' %}" class="btn btn-primary">Go to My Wallet</a>
+              <a href="{% url 'service_list' %}" class="btn btn-outline-secondary">Keep browsing</a>
+            </div>
+          </div>
+
+          {% if vouchers %}
+            <div class="row g-4">
+              {% for voucher in vouchers %}
+                <div class="col-12 col-sm-6 col-lg-4">
+                  <div class="card voucher-card h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                      <p class="text-uppercase small text-muted mb-1">{{ voucher.service.category.name }}</p>
+                      <h5 class="card-title heading mb-2">{{ voucher.service.name }}</h5>
+                      <p class="mb-2"><strong>Code:</strong> {{ voucher.code }}</p>
+                      {% if voucher.qr_img_path %}
+                        <img src="{{ voucher.qr_img_path.url }}"
+                             alt="QR Code for {{ voucher.code }}"
+                             class="img-fluid voucher-qr mb-3">
+                      {% else %}
+                        <p class="text-danger mb-3">QR code not available</p>
+                      {% endif %}
+                      <p class="small text-muted mb-1">Issued: {{ voucher.issued_at|date:"M d, Y" }}</p>
+                      <p class="small text-muted mb-3">Expires: {{ voucher.expires_at|date:"M d, Y" }}</p>
+                      <a href="{% url 'orders:voucher_detail' voucher.code %}" class="btn btn-outline-secondary mt-auto">View voucher</a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="alert alert-warning mt-3 mb-0">
+              <p class="mb-1">No vouchers were generated for this order.</p>
+              <p class="mb-0">If you believe this is an error, please contact support with your order ID.</p>
+            </div>
+          {% endif %}
         </div>
+      </div>
     </div>
+  </div>
 {% endblock content %}

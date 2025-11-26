@@ -7,9 +7,9 @@
     </div>
 {% endblock page_header %}
 {% block content %}
-    <div class="alert alert-warning wag-offer-alert text-center shadow-sm">
-        🐾 <strong>Don’t forget!</strong> Check out our special offers — more wag for less!<a href="{% url 'service_list' %}"
-   class="btn btn-primary d-block mx-auto offer-btn-style">OFFERS</a>
+    <div class="alert alert-warning wag-offer-alert text-center shadow-sm d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2">
+        <span>?? <strong>Don't forget!</strong> Check out our special offers - more wag for less!</span>
+        <a href="{% url 'service_list' %}" class="btn btn-primary btn-sm px-3">Offers</a>
     </div>
     <div class="container mb-5">
         <div class="row justify-content-center">
@@ -44,7 +44,7 @@
                                             {% for item in cart_items %}
                                                 <tr>
                                                     <td>{{ item.name }}</td>
-                                                    <td class="text-end">€{{ item.price|floatformat:2 }}</td>
+                                                    <td class="text-end">?{{ item.price|floatformat:2 }}</td>
                                                     <td class="text-center">{{ item.quantity }}</td>
                                                     <td class="text-center">
                                                         <a href="{% url 'orders:remove_from_cart' item.id %}"
@@ -59,7 +59,7 @@
                                     <a href="{% url 'service_list' %}" class="btn btn-outline-secondary">Continue Shopping</a>
                                     <div class="text-end ms-auto">
                                         <p class="mb-1 text-muted">Total Amount</p>
-                                        <h4 class="mb-3">€{{ total_amount|floatformat:2 }}</h4>
+                                        <h4 class="mb-3">{{ € total_amount|floatformat:2 }}</h4>
                                         <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                                     </div>
                                 </div>

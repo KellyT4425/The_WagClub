@@ -1,5 +1,17 @@
-{% extends "allauth/layouts/entrance.html" %}
+{% extends "base.html" %}
 
-{% block entrance_content %}
-  {% block content %}{% endblock content %}
-{% endblock entrance_content %}
+{% block page_header %}
+  {% block entrance_header %}{% endblock entrance_header %}
+{% endblock page_header %}
+
+{% block content %}
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        {% block entrance_content %}
+          {% block content %}{% endblock content %}
+        {% endblock entrance_content %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

@@ -1,35 +1,43 @@
-{% extends "allauth/account/base_entrance.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% load i18n account allauth %}
-
-{% block head_title %}{% trans "Confirm Email Address" %}{% endblock head_title %}
-
+{% block head_title %}
+  {% trans "Confirm Email Address" %}
+{% endblock head_title %}
+{% block entrance_header %}
+  <div class="text-center my-4">
+    <h2 class="service-page heading">{% trans "Confirm Email" %}</h2>
+    <p class="text-muted mb-0">{% trans "Verify your email to secure your account." %}</p>
+  </div>
+{% endblock entrance_header %}
 {% block content %}
-  <h1 class="heading mb-2 text-center">{% trans "Confirm Email Address" %}</h1>
-
-  {% if confirmation %}
-    {% user_display confirmation.email_address.user as user_display %}
-    {% if can_confirm %}
-      <p class="text-muted text-center mb-4">
-        {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an email address for user {{ user_display }}.{% endblocktrans %}
-      </p>
-      {% url 'account_confirm_email' confirmation.key as action_url %}
-      {% element form method="post" action=action_url %}
-        {% slot actions %}
+  <div class="card shadow-sm border-0 wag-card auth-card">
+    {% if confirmation %}
+      {% user_display confirmation.email_address.user as user_display %}
+      {% if can_confirm %}
+        <h4 class="heading mb-2 text-center">{% trans "Almost there!" %}</h4>
+        <p class="text-muted mb-3 text-center">
+          {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> belongs to {{ user_display }}.{% endblocktrans %}
+        </p>
+        {% url 'account_confirm_email' confirmation.key as action_url %}
+        <form method="post" action="{{ action_url }}" class="text-center">
           {% csrf_token %}
           {{ redirect_field }}
-          {% element button type="submit" %}{% trans 'Confirm' %}{% endelement %}
-        {% endslot %}
-      {% endelement %}
+          {% if form and form.non_field_errors %}
+            <div class="alert alert-danger small text-start">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <button type="submit" class="btn btn-primary w-100 py-2 mt-2">{% trans 'Confirm Email' %}</button>
+        </form>
+      {% else %}
+        <p class="text-danger mb-0 text-center">
+          {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
+        </p>
+      {% endif %}
     {% else %}
-      <p class="text-danger text-center">
-        {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
+      {% url 'account_email' as email_url %}
+      <p class="text-muted mb-0 text-center">
+        {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">request a new confirmation link</a>.{% endblocktrans %}
       </p>
     {% endif %}
-  {% else %}
-    {% url 'account_email' as email_url %}
-    <p class="text-muted text-center">
-      {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
-    </p>
-  {% endif %}
+  </div>
 {% endblock content %}

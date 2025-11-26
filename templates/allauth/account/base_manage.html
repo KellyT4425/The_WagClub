@@ -1,5 +1,17 @@
-{% extends "allauth/layouts/manage.html" %}
+{% extends "base.html" %}
 
-{% block manage_content %}
-  {% block content %}{% endblock content %}
-{% endblock manage_content %}
+{% block page_header %}
+  {% block manage_header %}{% endblock manage_header %}
+{% endblock page_header %}
+
+{% block content %}
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        {% block manage_content %}
+          {% block content %}{% endblock content %}
+        {% endblock manage_content %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

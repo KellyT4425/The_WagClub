@@ -48,15 +48,15 @@
                     </div>
                     <div class="align-center col-5">
                         <h5>Status:</h5>
-                        <p>
-                            {% if voucher.status == "ISSUED" %}
-                                <span class="badge bg-success">ACTIVE</span>
-                            {% elif voucher.status == "REDEEMED" %}
+                        <p class="mb-0">
+                            {% if voucher.status == "REDEEMED" and voucher.redeemed_at %}
                                 <span class="badge bg-secondary">REDEEMED</span>
                                 <br>
-                                Redeemed on: {{ voucher.redeemed_at|date:"F j, Y" }}
-                            {% else %}
+                                <small class="text-muted">Redeemed on: {{ voucher.redeemed_at|date:"F j, Y" }}</small>
+                            {% elif voucher.status == "EXPIRED" %}
                                 <span class="badge bg-danger">EXPIRED</span>
+                            {% else %}
+                                <span class="badge bg-success">ACTIVE</span>
                             {% endif %}
                         </p>
                     </div>

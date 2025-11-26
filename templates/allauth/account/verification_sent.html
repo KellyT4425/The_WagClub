@@ -1,21 +1,27 @@
-{% extends "allauth/account/base_entrance.html" %}
+{% extends "account/base_entrance.html" %}
 {% load static %}
 {% load i18n %}
 
 {% block head_title %}{% trans "Verify Your Email" %}{% endblock head_title %}
 
+{% block entrance_header %}
+  <div class="text-center my-4">
+    <h2 class="service-page heading">{% trans "Verify Your Email" %}</h2>
+    <p class="text-muted mb-0">{% trans "Check your inbox for the confirmation link." %}</p>
+  </div>
+{% endblock entrance_header %}
+
 {% block content %}
-  <h2 class="heading mb-2 text-center">{% trans "Verify Your Email" %}</h2>
-  <p class="mb-3 text-muted text-center">
-    {% blocktrans %}
-    We've sent a verification email to the address you used to sign up.
-    Click the link in that email to activate your account.
-    {% endblocktrans %}
-  </p>
-  <p class="small text-muted text-center mb-3">
-    {% trans "If you don't see it in a couple of minutes, check your spam or promotions folder." %}
-  </p>
-  <div class="text-center">
+  <div class="card shadow-sm border-0 wag-card auth-card text-center">
+    <p class="mb-3 text-muted">
+      {% blocktrans %}
+      We've sent a verification email to the address you used to sign up.
+      Click the link in that email to activate your account.
+      {% endblocktrans %}
+    </p>
+    <p class="small text-muted mb-3">
+      {% trans "If you don't see it in a couple of minutes, check your spam or promotions folder." %}
+    </p>
     <a href="{% url 'account_login' %}" class="btn btn-primary mt-2">{% trans "Back to sign in" %}</a>
   </div>
 {% endblock content %}
