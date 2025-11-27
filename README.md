@@ -1,497 +1,153 @@
-![Business Logo](static\images\business.png)
+![Business Logo](static/images/business.png)
 
-# The_WagClub
-> "Pampering Pups, One Wag at a Time"
+# The Wag Club
+> Pampering pups, one wag at a time.
 
-Live Site & Repo
+## Contents
+- [The Wag Club](#the-wag-club)
+  - [Contents](#contents)
+  - [Overview](#overview)
+  - [Live Demo \& Repository](#live-demo--repository)
+  - [Product Screenshots](#product-screenshots)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Data Model](#data-model)
+  - [User Experience](#user-experience)
+  - [Stripe Payments](#stripe-payments)
+  - [Deployment (Heroku)](#deployment-heroku)
+  - [Local Development](#local-development)
+  - [Environment Variables](#environment-variables)
+  - [Testing](#testing)
+  - [Social Media Presence](#social-media-presence)
+  - [Future Enhancements](#future-enhancements)
+  - [Credits](#credits)
 
-Deployed URL
+## Overview
+The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming business. Customers browse services, add them to a cart, and pay through Stripe. Successful payments generate time-bound vouchers with QR codes that can be redeemed on-site. A customer wallet keeps active, redeemed, and expired vouchers organised; staff can scan and redeem vouchers securely.
 
-GitHub repo
+## Live Demo & Repository
+- Live Site (Heroku): [https://\<your-heroku-app>.herokuapp.com/](https://<your-heroku-app>.herokuapp.com/)
+- Repository: [https://github.com/\<user>/\<repo>](https://github.com/<user>/<repo>)
 
-Screenshots (Desktop & Mobile)
-Three or four images that show home, services, cart/checkout, and a mobile navbar.
+## Product Screenshots
+Replace the placeholders with your captures (examples below point to `static/images/*`):
 
-## Description
-The Wag Club is a Django-powered web application built to make life easier for both dog parents and the people who care for their pups. Instead of dealing with scribbled notes, lost paper passes, or “did I use that voucher already?” moments, everything is handled digitally — clean, simple, and secure.
+<img src="static\images\instagram.png" alt="Homepage" width="820" />
 
-Customers can browse daycare passes, grooming packages, and special offers, then buy them through a smooth checkout experience. Every purchase instantly generates a unique voucher with its own expiry date and QR code, so owners can redeem their passes on-site with a quick scan. Their personal wallet keeps everything neatly organised in one place, making it easy to see what’s active, what’s expiring soon, and what’s already been used.
+![Facebook Page Mockup](static/images/facebook-page.png)
 
-Behind the scenes, the platform gives staff all the tools they need to run the business smoothly: managing services and prices, issuing and redeeming vouchers, checking histories, and keeping everything consistent without spreadsheets or guesswork. It’s powered by Django, PostgreSQL, and Stripe, with a responsive front-end that stays true to the soft, friendly Wag Club brand.
+- Services listing: `static/images/services-list.png`
+- Cart & checkout: `static/images/cart-checkout.png`
+- Wallet & voucher detail: `static/images/wallet.png`
+- Admin/staff view (optional): `static/images/admin.png`
+- Social page (alt): `static/images/facebook-eg.png` / `static/images/insta-post.png`
 
-The end result feels like a modern companion for a real dog-care business — something that cuts down admin, keeps customers informed, and brings a bit of joy into the process with clean design and puppy energy.
+## Features
+- Service browsing with categories (Passes, Packages, Offers) and search.
+- Cart and checkout via Stripe Checkout Sessions with order metadata.
+- Voucher generation per line item quantity, including QR codes and expiry.
+- Customer wallet grouped by status: Active, Redeemed, Expired.
+- Voucher detail and printable invoice with QR code.
+- Staff redemption via scan or manual code lookup.
+- Authentication (register, login, logout, password reset) via Django AllAuth.
+- Responsive UI with Bootstrap 5 and custom branding.
+- Social proof: footer links to reviews/contact plus Instagram and Facebook presence.
 
 ## Tech Stack
 
-| Layer               | Technologies Used                                                                 |
-|---------------------|------------------------------------------------------------------------------------|
-| 🎨 **Frontend**      | HTML5, CSS3, Bootstrap 5, JavaScript                                               |
-| 🐍 **Backend**        | Python 3.12, Django 5                                                              |
-| 🗄️ **Database**        | PostgreSQL                                                                         |
-| 🔐 **Authentication** | Django AllAuth (user accounts, login, registration)                                |
-| 💳 **Payments**       | Stripe API (Checkout Sessions)                                                    |
-| ☁️ **Media Storage**  | Cloudinary via `django-cloudinary-storage`                                        |
-| 📦 **Static Files**   | WhiteNoise (compressed & cached static file serving)                              |
-| 🔲 **QR Generation**  | Segno / qrcode library (for voucher QR codes)                                     |
-| ⚙️ **Environment**    | Virtualenv / venv, Python-dotenv                                                   |
-| 🚀 **Deployment**     | Heroku (Python buildpack, Postgres add-on, config vars)                          |
-| 🐙 **Version Control**| Git & GitHub                                                                       |
-
-## Getting Started (Local Development)
-
-1. **Clone & install dependencies**
-   ```bash
-   python -m venv .venv && source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
-
-2. **Create a `.env` from the template**
-   ```bash
-   cp .env.example .env
-   ```
-   Update the Stripe keys with test credentials and, if you plan to use Postgres locally, set `DATABASE_URL`.
-
-3. **Apply migrations & run the server**
-   ```bash
-   python manage.py migrate
-   python manage.py runserver
-   ```
-
-With `DEBUG=True` (the default in `.env.example`), the project uses SQLite and will start with permissive hosts (`127.0.0.1`, `localhost`).
-
-## Configuration Reference
-
-Key environment variables expected by the app:
-
-- **SECRET_KEY**: Django secret key (a safe default is provided for local dev; override in production).
-- **DEBUG**: `True` for local development; set to `False` in production.
-- **ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS**: Comma-separated lists for deployment.
-- **DATABASE_URL**: Postgres connection string (required when `DEBUG=False`).
-- **Stripe**: `STRIPE_SECRET_KEY`, `STRIPE_API_KEY` (restricted key), `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK`.
-- **Email**: `EMAIL_BACKEND` (defaults to console), host, port, TLS, credentials, and `DEFAULT_FROM_EMAIL`.
-- **Cloudinary**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (optional for local runs).
-
-## Minimum Viable Product (MVP)
-The Wag Club MVP is a focused, practical web application that delivers the essential digital tools a dog daycare & grooming business needs to operate smoothly — without unnecessary complexity. It replaces manual tracking with a streamlined system where customers can purchase passes, view their vouchers, and redeem them using auto-generated QR codes.
-
-At its core, the MVP does three things exceptionally well:
-
-1. Sell services and passes
-Users can browse daycare passes, grooming options, and special offers, then complete purchases through a Stripe-ready checkout flow.
-
-2. Generate and manage vouchers
-Every purchase creates a unique, secure voucher with an expiry date, QR code, and a clear status (active, redeemed, or expired). Customers can view all their vouchers from a simple “My Wallet” dashboard.
-
-3. Support smooth in-store redemption
-Staff can scan or manually check voucher codes to validate them instantly, reducing mistakes and removing the need for paper tracking.
-
-The MVP focuses on real business value: clarity, automation, and reliability. With Django, PostgreSQL, and a clean branded UI, The Wag Club delivers the minimum lovable product a real dog-care service could use today — offering customers a modern digital experience while keeping operations effortless for the staff.
-
-## Key Features (MVP)
-
-Customers can browse all daycare passes, grooming packages, and seasonal offers with clear pricing, durations, and images.
-
-### 🎟️ Digital Voucher Generation
-
-When a customer “purchases” a service:
-
-- A unique voucher code is generated
-
-- An expiry date is automatically applied
-
-- A QR code is created and stored
-
-- A digital invoice is available to view and print
-
-### 📱 Customer Wallet
-
-A personalised My Wallet dashboard shows:
-
-- All active vouchers
-
-- QR code previews
-
-- Voucher status (Active / Redeemed / Expired)
-
-- Quick access to view details or print
-
-### 🔒 QR Code Verification
-
-Each voucher includes a scannable QR code for fast verification at the daycare or grooming salon.
-
-### 🧾 Styled Invoice Generator
-
-Each voucher includes a clean, responsive invoice containing:
-
-- Customer information
-
-- Service details and price
-
-- QR code
-
-- Terms & conditions
-
-- Issue and expiry dates
-
-🛒 Basic Cart System
-
-Users can add services to their cart and review totals.
-(Stripe keys included — ready to plug in live payment.)
-
-### 👤 User Authentication
-
-Integrated with Django Allauth:
-
-- Register
-
-- Log in/out
-
-- Password reset
-
-### 🔐 Admin Tools
-
-Staff/admin users can:
-
-- Create and manage services
-
-- View voucher details
-
-- Track expiry and redemption status
-
-- Access all orders
-
-### 🎨 Fully Responsive Brand UI
-
-Custom branding (“The Wag Club” aesthetic):
-
-- Handwritten-style headings
-
-- Soft colour palette
-
-- Clean card layout
-
-- Mobile-friendly hero banner
-
-- Consistent footer + navigation
-
-### ☁️ Cloudinary Media Handling
-
-All images (services, QR codes) are stored and served via Cloudinary.
-
-### 📦 Deployment-Ready
-
-Configured for:
-
-- Static file handling with Whitenoise
-
-- Cloudinary media
-
-- Environment variables
-
-- PostgreSQL
-
-- Django 5
-
-
-## Entity Relationship Diagram (ERD)
-
-### Core Entities
-
-#### 1. ServiceCategory
-Represents a high-level grouping of services (e.g. passes, grooming packages, offers).
-
-- `id` (PK)
-- `name` – choice of: Passes, Packages, Offers
-- `slug` – unique identifier for URLs
-- `is_active` – soft toggle for showing/hiding a category
-
-**Relationships**
-
-- One `ServiceCategory` has many `Service` records.
-
-
-#### 2. Service
-A specific daycare pass, grooming package, or special offer that can be purchased.
-
-- `id` (PK)
-- `category` (FK → ServiceCategory)
-- `name`
-- `slug` – unique
-- `description`
-- `price`
-- `duration_hours` – optional, e.g. length of service/pass
-- `img_path` – main display image
-- `alt_text` – accessibility text
-- `is_bundle` – whether this is a package/bundle
-- `is_active` – whether the service is currently available
-
-**Relationships**
-
-- One `Service` belongs to one `ServiceCategory`.
-- One `Service` has many `ServiceImage` records.
-- One `Service` can appear in many `OrderItem` records.
-- One `Service` can be referenced by many `Voucher` records.
-
-
-#### 3. ServiceImage
-Stores one or more images for each service.
-
-- `id` (PK)
-- `service` (FK → Service)
-- `image_url`
-- `alt_text`
-- `is_main` – whether this is the main/primary image
-- `sort_order` – controls ordering in galleries/lists
-
-**Constraints**
-
-- Exactly one `ServiceImage` per `Service` may have `is_main = True` (enforced via a unique constraint).
-
-
-#### 4. User
-Django’s built-in user model (via `get_user_model()`).
-
-- Standard auth fields (email/username, password, etc.)
-
-**Relationships**
-
-- One `User` has many `Order` records.
-- One `User` has many `Voucher` records.
-
-
-#### 5. Order
-Represents a single checkout event / purchase.
-
-- `id` (PK)
-- `user` (FK → User)
-- `is_paid` – whether payment was completed
-- `created_at` – timestamp of order creation
-
-**Relationships**
-
-- One `Order` belongs to one `User`.
-- One `Order` has many `OrderItem` records.
-
-
-#### 6. OrderItem
-A line item inside an order (e.g. “5-Day Pass × 2”).
-
-- `id` (PK)
-- `order` (FK → Order)
-- `service` (FK → Service)
-- `quantity`
-- `price` – price at time of purchase
-
-**Relationships**
-
-- One `OrderItem` belongs to one `Order`.
-- One `OrderItem` references one `Service`.
-- One `OrderItem` has exactly one `Voucher` (via OneToOne).
-
-
-#### 7. Voucher
-A digital voucher generated from an `OrderItem`.
-
-- `id` (PK)
-- `service` (FK → Service)
-- `order_item` (OneToOne → OrderItem)
-- `user` (FK → User)
-- `code` – unique voucher code
-- `qr_img_path` – QR image file
-- `status` – choice: ISSUED, REDEEMED, EXPIRED
-- `issued_at`
-- `redeemed_at` – nullable
-- `expires_at` – default 18 months from issue
-
-**Relationships**
-
-- One `Voucher` belongs to one `User`.
-- One `Voucher` belongs to one `Service`.
-- One `Voucher` is generated from exactly one `OrderItem` (1–1).
-
-## ERD Diagram (Mermaid.js)
-
-    User ||--o{ Order : "places"
-    Order ||--o{ OrderItem : "contains"
-    OrderItem ||--|| Voucher : "generates"
-    User ||--o{ Voucher : "owns"
-
-    ServiceCategory ||--o{ Service : "groups"
-    Service ||--o{ ServiceImage : "has"
-    Service ||--o{ OrderItem : "purchased_as"
-    Service ||--o{ Voucher : "redeemed_for"
-
-    User {
-        int id
-        string username
-        string email
-        string password
-    }
-
-    ServiceCategory {
-        int id
-        string name
-        string slug
-        bool is_active
-    }
-
-    Service {
-        int id
-        int category_id
-        string name
-        string slug
-        string description
-        decimal price
-        decimal duration_hours
-        string img_path
-        string alt_text
-        bool is_bundle
-        bool is_active
-    }
-
-    ServiceImage {
-        int id
-        int service_id
-        string image_url
-        string alt_text
-        bool is_main
-        int sort_order
-    }
-
-    Order {
-        int id
-        int user_id
-        bool is_paid
-        datetime created_at
-    }
-
-    OrderItem {
-        int id
-        int order_id
-        int service_id
-        int quantity
-        decimal price
-    }
-
-    Voucher {
-        int id
-        int order_item_id
-        int service_id
-        int user_id
-        string code
-        string qr_img_path
-        string status
-        datetime issued_at
-        datetime redeemed_at
-        datetime expires_at
-    }
-
-## Design
-
-### Typography
-| Use Case          | Font Family          | Style & Purpose                                           |
-|-------------------|----------------------|-------------------------------------------------------------|
-| Headings / Logo   | Patrick Hand SC       | Playful, handwritten feel that adds personality to the brand |
-| Body Text         | Lato                  | Clean, modern sans-serif for readability and consistency     |
-
-
-### Colour Palette
-| Colour Name     | Hex Code   | Usage                                  |
-|-----------------|------------|-----------------------------------------|
-| 🐾 Beige        | `#e3dad2`  | Main background (warm, welcoming tone)  |
-| 🐶 Charcoal     | `#1a1a1a`  | Primary text & button colour            |
-| 🏅 Gold Accent  | `#c7a77b`  | Highlight colour for active states, hover, CTAs |
-
-### Imagery
-| Type of Image        | Purpose                                           |
-|----------------------|----------------------------------------------------|
-| Hero Images          | Establish warm, welcoming first impression         |
-| Service Cards        | Visual cues for passes, grooming, and offers       |
-| [**QR Code**](https://qr.io/)             | Used in the digital voucher system                 |
-| Icons (Cart, Paw)    | Lightweight branding and clarity for navigation    |
-
-- **Unsplash** (royalty-free, no attribution required)
-- **Pexels** (royalty-free, no attribution required)
-
-_________________________________
-
-Browse services with search/filter
-
-Auth (signup/login/logout)
-
-Cart & Stripe checkout
-
-Wallet/Vouchers (if live)
-
-Responsive layout, toasts, accessible forms
-
-Information Architecture
-
-Global nav: Home, Services, Cart, Account
-
-Footer: Reviews, Contact, Socials
-
-Design System (tiny)
-
-Fonts: Heading / Body
-
-Colors: hex list (primary, background, text, accent)
-
-Spacing: e.g., 0.5rem / 1rem / 2rem
-
-Components: buttons, cards, forms, toasts
-
-Tech Stack
-
-Django 5, Bootstrap 5, Stripe
-
-Crispy Forms (if used), PostgreSQL (if prod)
-
-Data Model (brief)
-
-Service, Category, Order, OrderItem, Voucher (whatever you actually used)
-
-One line per model explaining purpose & key fields
-
-How to Run Locally
-
-Clone
-
-Create venv & install requirements
-
-Set env vars (STRIPE_PUBLIC_KEY, etc.)
-
+| Layer | Technologies |
+|-------|--------------|
+| Frontend | HTML5, CSS3, Bootstrap 5, JavaScript |
+| Backend | Python 3.12, Django 5 |
+| Database | PostgreSQL (Heroku Postgres) |
+| Authentication | Django AllAuth |
+| Payments | Stripe Checkout Sessions & Webhooks |
+| Media Storage | Cloudinary (`django-cloudinary-storage`) |
+| Static Files | WhiteNoise (compressed & cached) |
+| QR Generation | `qrcode` |
+| Environment | `python-dotenv`, virtualenv/venv |
+| Deployment | Heroku (Python buildpack, Postgres add-on) |
+| Version Control | Git & GitHub |
+
+## Data Model
+- `ServiceCategory`: Groups services into Passes, Packages, Offers; slugged for URLs.
+- `Service`: A purchasable pass/package/offer with price, duration, imagery, and active toggle.
+- `ServiceImage`: Optional gallery per service; unique main image enforced.
+- `Order`: A paid checkout linked to a user.
+- `OrderItem`: Line items within an order, storing service, quantity, and locked-in price.
+- `Voucher`: Generated per order item and quantity; tracks code, QR image, status (ISSUED, REDEEMED, EXPIRED), issued/redeemed/expiry timestamps.
+- `User`: Django auth user (owner of orders and vouchers).
+
+## User Experience
+- Navigation: Home, Services, Cart, Account dropdown, with footer links to Reviews and Contact.
+- Styling: Handwritten-style headings, soft palette, clean cards, mobile-friendly layout.
+- Accessibility: Alt text on imagery, focusable buttons/links, toasts for feedback.
+
+## Stripe Payments
+- Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
+- Webhook endpoint: `/orders/checkout/webhook/` (`orders:stripe_webhook`).
+- Success redirect: `/orders/success/?session_id={CHECKOUT_SESSION_ID}`.
+- Requires `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_API_KEY` (restricted key optional), and `STRIPE_WEBHOOK` (signing secret).
+
+## Deployment (Heroku)
+1) Create Heroku app and add Heroku Postgres.
+2) Set config vars (see Environment Variables).
+3) `heroku config:set DISABLE_COLLECTSTATIC=0` (only if collectstatic should run).
+4) Deploy via GitHub integration or `git push heroku main`.
+5) Run migrations: `heroku run python manage.py migrate`.
+6) Create superuser: `heroku run python manage.py createsuperuser`.
+7) Add allowed host and CSRF origins for your Heroku domain.
+8) Set Stripe webhook to `https://<your-app>.herokuapp.com/orders/checkout/webhook/` with the signing secret stored in `STRIPE_WEBHOOK`.
+
+## Local Development
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate  # Windows
+# source .venv/bin/activate  # macOS/Linux
+pip install -r requirements.txt
+cp .env.example .env
 python manage.py migrate
-
 python manage.py runserver
+```
+With `DEBUG=True`, the app uses SQLite and permissive hosts for localhost/testserver.
 
-Environment Variables
-List each with a one-liner: what it's for and an example value.
+## Environment Variables
+Set these in `.env` locally and in Heroku config vars for production:
 
-Testing
-
-Manual testing: link to section below (in README or separate TESTING.md)
-
-Automated tests: how to run (see below)
-
-Coverage result (screenshot or percentage)
-
-Known Issues / Future Work
-
-What's intentionally left out
-
-What you'd do next (1-3 bullets)
-
-Credits
-
-Images (Unsplash links), icons, libraries
-
-License (optional)
+- `SECRET_KEY` — Django secret key.
+- `DEBUG` — `True` (local) / `False` (production).
+- `ALLOWED_HOSTS` — comma-separated (e.g., `localhost,127.0.0.1,<your-app>.herokuapp.com`).
+- `CSRF_TRUSTED_ORIGINS` — comma-separated origins (e.g., `https://<your-app>.herokuapp.com`).
+- `DATABASE_URL` — Postgres connection string (Heroku supplies this).
+- `STRIPE_SECRET_KEY` — Stripe secret key.
+- `STRIPE_PUBLISHABLE_KEY` — Stripe publishable key.
+- `STRIPE_API_KEY` — Optional restricted key for server-side API calls.
+- `STRIPE_WEBHOOK` — Stripe webhook signing secret.
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — for media.
+- `EMAIL_BACKEND` and SMTP settings if using email (defaults to console backend).
 
 ## Testing
-Tests are run with `python manage.py test` (uses the test SQLite DB). Current coverage includes:
+- Automated: `python manage.py test`
+  - Covers checkout session creation and webhook-driven order/voucher generation.
+  - Service list view populates categories.
+- Manual (recommended):
+  - Add to cart, create Stripe Checkout, ensure success clears cart.
+  - Verify vouchers appear in wallet (Active, Redeemed, Expired).
+  - Staff redemption via scan/manual code; ensure status changes and permissions hold.
+  - Responsive checks on mobile/tablet for nav, forms, and cards.
 
-- Checkout session creation flow and Stripe metadata injection (`orders.tests.OrderViewsTests`).
-- Stripe webhook order/voucher creation with QR generation for cart items.
-- Success view display without duplicating orders, and voucher access control.
-- Service listing populates Passes/Packages/Offers categories (`services.tests.ServiceListViewTests`).
+## Social Media Presence
+- <img src="static/images/instagram.png" alt="Instagram" width="18" /> Instagram: https://www.instagram.com/thewag_club/
+- <img src="static/images/facebook-eg.png" alt="Facebook" width="18" /> Facebook mockups: `static/images/facebook-page.png`, `static/images/facebook-eg.png`
+- Include screenshot captures of the live/placeholder page in [Product Screenshots](#product-screenshots) for assessment.
+
+## Future Enhancements
+- Email/SMS notifications for expiring vouchers.
+- Customer order history and invoices archive.
+- Discount codes and promotional bundles.
+- Staff dashboard with search/filter for vouchers and redemptions.
+
+## Credits
+- Design: The Wag Club brand assets (logo, palette, typography).
+- Images: Stored in `static/images` (hero, service imagery, social mockups).
+- Libraries: Django, Bootstrap, Stripe, qrcode, Cloudinary, WhiteNoise, Django AllAuth.
