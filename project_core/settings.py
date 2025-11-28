@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
-import stripe
-from pathlib import Path
 import dj_database_url
 import dotenv
+import stripe
+from django.core.exceptions import ImproperlyConfigured
+from pathlib import Path
 from django.contrib.messages import constants as messages
 
 
@@ -161,7 +162,11 @@ if DEBUG:
         }
     }
 else:
-    # Production: Postgres with SSL
+    # Production: fail fast if DATABASE_URL missing to avoid silent SQLite fallback
+    if not os.getenv("DATABASE_URL"):
+        raise ImproperlyConfigured(
+            "DATABASE_URL must be set when DEBUG is False."
+        )
     DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('DATABASE_URL'),
