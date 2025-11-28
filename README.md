@@ -6,24 +6,36 @@
 ## Contents
 - [The Wag Club](#the-wag-club)
   - [Contents](#contents)
-  - [Overview](#overview)
-  - [Live Demo \& Repository](#live-demo--repository)
-  - [Product Screenshots](#product-screenshots)
-  - [Features](#features)
-  - [Tech Stack](#tech-stack)
-  - [Data Model](#data-model)
-  - [User Experience](#user-experience)
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Live Demo \& Repository](#live-demo--repository)
+- [Product Screenshots](#product-screenshots)
+- [Features](#features)
+- [Frontend](#frontend)
+- [Backend](#backend)
+- [Tech Stack](#tech-stack)
+- [Data Model](#data-model)
+- [User Experience](#user-experience)
   - [Stripe Payments](#stripe-payments)
   - [Deployment (Heroku)](#deployment-heroku)
   - [Local Development](#local-development)
-  - [Environment Variables](#environment-variables)
-  - [Testing](#testing)
-  - [Social Media Presence](#social-media-presence)
+- [Environment Variables](#environment-variables)
+- [Testing](#testing)
+- [Manual Testing](#manual-testing)
+- [Social Media Presence](#social-media-presence)
   - [Future Enhancements](#future-enhancements)
   - [Credits](#credits)
 
 ## Overview
 The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming business. Customers browse services, add them to a cart, and pay through Stripe. Successful payments generate time-bound vouchers with QR codes that can be redeemed on-site. A customer wallet keeps active, redeemed, and expired vouchers organised; staff can scan and redeem vouchers securely.
+
+## Architecture
+- Monolithic Django 5 project split into domain apps:
+  - `services`: service catalog, categories, images, search.
+  - `orders`: cart, Stripe checkout session creation, webhook fulfilment, vouchers, wallet, redemption.
+  - `project_core`: project settings, URLs, static/media configuration.
+- Frontend rendered with Django templates + Bootstrap 5; no custom API layer required for core flows.
+- Payments handled server-side via Stripe Checkout and webhooks to keep keys secret and ensure orders/vouchers are created after confirmed payment.
 
 ## Live Demo & Repository
 - Live Site (Heroku): [https://\<your-heroku-app>.herokuapp.com/](https://<your-heroku-app>.herokuapp.com/)
@@ -32,7 +44,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 ## Product Screenshots
 Replace the placeholders with your captures (examples below point to `static/images/*`):
 
-<img src="static\images\instagram.png" alt="Homepage" width="820" />
+<img src="static/images/homepage-hero-img.jpg" alt="Homepage" width="820" />
 
 ![Facebook Page Mockup](static/images/facebook-page.png)
 
@@ -53,6 +65,24 @@ Replace the placeholders with your captures (examples below point to `static/ima
 - Responsive UI with Bootstrap 5 and custom branding.
 - Social proof: footer links to reviews/contact plus Instagram and Facebook presence.
 
+## Frontend
+- Templates: Django templates with Bootstrap 5, custom CSS in `static/css/base.css`.
+- Layout: responsive navbar, footer social links, toast notifications for feedback.
+- Pages: home hero, services list/detail, cart/checkout, wallet, voucher detail/invoice, staff scan/redeem.
+- UX: search/filter on services; status badges for vouchers (Active/Redeemed/Expired); accessible form controls and alt text on imagery.
+- Icons: Font Awesome for UI glyphs; branded imagery in `static/images`.
+
+## Backend
+- Django 5 with two domain apps: `services` (catalog) and `orders` (cart, payments, vouchers).
+- Payments: Stripe Checkout session creation (`orders.views.create_checkout_session`) and webhook fulfilment (`orders.views.stripe_webhook`).
+- Business logic:
+  - Order and order items created only after confirmed payment event.
+  - Vouchers generated per quantity with unique codes and QR images, default expiry 18 months.
+  - Wallet views filter vouchers by status; staff-only redemption via `scan_voucher`/`redeem_voucher`.
+- Auth: Django AllAuth for registration/login/logout/password reset.
+- Media: Cloudinary for images; QR codes stored via ImageField.
+- Static: WhiteNoise for compressed static serving; Bootstrap/FontAwesome from CDNs.
+
 ## Tech Stack
 
 | Layer | Technologies |
@@ -70,13 +100,93 @@ Replace the placeholders with your captures (examples below point to `static/ima
 | Version Control | Git & GitHub |
 
 ## Data Model
+### Entities
 - `ServiceCategory`: Groups services into Passes, Packages, Offers; slugged for URLs.
 - `Service`: A purchasable pass/package/offer with price, duration, imagery, and active toggle.
 - `ServiceImage`: Optional gallery per service; unique main image enforced.
 - `Order`: A paid checkout linked to a user.
 - `OrderItem`: Line items within an order, storing service, quantity, and locked-in price.
-- `Voucher`: Generated per order item and quantity; tracks code, QR image, status (ISSUED, REDEEMED, EXPIRED), issued/redeemed/expiry timestamps.
+- `Voucher`: Generated per order item *and* quantity (multiple vouchers per item when quantity > 1); tracks code, QR image, status (ISSUED, REDEEMED, EXPIRED), issued/redeemed/expiry timestamps, and expiry (default 18 months).
 - `User`: Django auth user (owner of orders and vouchers).
+
+### ERD Diagram (Mermaid)
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--o{ ORDERITEM : contains
+    ORDERITEM ||--o{ VOUCHER : generates
+    USER ||--o{ VOUCHER : owns
+
+    SERVICECATEGORY ||--o{ SERVICE : groups
+    SERVICE ||--o{ SERVICEIMAGE : has
+    SERVICE ||--o{ ORDERITEM : purchased_as
+    SERVICE ||--o{ VOUCHER : redeemed_for
+
+    USER {
+        int id
+        string username
+        string email
+        string password
+    }
+
+    SERVICECATEGORY {
+        int id
+        string name
+        string slug
+        bool is_active
+    }
+
+    SERVICE {
+        int id
+        int category_id
+        string name
+        string slug
+        string description
+        decimal price
+        decimal duration_hours
+        string img_path
+        string alt_text
+        bool is_bundle
+        bool is_active
+    }
+
+    SERVICEIMAGE {
+        int id
+        int service_id
+        string image_url
+        string alt_text
+        bool is_main
+        int sort_order
+    }
+
+    ORDER {
+        int id
+        int user_id
+        bool is_paid
+        datetime created_at
+    }
+
+    ORDERITEM {
+        int id
+        int order_id
+        int service_id
+        int quantity
+        decimal price
+    }
+
+    VOUCHER {
+        int id
+        int order_item_id
+        int service_id
+        int user_id
+        string code
+        string qr_img_path
+        string status
+        datetime issued_at
+        datetime redeemed_at
+        datetime expires_at
+    }
+```
 
 ## User Experience
 - Navigation: Home, Services, Cart, Account dropdown, with footer links to Reviews and Contact.
@@ -135,6 +245,9 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Verify vouchers appear in wallet (Active, Redeemed, Expired).
   - Staff redemption via scan/manual code; ensure status changes and permissions hold.
   - Responsive checks on mobile/tablet for nav, forms, and cards.
+
+## Manual Testing
+Detailed manual test cases (flows, expected results, and status) are documented in [testing.md](testing.md).
 
 ## Social Media Presence
 - <img src="static/images/instagram.png" alt="Instagram" width="18" /> Instagram: https://www.instagram.com/thewag_club/
