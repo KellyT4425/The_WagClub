@@ -263,6 +263,9 @@ CLOUDINARY_STORAGE = {
     'CLOUDINARY_API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'CLOUDINARY_API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
+
+# Enable Cloudinary media storage in dev by setting USE_CLOUDINARY_MEDIA=True
+USE_CLOUDINARY_MEDIA = os.getenv("USE_CLOUDINARY_MEDIA", "False") == "True"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -273,4 +276,8 @@ if DEBUG:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 else:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if (not DEBUG) or USE_CLOUDINARY_MEDIA:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
