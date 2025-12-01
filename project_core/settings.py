@@ -271,13 +271,19 @@ USE_CLOUDINARY_MEDIA = os.getenv("USE_CLOUDINARY_MEDIA", "False") == "True"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-if (not DEBUG) or USE_CLOUDINARY_MEDIA:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-else:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        )
+    },
+    "default": {
+        "BACKEND": (
+            "cloudinary_storage.storage.MediaCloudinaryStorage"
+            if ((not DEBUG) or USE_CLOUDINARY_MEDIA)
+            else "django.core.files.storage.FileSystemStorage"
+        )
+    },
+}
