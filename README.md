@@ -17,9 +17,10 @@
 - [Data Model](#data-model)
 - [User Experience](#user-experience)
   - [Stripe Payments](#stripe-payments)
-  - [Deployment (Heroku)](#deployment-heroku)
-  - [Local Development](#local-development)
+- [Deployment (Heroku)](#deployment-heroku)
+- [Local Development](#local-development)
 - [Environment Variables](#environment-variables)
+- [Bugs Encountered](#bugs-encountered)
 - [Testing](#testing)
 - [Manual Testing](#manual-testing)
 - [Social Media Presence](#social-media-presence)
@@ -235,6 +236,12 @@ Set these in `.env` locally and in Heroku config vars for production:
 - `STRIPE_WEBHOOK` — Stripe webhook signing secret.
 - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — for media.
 - `EMAIL_BACKEND` and SMTP settings if using email (defaults to console backend).
+
+## Bugs Encountered
+- Services page 500 on Heroku caused by malformed price template tag (`{{ € s.price }}`); fixed to `€{{ s.price }}`.
+- Service card images missing on deploy because Cloudinary storage only activates with `DEBUG=False` and images had not been uploaded; resolved by re-saving media to Cloudinary and pruning duplicate local media files.
+- Model/DB mismatches during deployment caused errors; aligned model fields and migrations to production schema.
+- Early deploy issues (Procfile/import paths, WhiteNoise/psycopg setup) fixed across deployment hardening commits.
 
 ## Testing
 - Automated: `python manage.py test`
