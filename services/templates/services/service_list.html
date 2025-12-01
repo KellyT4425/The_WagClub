@@ -16,7 +16,12 @@
     {% if search_query %}
         <div class="container mb-4">
             <div class="alert alert-info shadow-sm">
-                Showing results for "<strong>{{ search_query }}</strong>". {% if search_results %}Found {{ search_results|length }} service{{ search_results|length|pluralize }}.{% else %}No services match your search yet.{% endif %}
+                Showing results for "<strong>{{ search_query }}</strong>".
+                {% if search_results %}
+                    Found {{ search_results|length }} service{{ search_results|length|pluralize }}.
+                {% else %}
+                    No services match your search yet.
+                {% endif %}
             </div>
         </div>
         {% if search_results %}
@@ -42,7 +47,7 @@
                                             8.30am - 18.30pm(daily)
                                         {% endif %}
                                     </li>
-                                    <li class="list-group-item">Price: ?{{ s.price|floatformat:2 }}</li>
+                                    <li class="list-group-item">Price: {{ € s.price|floatformat:2 }}</li>
                                 </ul>
                                 <div class="card-body">
                                     <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
@@ -93,7 +98,8 @@
                                 <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
                             </ul>
                             <div class="card-body">
-                                <a href="{% url 'services:service_detail' s.slug %}" class="card-link btn btn-sm btn-primary">Details</a>
+                                <a href="{% url 'services:service_detail' s.slug %}"
+                                   class="card-link btn btn-sm btn-primary">Details</a>
                                 <form action="{% url 'orders:add_to_cart' %}"
                                       method="post"
                                       class="d-inline">
@@ -140,7 +146,8 @@
                                 <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
                             </ul>
                             <div class="card-body">
-                                <a href="{% url 'services:service_detail' s.slug %}" class="card-link btn btn-sm btn-primary">Details</a>
+                                <a href="{% url 'services:service_detail' s.slug %}"
+                                   class="card-link btn btn-sm btn-primary">Details</a>
                                 <form action="{% url 'orders:add_to_cart' %}"
                                       method="post"
                                       class="d-inline">
@@ -189,7 +196,8 @@
                                     <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
                                 </ul>
                                 <div class="card-body">
-                                    <a href="{% url 'services:service_detail' s.slug %}" class="card-link btn btn-sm btn-primary">Details</a>
+                                    <a href="{% url 'services:service_detail' s.slug %}"
+                                       class="card-link btn btn-sm btn-primary">Details</a>
                                     <form action="{% url 'orders:add_to_cart' %}"
                                           method="post"
                                           class="d-inline">
