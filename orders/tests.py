@@ -180,6 +180,36 @@ class OrderViewsTests(TestCase):
         self.assertEqual(Order.objects.count(), 1)  # no duplicates
         self.assertEqual(response.context["vouchers"].count(), 1)
 
+    @patch("stripe.checkout.Session.retrieve")
+    def test_success_view_allows_unauthenticated_with_metadata(self, mock_retrieve):
+        session_id = "sess_unauth"
+        order = Order.objects.create(
+            user=self.user, is_paid=True, stripe_session_id=session_id
+        )
+        order_item = OrderItem.objects.create(
+            order=order, service=self.service, quantity=1, price=self.service.price
+        )
+        Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="unauthcode",
+            status="ISSUED",
+        )
+
+        mock_retrieve.return_value = SimpleNamespace(
+            id=session_id,
+            metadata={"user_id": str(self.user.id)},
+            payment_status="paid",
+        )
+
+        response = self.client.get(
+            reverse("orders:success") + f"?session_id={session_id}", follow=False
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "unauthcode")
+
     def test_voucher_detail_requires_owner(self):
         other_user = User.objects.create_user(
             username="other", email="other@example.com", password="pass1234"

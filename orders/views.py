@@ -247,7 +247,6 @@ def generate_qr_code(voucher, site_url=None):
     )
 
 
-@login_required
 def success_view(request):
     """Show the success page; orders/vouchers are created via webhook."""
     session_id = request.GET.get('session_id')
@@ -266,7 +265,17 @@ def success_view(request):
         metadata = stripe_session.get("metadata")
 
     user_id = metadata.get('user_id') if metadata else None
-    if str(user_id) != str(request.user.id):
+    if not user_id:
+        messages.error(request, "Missing payment metadata; please contact support.")
+        return redirect('orders:cart')
+
+    try:
+        order_user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        messages.error(request, "We could not verify the account for this payment.")
+        return redirect('orders:cart')
+
+    if request.user.is_authenticated and str(request.user.id) != str(user_id):
         messages.error(request, "This payment does not belong to your account.")
         return redirect('orders:cart')
 
@@ -279,7 +288,7 @@ def success_view(request):
         return redirect('orders:cart')
 
     order = Order.objects.filter(
-        user=request.user, is_paid=True, stripe_session_id=session_id
+        user=order_user, is_paid=True, stripe_session_id=session_id
     ).order_by('-created_at').first()
 
     if not order:
