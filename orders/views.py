@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.conf import settings
 from decimal import Decimal
 from django.utils import timezone
+from django.db import IntegrityError
 
 # Stripe exceptions can live in different modules across versions
 try:
@@ -160,12 +161,20 @@ def stripe_webhook(request):
                 cart_items = []
 
             # Create an order to associate with all items
-            order = Order.objects.create(
-                user=user,
-                is_paid=True,
-                created_at=timezone.now(),
-                stripe_session_id=session_id,
-            )
+            try:
+                order = Order.objects.create(
+                    user=user,
+                    is_paid=True,
+                    created_at=timezone.now(),
+                    stripe_session_id=session_id,
+                )
+            except IntegrityError:
+                # Another process already created this order for this session
+                existing_order = Order.objects.filter(stripe_session_id=session_id).first()
+                if existing_order:
+                    print(f"Order already exists for session {session_id}")
+                    return HttpResponse(status=200)
+                raise
 
             # Process each cart item
             for item_data in cart_items:
