@@ -25,6 +25,9 @@ class Order(models.Model):
         User, on_delete=models.CASCADE, related_name="orders")
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
+    stripe_session_id = models.CharField(
+        max_length=255, unique=True, null=True, blank=True
+    )
 
 
 class OrderItem(models.Model):

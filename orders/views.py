@@ -114,19 +114,35 @@ def stripe_webhook(request):
     # Handle the event types you care about:
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
+        session_id = getattr(session, "id", None)
+        if session_id is None and isinstance(session, dict):
+            session_id = session.get("id")
+
+        metadata = getattr(session, "metadata", None)
+        if metadata is None and isinstance(session, dict):
+            metadata = session.get("metadata")
+
         try:
             # Extract metadata
-            user_id = session.metadata.get('user_id')
+            if metadata is None:
+                print("Missing metadata in session")
+                return HttpResponse(status=200)
+
+            user_id = metadata.get('user_id')
 
             if not user_id:
                 print("Missing user_id in session metadata")
+                return HttpResponse(status=200)
+
+            if session_id and Order.objects.filter(stripe_session_id=session_id).exists():
+                print(f"Order already processed for session {session_id}")
                 return HttpResponse(status=200)
 
             # Get service and user
             user = User.objects.get(id=user_id)
 
             try:
-                cart_items_str = session.metadata.get('cart_items', '[]')
+                cart_items_str = metadata.get('cart_items', '[]')
                 cart_items = ast.literal_eval(cart_items_str)
             except (ValueError, SyntaxError) as e:
                 print(f"Error parsing cart items: {str(e)}")
@@ -136,7 +152,8 @@ def stripe_webhook(request):
             order = Order.objects.create(
                 user=user,
                 is_paid=True,
-                created_at=timezone.now()
+                created_at=timezone.now(),
+                stripe_session_id=session_id,
             )
 
             # Process each cart item
@@ -171,33 +188,9 @@ def stripe_webhook(request):
                             status="ISSUED"
                         )
 
-                        # Generate QR code
-                        qr = qrcode.QRCode(
-                            version=1,
-                            error_correction=qrcode.constants.ERROR_CORRECT_L,
-                            box_size=10,
-                            border=4,
-                        )
-                        qr.add_data(voucher_code)
-                        qr.make(fit=True)
-
-                        img = qr.make_image(
-                            fill_color="black", back_color="white")
-                        buffer = BytesIO()
-                        img.save(buffer, format="PNG")
-                        buffer.seek(0)
-
-                        # Save the QR code image to the voucher
-                        voucher.qr_img_path.save(
-                            f"voucher_qr_{voucher_code}.png",
-                            ContentFile(buffer.getvalue()),
-                            save=False
-                        )
-
-                        # Save the voucher
+                        generate_qr_code(voucher)
                         voucher.save()
-                        print(
-                            f"Voucher created: {voucher_code} for service {service.name}")
+                        print(f"Voucher created: {voucher_code} for service {service.name}")
 
                 except Service.DoesNotExist:
                     print(f"Service with id {service_id} not found")
@@ -218,15 +211,20 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
-def generate_qr_code(voucher):
-    """Generate and attach a QR image for a voucher."""
+def generate_qr_code(voucher, site_url=None):
+    """Generate and attach a QR image for a voucher that points to scan/redeem."""
+    site_root = site_url or getattr(settings, "SITE_URL", "")
+    site_root = (site_root or "http://localhost:8000").rstrip("/")
+    scan_path = reverse("orders:scan_voucher", args=[voucher.code])
+    scan_url = f"{site_root}{scan_path}"
+
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=4,
     )
-    qr.add_data(f"VOUCHER:{voucher.code}")
+    qr.add_data(scan_url)
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
@@ -234,7 +232,8 @@ def generate_qr_code(voucher):
     img.save(buffer, format="PNG")
 
     voucher.qr_img_path.save(
-        f"voucher_{voucher.code}.png", ContentFile(buffer.getvalue()))
+        f"voucher_qr_{voucher.code}.png", ContentFile(buffer.getvalue()), save=False
+    )
 
 
 @login_required
@@ -251,17 +250,36 @@ def success_view(request):
         messages.error(request, "Unable to verify payment with Stripe.")
         return redirect('orders:cart')
 
-    user_id = stripe_session.metadata.get('user_id') if stripe_session.metadata else None
+    metadata = getattr(stripe_session, "metadata", None)
+    if metadata is None and isinstance(stripe_session, dict):
+        metadata = stripe_session.get("metadata")
+
+    user_id = metadata.get('user_id') if metadata else None
     if str(user_id) != str(request.user.id):
         messages.error(request, "This payment does not belong to your account.")
         return redirect('orders:cart')
 
-    if stripe_session.payment_status != 'paid':
+    payment_status = getattr(stripe_session, "payment_status", None)
+    if payment_status is None and isinstance(stripe_session, dict):
+        payment_status = stripe_session.get("payment_status")
+
+    if payment_status != 'paid':
         messages.warning(request, "Payment not completed. You have not been charged.")
         return redirect('orders:cart')
 
-    order = Order.objects.filter(user=request.user, is_paid=True).order_by('-created_at').first()
-    vouchers = Voucher.objects.filter(order_item__order=order) if order else Voucher.objects.none()
+    order = Order.objects.filter(
+        user=request.user, is_paid=True, stripe_session_id=session_id
+    ).order_by('-created_at').first()
+
+    if not order:
+        messages.warning(
+            request,
+            "We couldn't find your order for this payment yet. "
+            "Please check again in a moment or contact support.",
+        )
+        return redirect('orders:cart')
+
+    vouchers = Voucher.objects.filter(order_item__order=order)
 
     if 'cart' in request.session:
         del request.session['cart']
@@ -278,14 +296,15 @@ def cancel_view(request):
     return render(request, 'orders/cancel.html')
 
 
+@login_required
 def voucher_invoice(request, code):
     """Render an invoice for a voucher owned by the current user."""
     try:
         voucher = Voucher.objects.get(code=code, user=request.user)
-        if request.user != voucher.user and not request.user.is_staff:
-            return redirect('orders:voucher_detail')
     except Voucher.DoesNotExist:
-        return render(request, 'orders/vouc_not_found.html', {'code': code})
+        return render(
+            request, 'orders/vouc_not_found.html', {'code': code}, status=404
+        )
 
     context = {
         'voucher': voucher,

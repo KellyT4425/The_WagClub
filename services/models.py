@@ -93,9 +93,10 @@ class ServiceImage(models.Model):
         for any other image linked to the same service that is also main.
         If another main image exists, a ValidationError is raised.
         """
-        if self.is_main and self.service_id:
-            qs = ServiceImage.objects.filter(
-                service=self.service, is_main=True)
+        if not self.is_main or not self.service_id:
+            return
+
+        qs = ServiceImage.objects.filter(service=self.service, is_main=True)
         if self.pk:
             qs = qs.exclude(pk=self.pk)
         if qs.exists():

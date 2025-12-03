@@ -287,3 +287,6 @@ STORAGES = {
         )
     },
 }
+
+# Base site URL used for QR codes / absolute links
+SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
