@@ -1,3 +1,24 @@
-from django.contrib import admin
+import logging
 
-# Register your models here.
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
+logger = logging.getLogger(__name__)
+User = get_user_model()
+
+
+class LoggingUserAdmin(DjangoUserAdmin):
+    """Custom User admin that logs exceptions on delete_view for debugging."""
+
+    def delete_view(self, request, object_id, extra_context=None):
+        try:
+            return super().delete_view(request, object_id, extra_context)
+        except Exception:
+            logger.exception("Error deleting user via admin", extra={"user_id": object_id})
+            raise
+
+
+# Replace default User admin to capture delete errors
+admin.site.unregister(User)
+admin.site.register(User, LoggingUserAdmin)

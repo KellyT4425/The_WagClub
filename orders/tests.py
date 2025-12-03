@@ -279,6 +279,16 @@ class OrderViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_admin_delete_user_page_loads(self):
+        # Regression guard: ensure the admin delete confirmation page renders
+        admin = User.objects.create_superuser(
+            username="admin2", email="admin2@example.com", password="adminpass123"
+        )
+        url = reverse("admin:auth_user_delete", args=[admin.pk])
+        self.client.login(username="admin2", password="adminpass123")
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+
     def test_my_wallet_groups_vouchers_by_status(self):
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(
