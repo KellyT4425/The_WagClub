@@ -17,6 +17,15 @@ from django.conf import settings
 from decimal import Decimal
 from django.utils import timezone
 
+# Stripe exceptions can live in different modules across versions
+try:
+    from stripe.error import SignatureVerificationError
+except Exception:  # pragma: no cover - fallback for newer packages
+    try:
+        from stripe._error import SignatureVerificationError  # type: ignore
+    except Exception:  # pragma: no cover
+        SignatureVerificationError = None
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 User = get_user_model()
 
@@ -107,9 +116,11 @@ def stripe_webhook(request):
     except ValueError:
         # Invalid payload
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError:
-        # Invalid signature (forged or incorrect secret)
-        return HttpResponse(status=400)
+    except Exception as exc:
+        # Handle signature errors across stripe versions without breaking on AttributeError
+        if SignatureVerificationError and isinstance(exc, SignatureVerificationError):
+            return HttpResponse(status=400)
+        raise
 
     # Handle the event types you care about:
     if event['type'] == 'checkout.session.completed':
