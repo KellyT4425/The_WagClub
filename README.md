@@ -291,6 +291,7 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Webhook-driven order/voucher generation
   - Service list view populates categories
   - Update tests as you add features; rerun after migrations/major changes.
+- Latest run: `python manage.py test` (14 tests, pass; system check clean).
 - Manual: key flows exercised on desktop/mobile:
   - Add to cart → Stripe Checkout → success clears cart
   - Vouchers in wallet (Active/Redeemed/Expired) with QR visible for Active

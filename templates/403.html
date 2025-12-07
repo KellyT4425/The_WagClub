@@ -2,22 +2,20 @@
 {% load static %}
 {% block page_header %}
     <div class="text-center my-5">
-        <h2 class="heading">Lost Your Way?</h2>
+        <h2 class="heading">Access Denied</h2>
     </div>
 {% endblock page_header %}
 {% block content %}
     <div class="d-flex justify-content-center my-5 page-center-wrapper">
         <div class="wag-card p-4 error-card">
-            <h3 class="heading text-center mb-3">404 – Page Not Found</h3>
+            <h3 class="heading text-center mb-3">403 – Forbidden</h3>
             <p class="text-center mb-3">
-                That page has wandered off like an overexcited pup. 🐕‍🦺
-                <br>
-                The link might be out of date, or the URL has a typo.
+                You don’t have permission to view this page. If you think this is a mistake, please log in with the correct role or contact staff.
             </p>
             <div class="text-center">
                 <a href="{% url 'home' %}" class="btn btn-primary mb-2">Back to Home</a>
                 <br>
-                <a href="{% url 'services:service_list' %}" class="btn btn-secondary">Browse Daycare & Grooming Services</a>
+                <a href="{% url 'account_login' %}" class="btn btn-secondary">Login</a>
             </div>
         </div>
     </div>

@@ -231,6 +231,10 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
+.error-card {
+    max-width: 520px;
+    width: 100%;
+}
 
 .service-section-title {
     font-size: 1.8rem;

@@ -16,11 +16,11 @@ class LoggingUserAdmin(DjangoUserAdmin):
         try:
             return super().delete_view(request, object_id, extra_context)
         except Exception:
-            logger.exception("Error deleting user via admin", extra={"user_id": object_id})
+            logger.exception("Error deleting user via admin",
+                             extra={"user_id": object_id})
             raise
 
 
-# Replace default User admin to capture delete errors
 admin.site.unregister(User)
 admin.site.register(User, LoggingUserAdmin)
 
