@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('voucher/invoice/<str:code>/',
          views.voucher_invoice, name='voucher_invoice'),
+    path("voucher/<str:code>/qr/", views.voucher_qr_image, name="voucher_qr"),
     path('checkout/webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('voucher/<str:code>/', views.voucher_detail, name='voucher_detail'),
     path("voucher/<str:code>/redeem/",

@@ -18,13 +18,9 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="voucher-card h-100">
                         <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
-                        <div class="voucher-card-body text-center">
+                            <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
-                                {% if voucher.qr_img_path %}
-                                    <img src="{{ voucher.qr_img_path.url }}" alt="Voucher QR Code">
-                                {% else %}
-                                    <span class="text-muted small">QR not available</span>
-                                {% endif %}
+                                    <img src="{% url 'orders:voucher_qr' voucher.code %}" alt="Voucher QR Code">
                             </div>
                             <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
                             <p class="mb-1"><strong>Status:</strong> Active</p>

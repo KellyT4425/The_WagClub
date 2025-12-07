@@ -34,13 +34,9 @@
                       <p class="text-uppercase small text-muted mb-1">{{ voucher.service.category.name }}</p>
                       <h5 class="card-title heading mb-2">{{ voucher.service.name }}</h5>
                       <p class="mb-2"><strong>Code:</strong> {{ voucher.code }}</p>
-                      {% if voucher.qr_img_path %}
-                        <img src="{{ voucher.qr_img_path.url }}"
-                             alt="QR Code for {{ voucher.code }}"
-                             class="img-fluid voucher-qr mb-3">
-                      {% else %}
-                        <p class="text-danger mb-3">QR code not available</p>
-                      {% endif %}
+                      <img src="{% url 'orders:voucher_qr' voucher.code %}"
+                           alt="QR Code for {{ voucher.code }}"
+                           class="img-fluid voucher-qr mb-3">
                       <p class="small text-muted mb-1">Issued: {{ voucher.issued_at|date:"M d, Y" }}</p>
                       <p class="small text-muted mb-3">Expires: {{ voucher.expires_at|date:"M d, Y" }}</p>
                       <a href="{% url 'orders:voucher_detail' voucher.code %}" class="btn btn-outline-secondary mt-auto">View voucher</a>

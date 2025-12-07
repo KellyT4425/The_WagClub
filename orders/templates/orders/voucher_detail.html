@@ -15,11 +15,9 @@
       </div>
       <!-- Body -->
       <div class="voucher-body text-center">
-        {% if voucher.qr_img_path %}
-          <img src="{{ voucher.qr_img_path.url }}"
-               alt="QR Code for voucher {{ voucher.code }}"
-               class="voucher-qr mb-3">
-        {% endif %}
+        <img src="{% url 'orders:voucher_qr' voucher.code %}"
+             alt="QR Code for voucher {{ voucher.code }}"
+             class="voucher-qr mb-3">
 
         <div class="row text-start g-3 mb-3">
           <div class="col-12 col-md-6">

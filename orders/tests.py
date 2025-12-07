@@ -289,6 +289,23 @@ class OrderViewsTests(TestCase):
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
 
+    def test_voucher_qr_endpoint_generates_and_redirects(self):
+        order = Order.objects.create(user=self.user, is_paid=True, stripe_session_id="sess_qr")
+        order_item = OrderItem.objects.create(
+            order=order, service=self.service, quantity=1, price=self.service.price
+        )
+        voucher = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="qrtestcode",
+            status="ISSUED",
+        )
+
+        response = self.client.get(reverse("orders:voucher_qr", args=[voucher.code]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("qrtestcode", response["Location"])
+
     def test_my_wallet_groups_vouchers_by_status(self):
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(

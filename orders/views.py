@@ -17,6 +17,7 @@ from django.conf import settings
 from decimal import Decimal
 from django.utils import timezone
 from django.db import IntegrityError
+from django.core.files.storage import default_storage
 
 # Stripe exceptions can live in different modules across versions
 try:
@@ -251,9 +252,10 @@ def generate_qr_code(voucher, site_url=None):
     buffer = BytesIO()
     img.save(buffer, format="PNG")
 
-    voucher.qr_img_path.save(
-        f"voucher_qr_{voucher.code}.png", ContentFile(buffer.getvalue()), save=False
-    )
+    filename = f"vouchers/qr_codes/{voucher.code}.png"
+    if not default_storage.exists(filename):
+        default_storage.save(filename, ContentFile(buffer.getvalue()))
+    voucher.qr_img_path.name = filename
 
 
 def success_view(request):
@@ -363,6 +365,23 @@ def voucher_detail(request, code):
     }
 
     return render(request, 'orders/voucher_detail.html', context)
+
+
+def voucher_qr_image(request, code):
+    """
+    Serve voucher QR by ensuring it's stored via default storage (Cloudinary in prod)
+    and redirecting to the storage URL.
+    """
+    voucher = get_object_or_404(Voucher, code=code)
+    filename = f"vouchers/qr_codes/{voucher.code}.png"
+
+    if not default_storage.exists(filename):
+        # Generate on-demand if missing
+        generate_qr_code(voucher)
+        voucher.save(update_fields=["qr_img_path"])
+
+    url = default_storage.url(filename)
+    return redirect(url)
 
 
 @login_required
