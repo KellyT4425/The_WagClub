@@ -174,6 +174,8 @@ else:
             ssl_require=True,  # << SSL ONLY IN PRODUCTION
         )
     }
+    # Health-check connections to avoid "connection already closed" errors on idle dynos
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 AUTHENTICATION_BACKENDS = [
 
