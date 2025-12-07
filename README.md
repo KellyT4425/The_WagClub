@@ -26,6 +26,10 @@
 - [Social Media Presence](#social-media-presence)
   - [Future Enhancements](#future-enhancements)
   - [Credits](#credits)
+  - [User Guide](#user-guide)
+  - [Admin Guide](#admin-guide)
+  - [Business Model](#business-model)
+  - [Marketing & SEO](#marketing--seo)
 
 ## Overview
 The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming business. Customers browse services, add them to a cart, and pay through Stripe. Successful payments generate time-bound vouchers with QR codes that can be redeemed on-site. A customer wallet keeps active, redeemed, and expired vouchers organised; staff can scan and redeem vouchers securely.
@@ -163,6 +167,12 @@ erDiagram
         int sort_order
     }
 
+    NEWSLETTERSIGNUP {
+        int id
+        string email
+        datetime created_at
+    }
+
     ORDER {
         int id
         int user_id
@@ -278,5 +288,32 @@ Detailed manual test cases (flows, expected results, and status) are documented 
 - Design: The Wag Club brand assets (logo, palette, typography).
 - Images: Stored in `static/images` (hero, service imagery, social mockups).
 - Libraries: Django, Bootstrap, Stripe, qrcode, Cloudinary, WhiteNoise, Django AllAuth.
-- Tools/References: Stripe docs (Checkout, Webhooks, CLI), Django docs (storage, management commands), Cloudinary docs (Django storage), Heroku runtime/buildpack docs.
-- Testing/ops: `migrate_media_to_cloudinary` and `check_media_urls` commands for media integrity; Stripe CLI for webhook/checkout event testing.
+- Tools/References: Stripe docs (Checkout, Webhooks, CLI), Django docs (storage, management commands), Cloudinary docs (Django storage), Heroku runtime/buildpack docs; Ruff for linting.
+- Testing/ops: `migrate_media_to_cloudinary`, `check_media_urls`, `migrate_media_to_cloudinary`, Stripe CLI for webhook/checkout event testing.
+
+## User Guide
+- Browse services: go to Services, search/filter, view details, add to cart.
+- Checkout: proceed to Stripe Checkout, pay with test card (4242... in test mode).
+- After payment: view success page; vouchers appear in My Wallet with QR codes.
+- Redeem: staff scan the QR (staff-only redeem URL) and redeem via POST; customers see status only.
+- Account: register/login via AllAuth; wallet shows Active/Redeemed/Expired vouchers.
+- Newsletter: subscribe via footer form.
+- Roles: customers can browse, pay, and view their vouchers; staff/admin can redeem and manage via admin. Login state is shown in the navbar.
+
+## Admin Guide
+- Admin login: use Django admin for CRUD on services, categories, images, orders, vouchers, newsletter signups.
+- Vouchers: staff/admin can mark redeemed/expired via admin actions; QR links generate on demand.
+- Media: stored in Cloudinary; use `migrate_media_to_cloudinary` and `check_media_urls` to manage media health.
+- Security: keep secrets in env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK`, `CLOUDINARY_*`, `SECRET_KEY`, etc.), DEBUG off in prod.
+- CRUD: full CRUD available via Django admin for all models; user-facing flows cover create/read/update where applicable (cart/checkout/vouchers).
+
+## Business Model
+- Revenue: paid daycare/grooming services purchased online; each purchase issues vouchers for on-site redemption.
+- Flow: cart → Stripe Checkout → webhook creates order/vouchers → wallet for customer → staff redeem on scan.
+- Value: simplifies booking and redemption, provides clear statuses (Active/Redeemed/Expired), and staff-controlled redemption.
+
+## Marketing & SEO
+- Social: Instagram link in footer; Facebook Business Page placeholder is linked in footer (`https://www.facebook.com/TheWagClubBiz`)—replace with your real page if different.
+- Newsletter: footer signup stored in `NewsletterSignup`.
+- SEO: meta description/keywords in `base.html`, title block, `robots.txt`, `sitemap.xml`, 404 page present. Add per-page meta if desired.
+- Agile/UX: maintain user stories/backlog in your Agile board and link it here; include wireframes/mockups (e.g., in `static/docs/`) and reference them in this README for assessment.

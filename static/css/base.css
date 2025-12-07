@@ -79,13 +79,13 @@ main {
 }
 
 #search-bar .form-control {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #1a1a1a;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 #search-bar .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(0, 0, 0, 0.55);
 }
 
 #search-bar .btn {
@@ -108,6 +108,21 @@ main {
     background: #fff !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
+
+.navbar-toggler {
+    border: 1px solid #c7a77b;
+    padding: 0.35rem 0.55rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.15rem rgba(199, 167, 123, 0.4);
+}
+
+.navbar-toggler-icon {
+    filter: hue-rotate(15deg) saturate(1.2);
+}
+
+
 
 .nav-link {
     color: #1a1a1a !important;
@@ -150,6 +165,21 @@ main {
     font-size: 1.3rem;
 }
 
+.newsletter-form input {
+    min-width: 160px;
+}
+
+@media (max-width: 576px) {
+    .newsletter-form {
+        width: 100%;
+        justify-content: center;
+    }
+    .newsletter-form input,
+    .newsletter-form button {
+        width: 100%;
+    }
+}
+
 /* ========== CARDS / GRID ========== */
 
 .space-row {
@@ -174,6 +204,14 @@ main {
 .custom-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 18px 32px rgba(0, 0, 0, 0.12);
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.25rem;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
 .card-img-top {

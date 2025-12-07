@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from allauth.account.forms import SignupForm
 from allauth.account.forms import LoginForm
+from .models import NewsletterSignup
 
 
 class CustomLoginForm(LoginForm):
@@ -58,3 +59,14 @@ class CustomSignupForm(SignupForm):
         user.username = self.cleaned_data['username']
         user.save()
         return user
+
+
+class NewsletterSignupForm(forms.ModelForm):
+    """Simple newsletter subscription form."""
+
+    class Meta:
+        model = NewsletterSignup
+        fields = ["email"]
+        widgets = {
+            "email": forms.EmailInput(attrs={"placeholder": "Email address"}),
+        }

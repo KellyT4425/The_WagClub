@@ -56,10 +56,7 @@
     <script src="https://kit.fontawesome.com/61038baed8.js"
             crossorigin="anonymous"></script>
     <!--     -->
-    <title>The_Wagclub
-      {% block extra_title %}
-      {% endblock extra_title %}
-    </title>
+    <title>{% block extra_title %}The Wag Club{% endblock extra_title %}</title>
   </head>
   <body>
     <header>
@@ -99,7 +96,7 @@
                      data-bs-toggle="dropdown"
                      aria-expanded="false">
                     <i class="fa-solid fa-grip fa-xl mb-1"></i>
-                    <span class="small mt-1">Dashboard</span>
+                    <span class="small mt-1">Account</span>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end"
                       aria-labelledby="user-account">
@@ -110,35 +107,45 @@
                         </li>
                       {% endif %}
                       <li>
-                        <a class="dropdown-item {% if current == 'home' %}active{% endif %}"
+                        <span class="dropdown-item-text text-muted small">Signed in as</span>
+                        <a class="dropdown-item disabled text-muted fw-semibold" tabindex="-1">
+                          {{ request.user.username }}
+                        </a>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'home' %}active{% endif %}"
                            href="{% url 'home' %}">Home</a>
                       </li>
                       <li>
-                        <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'service_list' %}active{% endif %}"
                            href="{% url 'services:service_list' %}">Services</a>
                       </li>
                       <li>
-                        <a class="dropdown-item {% if current == 'my_wallet' and ns == 'orders' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'my_wallet' and ns == 'orders' %}active{% endif %}"
                            href="{% url 'orders:my_wallet' %}">My Wallet</a>
                       </li>
+                      <li><hr class="dropdown-divider"></li>
                       <li>
                         <a class="dropdown-item" href="{% url 'account_logout' %}">Sign Out</a>
                       </li>
                     {% else %}
+                      <li class="px-3 py-2 text-muted small">Guest</li>
+                      <li><hr class="dropdown-divider"></li>
                       <li>
-                        <a class="dropdown-item {% if current == 'home' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'home' %}active{% endif %}"
                            href="{% url 'home' %}">Home</a>
                       </li>
                       <li>
-                        <a class="dropdown-item {% if current == 'service_list' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'service_list' %}active{% endif %}"
                            href="{% url 'services:service_list' %}">Services</a>
                       </li>
                       <li>
-                        <a class="dropdown-item {% if current == 'account_signup' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'account_signup' %}active{% endif %}"
                            href="{% url 'account_signup' %}">Register</a>
                       </li>
                       <li>
-                        <a class="dropdown-item {% if current == 'account_login' %}active{% endif %}"
+                        <a class="dropdown-item d-flex justify-content-between {% if current == 'account_login' %}active{% endif %}"
                            href="{% url 'account_login' %}">Sign in</a>
                       </li>
                     {% endif %}
@@ -147,7 +154,7 @@
                 <!-- Cart -->
                 <li class="nav-item cart-item">
                   <a class="nav-link d-flex flex-column align-items-center text-reset text-decoration-none px-3 py-1"
-                     href="{% url 'orders:cart' %}">
+                    href="{% url 'orders:cart' %}">
                     <i class="fa-solid fa-cart-shopping fa-lg mb-1"></i>
                     <span class="small mt-1">€{{ cart_total|floatformat:2 }}</span>
                   </a>
@@ -200,12 +207,12 @@
       </div>
       <!-- Footer -->
       <footer class="foot-bar">
-        <div class="container py-3">
-          <div class="row justify-content-between align-items-center text-center text-md-start">
-            <!-- Left: socials + reviews -->
-            <div class="col-12 col-md-4 mb-2 mb-md-0 d-flex justify-content-center justify-content-md-start gap-3">
+        <div class="container py-4">
+          <div class="row gy-3 align-items-center text-center text-md-start">
+            <!-- Left: socials -->
+            <div class="col-12 col-md-2 d-flex flex-row justify-content-center justify-content-md-start align-items-center gap-3">
               <a class="social-media"
-                 href="https://www.facebook.com/share/17SoWzt7QD/"
+                 href="https://www.facebook.com/TheWagClubBiz"
                  target="_blank"
                  aria-label="Facebook">
                 <i class="fa-brands fa-facebook"></i>
@@ -217,8 +224,19 @@
                 <i class="fa-brands fa-instagram"></i>
               </a>
             </div>
+            <!-- Center: newsletter -->
+            <div class="col-12 col-md-5">
+              <form class="newsletter-form d-flex flex-wrap align-items-center gap-2 justify-content-center justify-content-md-start"
+                    action="{% url 'newsletter_subscribe' %}"
+                    method="post">
+                {% csrf_token %}
+                <label for="newsletter-email" class="visually-hidden">Newsletter email</label>
+                <input id="newsletter-email" name="email" type="email" class="form-control form-control-sm" placeholder="Newsletter email" required>
+                <button class="btn btn-sm btn-primary" type="submit">Subscribe</button>
+              </form>
+            </div>
             <!-- Right: address + copyright -->
-            <div class="col-12 col-md-6 small text-muted text-center text-md-end">
+            <div class="col-12 col-md-5 small text-muted text-center text-md-end">
               <p class="mb-1">
                 <i class="fa-solid fa-phone me-1" aria-hidden="true"></i>
                 +353 123 4567

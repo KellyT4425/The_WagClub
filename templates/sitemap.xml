@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://the-wagclub-0b0521e2a364.herokuapp.com/</loc>
+  </url>
+  <url>
+    <loc>https://the-wagclub-0b0521e2a364.herokuapp.com/services/</loc>
+  </url>
+  <url>
+    <loc>https://the-wagclub-0b0521e2a364.herokuapp.com/orders/my-wallet/</loc>
+  </url>
+  <url>
+    <loc>https://the-wagclub-0b0521e2a364.herokuapp.com/accounts/login/</loc>
+  </url>
+  <url>
+    <loc>https://the-wagclub-0b0521e2a364.herokuapp.com/accounts/signup/</loc>
+  </url>
+</urlset>

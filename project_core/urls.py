@@ -16,18 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
 from services import views as service_views
 from django.conf import settings
 from django.conf.urls.static import static
+from core import views as core_views
 
 app_name = "orders"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    path("newsletter/subscribe/", core_views.newsletter_subscribe, name="newsletter_subscribe"),
     path("", service_views.home, name="home"),
     path("services/", include("services.urls", namespace="services")),
     path("orders/", include("orders.urls", namespace="orders")),
+    path(
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+    ),
+    path(
+        "sitemap.xml",
+        TemplateView.as_view(template_name="sitemap.xml", content_type="application/xml"),
+    ),
 ]
 
 if settings.DEBUG:
