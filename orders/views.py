@@ -18,6 +18,7 @@ from decimal import Decimal
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core.files.storage import default_storage
+from django.views.decorators.http import require_http_methods
 
 # Stripe exceptions can live in different modules across versions
 try:
@@ -233,11 +234,11 @@ def stripe_webhook(request):
 
 
 def generate_qr_code(voucher, site_url=None):
-    """Generate and attach a QR image for a voucher that points to scan/redeem."""
+    """Generate and attach a QR image for a voucher that points to staff redeem."""
     site_root = site_url or getattr(settings, "SITE_URL", "")
     site_root = (site_root or "http://localhost:8000").rstrip("/")
-    scan_path = reverse("orders:scan_voucher", args=[voucher.code])
-    scan_url = f"{site_root}{scan_path}"
+    redeem_path = reverse("orders:redeem_voucher", args=[voucher.code])
+    redeem_url = f"{site_root}{redeem_path}"
 
     qr = qrcode.QRCode(
         version=1,
@@ -245,7 +246,7 @@ def generate_qr_code(voucher, site_url=None):
         box_size=10,
         border=4,
     )
-    qr.add_data(scan_url)
+    qr.add_data(redeem_url)
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
@@ -386,27 +387,31 @@ def voucher_qr_image(request, code):
 
 @login_required
 @user_passes_test(staff_required)
+@require_http_methods(["GET", "POST"])
 def redeem_voucher(request, code):
-    """Allow staff/admin to redeem an ISSUED voucher."""
+    """Staff/admin redeem flow; GET shows confirmation, POST redeems."""
     voucher = get_object_or_404(Voucher, code=code)
 
-    if request.method != "POST":
-        messages.error(
-            request, "Voucher can only be redeemed with a POST request.")
-        return redirect("orders:voucher_detail", code=code)
+    if request.method == "POST":
+        if voucher.status != "ISSUED":
+            messages.warning(
+                request, "This voucher cannot be redeemed (already used or expired)."
+            )
+            return redirect("orders:redeem_voucher", code=code)
 
-    if voucher.status != "ISSUED":
-        messages.warning(
-            request, "This voucher cannot be redeemed (already used or expired).")
-        return redirect("orders:voucher_detail", code=code)
+        voucher.status = "REDEEMED"
+        voucher.redeemed_at = timezone.now()
+        voucher.save()
+        messages.success(request, f"Voucher {voucher.code} has been redeemed.")
+        return redirect("orders:redeem_voucher", code=code)
 
-    # Mark as redeemed
-    voucher.status = "REDEEMED"
-    voucher.redeemed_at = timezone.now()
-    voucher.save()
-
-    messages.success(request, f"Voucher {voucher.code} has been redeemed.")
-    return redirect("orders:voucher_detail", code=code)
+    context = {
+        "voucher": voucher,
+        "can_redeem": True,
+        "redeem_action_url": reverse("orders:redeem_voucher", args=[voucher.code]),
+        "default_redeem_url": reverse("orders:redeem_voucher", args=[voucher.code]),
+    }
+    return render(request, "orders/scan_voucher.html", context)
 
 
 @login_required
@@ -434,6 +439,7 @@ def scan_voucher(request, code):
     context = {
         "voucher": voucher,
         "can_redeem": request.user.is_staff or request.user.is_superuser,
+        "default_redeem_url": reverse("orders:scan_voucher", args=[voucher.code]),
     }
     return render(request, "orders/scan_voucher.html", context)
 

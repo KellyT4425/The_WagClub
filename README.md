@@ -39,8 +39,8 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Payments handled server-side via Stripe Checkout and webhooks to keep keys secret and ensure orders/vouchers are created after confirmed payment.
 
 ## Live Demo & Repository
-- Live Site (Heroku): [https://\<your-heroku-app>.herokuapp.com/](https://<your-heroku-app>.herokuapp.com/)
-- Repository: [https://github.com/\<user>/\<repo>](https://github.com/<user>/<repo>)
+- Live Site (Heroku): [https://the-wagclub-0b0521e2a364.herokuapp.com/](https://the-wagclub-0b0521e2a364.herokuapp.com/)
+- Repository: [https://github.com/<user>/<repo>](https://github.com/<user>/<repo>)  <!-- replace with the actual repo URL -->
 
 ## Product Screenshots
 Replace the placeholders with your captures (examples below point to `static/images/*`):
@@ -83,6 +83,9 @@ Replace the placeholders with your captures (examples below point to `static/ima
 - Auth: Django AllAuth for registration/login/logout/password reset.
 - Media: Cloudinary for images; QR codes stored via ImageField.
 - Static: WhiteNoise for compressed static serving; Bootstrap/FontAwesome from CDNs.
+- Management commands for media health:
+  - `python manage.py migrate_media_to_cloudinary [--dry-run]` (upload local media to Cloudinary via default storage).
+  - `python manage.py check_media_urls` (HEAD check service/media URLs for 404s).
 
 ## Tech Stack
 
@@ -234,14 +237,18 @@ Set these in `.env` locally and in Heroku config vars for production:
 - `STRIPE_PUBLISHABLE_KEY` — Stripe publishable key.
 - `STRIPE_API_KEY` — Optional restricted key for server-side API calls.
 - `STRIPE_WEBHOOK` — Stripe webhook signing secret.
-- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — for media.
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` - for media.
+- `SITE_URL` - base URL for building absolute QR links (set to your deployed domain).
 - `EMAIL_BACKEND` and SMTP settings if using email (defaults to console backend).
 
 ## Bugs Encountered
-- Services page 500 on Heroku caused by malformed price template tag (`{{ € s.price }}`); fixed to `€{{ s.price }}`.
-- Service card images missing on deploy because Cloudinary storage only activates with `DEBUG=False` and images had not been uploaded; resolved by re-saving media to Cloudinary and pruning duplicate local media files.
-- Model/DB mismatches during deployment caused errors; aligned model fields and migrations to production schema.
-- Early deploy issues (Procfile/import paths, WhiteNoise/psycopg setup) fixed across deployment hardening commits.
+- Stripe webhook 400/500: mismatched signing secret/version; fixed with resilient verification, correct `STRIPE_WEBHOOK`, and idempotent `stripe_session_id` handling (migration `0006_order_stripe_session_id`).
+- Duplicate orders/admin delete 500: production DB missing `stripe_session_id`; migration added and webhook skips duplicates.
+- Success page 500/302 after payment: success view now trusts Stripe metadata and renders vouchers without forcing login (with ownership checks).
+- QR codes pointing to localhost or not rendering: added `/orders/voucher/<code>/qr/` endpoint that generates/serves via default storage (Cloudinary) and respects `SITE_URL`.
+- Cloudinary 404s for services/QR: templates now use `.url` (no `{% static %}`/`/media`), added `migrate_media_to_cloudinary` uploader and `check_media_urls` verifier; missing files re-uploaded in admin.
+- Stripe CLI/setup friction: documented correct CLI usage (`stripe listen`, `stripe trigger`) and ensured webhook/success URLs align with deployed domain.
+- Minor UI/templating issues: fixed malformed service price tag; hardened WhiteNoise/psycopg/Procfile for deploy.
 
 ## Testing
 - Automated: `python manage.py test`
@@ -271,3 +278,5 @@ Detailed manual test cases (flows, expected results, and status) are documented 
 - Design: The Wag Club brand assets (logo, palette, typography).
 - Images: Stored in `static/images` (hero, service imagery, social mockups).
 - Libraries: Django, Bootstrap, Stripe, qrcode, Cloudinary, WhiteNoise, Django AllAuth.
+- Tools/References: Stripe docs (Checkout, Webhooks, CLI), Django docs (storage, management commands), Cloudinary docs (Django storage), Heroku runtime/buildpack docs.
+- Testing/ops: `migrate_media_to_cloudinary` and `check_media_urls` commands for media integrity; Stripe CLI for webhook/checkout event testing.

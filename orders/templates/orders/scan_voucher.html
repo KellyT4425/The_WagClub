@@ -13,11 +13,9 @@
         <h3 class="heading mb-0">{{ voucher.service.name }}</h3>
       </div>
       <div class="voucher-body text-center">
-        {% if voucher.qr_img_path %}
-          <img src="{{ voucher.qr_img_path.url }}"
-               alt="QR Code for voucher {{ voucher.code }}"
-               class="voucher-qr mb-3">
-        {% endif %}
+        <img src="{% url 'orders:voucher_qr' voucher.code %}"
+             alt="QR Code for voucher {{ voucher.code }}"
+             class="voucher-qr mb-3">
         <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
         <p class="mb-1"><strong>User:</strong> {{ voucher.user }}</p>
         <p class="mb-1"><strong>Status:</strong>
@@ -32,10 +30,12 @@
         <p class="mb-3"><strong>Expires:</strong> {{ voucher.expires_at|date:"d M Y" }}</p>
 
         {% if can_redeem and voucher.status == "ISSUED" %}
-          <form method="post" action="{% url 'orders:scan_voucher' voucher.code %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-dark">Redeem Voucher</button>
-          </form>
+          {% with action_url=redeem_action_url|default:default_redeem_url %}
+            <form method="post" action="{{ action_url }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-dark">Redeem Voucher</button>
+            </form>
+          {% endwith %}
         {% elif voucher.status == "REDEEMED" %}
           <p class="text-success mb-0">Already redeemed.</p>
         {% elif voucher.status == "EXPIRED" %}
