@@ -17,7 +17,7 @@
             {% for voucher in active_vouchers %}
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="voucher-card h-100">
-                        <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                        <div class="voucher-card-header issued-bg heading text-center">{{ voucher.service.name }}</div>
                             <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
                                 {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
@@ -54,8 +54,14 @@
                 {% for voucher in redeemed_vouchers %}
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="voucher-card h-100">
-                            <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                            <div class="voucher-card-header redeemed-bg heading text-center">{{ voucher.service.name }}</div>
                             <div class="voucher-card-body text-center">
+                                {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+                                {% with qr_target=site_root|add:redeem_path %}
+                                    <div class="voucher-qr-box mb-2">
+                                        <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}" alt="Voucher QR Code">
+                                    </div>
+                                {% endwith %}
                                 <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
                                 <p class="mb-1 text-success"><strong>Status:</strong> Redeemed</p>
                                 {% if voucher.redeemed_at %}
@@ -81,7 +87,7 @@
                 {% for voucher in expired_vouchers %}
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="voucher-card h-100">
-                            <div class="voucher-card-header heading text-center">{{ voucher.service.name }}</div>
+                            <div class="voucher-card-header expired-bg heading text-center">{{ voucher.service.name }}</div>
                             <div class="voucher-card-body text-center">
                                 <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
                                 <p class="mb-1 text-danger"><strong>Status:</strong> Expired</p>

@@ -156,8 +156,8 @@ main {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 2rem;
-    padding: 20px;
+    gap: 1.5rem;
+    padding: 0 10px 30px;
 }
 
 .custom-card {
@@ -165,9 +165,15 @@ main {
     max-width: 20rem;
     height: auto;
     border-radius: 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
+    background: linear-gradient(180deg, #fff, #fdf7ef);
     border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.12);
 }
 
 .card-img-top {
@@ -178,6 +184,7 @@ main {
     object-position: center;
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .wag-card {
@@ -185,6 +192,26 @@ main {
     background-color: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.service-section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #1a1a1a;
+    margin: 2rem 0 1rem;
+}
+
+.service-pill {
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    background: #f7e9d5;
+    color: #1a1a1a;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.5rem;
 }
 
 /* ========== DISPLAY BOX (MODALS / PANELS) ========== */
@@ -370,6 +397,12 @@ main {
     margin: 30px 0;
 }
 
+.invoice-qr {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+}
+
 /* =======================
    My Wallet / Vouchers (list)
    ======================= */
@@ -396,11 +429,21 @@ main {
 }
 
 .voucher-card-header {
-    background: #1f7a3a;
-    /* valid / issued */
     color: #fff;
     padding: .6rem 1rem;
     font-weight: 600;
+}
+
+.voucher-card-header.issued-bg {
+    background: #1f7a3a; /* green */
+}
+
+.voucher-card-header.redeemed-bg {
+    background: #c96a12; /* orange */
+}
+
+.voucher-card-header.expired-bg {
+    background: #b30021; /* red */
 }
 
 .voucher-card-body {

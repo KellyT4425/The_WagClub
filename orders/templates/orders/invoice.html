@@ -90,7 +90,7 @@
                     {% with qr_target=site_root|add:redeem_path %}
                         <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                              alt="QR Code"
-                             style="max-width: 200px">
+                             class="invoice-qr">
                     {% endwith %}
                     <p class="mt-2">Voucher Code: {{ voucher.code }}</p>
                 </div>

@@ -40,6 +40,7 @@ User = get_user_model()
 
 
 def staff_required(user):
+    """Return True if user is staff or superuser."""
     return user.is_staff or user.is_superuser
 
 
@@ -564,7 +565,17 @@ def add_to_cart(request):
         return redirect("orders:cart")
 
     service_id = request.POST.get("service_id")
-    qty = int(request.POST.get("quantity", 1))
+    raw_qty = request.POST.get("quantity", 1)
+    try:
+        qty = int(raw_qty)
+    except (TypeError, ValueError):
+        messages.error(request, "Invalid quantity.")
+        return redirect("orders:cart")
+
+    if qty <= 0:
+        messages.error(request, "Quantity must be at least 1.")
+        return redirect("orders:cart")
+
     service = get_object_or_404(Service, id=service_id, is_active=True)
 
     cart = request.session.get("cart", {})

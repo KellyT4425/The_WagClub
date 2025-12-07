@@ -35,8 +35,9 @@
                                          class="card-img-top"
                                          alt="{{ s.alt_text|default:s.name }}">
                                 {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                                <div class="card-body text-center">
+                                    <span class="service-pill">Search result</span>
+                                    <h5 class="card-title heading mt-2">{{ s.name }}</h5>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
@@ -49,8 +50,9 @@
                                     </li>
                                     <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
                                 </ul>
-                                <div class="card-body">
-                                    <a href="#" class="card-link btn btn-sm btn-primary">Details</a>
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'services:service_detail' s.slug %}"
+                                       class="btn btn-sm btn-primary">Details</a>
                                     <form action="{% url 'orders:add_to_cart' %}"
                                           method="post"
                                           class="d-inline">
@@ -72,7 +74,7 @@
     {% endif %}
     <!-- Passes -->
     <div>
-        <h3 class="text-center heading">Passes</h3>
+        <h3 class="text-center heading service-section-title">Passes</h3>
         <div class="container fun-passes">
             <div class="row g-4 space-row">
                 {% for s in doggy_daycare_pass %}
@@ -120,7 +122,7 @@
     </div>
     <!-- Packages -->
     <div>
-        <h3 class="text-center heading">Packages</h3>
+        <h3 class="text-center heading service-section-title">Packages</h3>
         <div class="container fun-passes">
             <div class="row space-row">
                 {% for s in doggy_grooming_packs %}
@@ -168,7 +170,7 @@
     </div>
     <!-- Offers -->
     <div>
-        <h3 class="text-center heading">Offers</h3>
+        <h3 class="text-center heading service-section-title">Offers</h3>
         <div class="alert alert-warning wag-offer-alert text-center shadow-sm">
             <strong>Don’t forget!</strong> Check out our special offers — more wag for less!🐾
             <div class="container fun-passes">
@@ -226,14 +228,6 @@
             <div class="col-6 text-end mb-4">
                 <h4>Dog Grooming Salon</h4>
                 Opening Hours: Mon - Sat: 9.30am - 5.00pm
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 text-center">
-                <h5>Need to talk to someone about a Service?</h5>
-                Phone: 123-456-7890
-                <br>
-                Submit Enquiry Form <a href="#">here</a>.
             </div>
         </div>
     </div>

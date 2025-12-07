@@ -211,7 +211,7 @@ class OrderViewsTests(TestCase):
         self.assertContains(response, "unauthcode")
 
     def test_voucher_detail_requires_owner(self):
-        other_user = User.objects.create_user(
+        User.objects.create_user(
             username="other", email="other@example.com", password="pass1234"
         )
         order = Order.objects.create(user=self.user, is_paid=True)
@@ -255,7 +255,7 @@ class OrderViewsTests(TestCase):
         self.assertIn("/accounts/login/", response["Location"])
 
     def test_voucher_invoice_404_for_non_owner(self):
-        other_user = User.objects.create_user(
+        User.objects.create_user(
             username="other2", email="other2@example.com", password="pass1234"
         )
         order = Order.objects.create(
@@ -365,7 +365,7 @@ class OrderViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
         # Staff can redeem
-        staff = User.objects.create_user(
+        User.objects.create_user(
             username="staff", email="staff@example.com", password="pass1234", is_staff=True
         )
         self.client.login(username="staff", password="pass1234")
