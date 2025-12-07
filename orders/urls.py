@@ -10,6 +10,7 @@ urlpatterns = [
     path('cart/remove/<str:item_id>/',
          views.remove_from_cart, name='remove_from_cart'),
 
+    path('qr/', views.qr_redirect, name='qr'),
     path('voucher/invoice/<str:code>/',
          views.voucher_invoice, name='voucher_invoice'),
     path("voucher/<str:code>/qr/", views.voucher_qr_image, name="voucher_qr"),

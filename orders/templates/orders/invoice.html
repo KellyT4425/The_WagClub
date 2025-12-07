@@ -86,14 +86,13 @@
                 </table>
                 <!-- QR Code -->
                 <div class="qr-code-container">
-                    {% if voucher.qr_img_path %}
-                        <img src="{{ voucher.qr_img_path.url }}"
+                    {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+                    {% with qr_target=site_root|add:redeem_path %}
+                        <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                              alt="QR Code"
                              style="max-width: 200px">
-                        <p class="mt-2">Voucher Code: {{ voucher.code }}</p>
-                    {% else %}
-                        <p>No QR code available</p>
-                    {% endif %}
+                    {% endwith %}
+                    <p class="mt-2">Voucher Code: {{ voucher.code }}</p>
                 </div>
                 <!-- Terms and Conditions -->
                 <div class="mt-5">

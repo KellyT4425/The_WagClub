@@ -15,9 +15,12 @@
       </div>
       <!-- Body -->
       <div class="voucher-body text-center">
-        <img src="{% url 'orders:voucher_qr' voucher.code %}"
-             alt="QR Code for voucher {{ voucher.code }}"
-             class="voucher-qr mb-3">
+        {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+        {% with qr_target=site_root|add:redeem_path %}
+          <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
+               alt="QR Code for voucher {{ voucher.code }}"
+               class="voucher-qr mb-3">
+        {% endwith %}
 
         <div class="row text-start g-3 mb-3">
           <div class="col-12 col-md-6">

@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from services.models import Service
 from .models import Voucher, Order, OrderItem
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
 import stripe
 import uuid
 import ast
 import qrcode
+import hashlib
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
@@ -19,6 +20,11 @@ from django.utils import timezone
 from django.db import IntegrityError
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_http_methods
+
+try:  # Cloudinary upload (optional)
+    import cloudinary.uploader as cloud_uploader
+except Exception:  # pragma: no cover
+    cloud_uploader = None
 
 # Stripe exceptions can live in different modules across versions
 try:
@@ -35,6 +41,15 @@ User = get_user_model()
 
 def staff_required(user):
     return user.is_staff or user.is_superuser
+
+
+def get_site_root(request):
+    """Return SITE_URL or derive from request."""
+    site_root = getattr(settings, "SITE_URL", "") or ""
+    site_root = site_root.rstrip("/")
+    if not site_root:
+        site_root = request.build_absolute_uri("/").rstrip("/")
+    return site_root
 
 
 @login_required
@@ -259,6 +274,66 @@ def generate_qr_code(voucher, site_url=None):
     voucher.qr_img_path.name = filename
 
 
+def qr_redirect(request):
+    """
+    Deterministic QR generator backed by Cloudinary/default storage.
+    Expects ?t=<text>; uses sha1(text) for public_id to allow CDN reuse.
+    """
+    text = (request.GET.get("t") or "").strip()
+    if not text:
+        return HttpResponseBadRequest("Missing t")
+
+    digest = hashlib.sha1(text.encode("utf-8")).hexdigest()
+    public_id = f"qr/{digest}"
+    filename = f"{public_id}.png"
+
+    # If already present, redirect immediately
+    try:
+        if default_storage.exists(filename):
+            return redirect(default_storage.url(filename))
+    except Exception:
+        pass
+
+    # Generate QR
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(text)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    # Prefer Cloudinary upload when available
+    if cloud_uploader:
+        try:
+            res = cloud_uploader.upload(
+                buffer.getvalue(),
+                public_id=public_id,
+                overwrite=True,
+                unique_filename=False,
+                resource_type="image",
+                format="png",
+            )
+            url = res.get("secure_url") or res.get("url")
+            if url:
+                return redirect(url)
+        except Exception:
+            pass
+
+    # Fallback to default storage
+    try:
+        if default_storage.exists(filename):
+            default_storage.delete(filename)
+        default_storage.save(filename, ContentFile(buffer.getvalue()))
+        return redirect(default_storage.url(filename))
+    except Exception:
+        return HttpResponse(status=500)
+
+
 def success_view(request):
     """Show the success page; orders/vouchers are created via webhook."""
     session_id = request.GET.get('session_id')
@@ -320,6 +395,7 @@ def success_view(request):
     return render(request, 'orders/success.html', {
         'order': order,
         'vouchers': vouchers,
+        'site_root': get_site_root(request),
     })
 
 
@@ -342,7 +418,7 @@ def voucher_invoice(request, code):
         'voucher': voucher,
         'user': voucher.user,
         'service': voucher.service,
-
+        'site_root': get_site_root(request),
     }
 
     return render(request, 'orders/invoice.html', context)
@@ -363,6 +439,7 @@ def voucher_detail(request, code):
         'voucher': voucher,
         'page_title': f'Voucher: {voucher.code}',
         "MEDIA_URL": settings.MEDIA_URL,
+        'site_root': get_site_root(request),
     }
 
     return render(request, 'orders/voucher_detail.html', context)
@@ -410,6 +487,7 @@ def redeem_voucher(request, code):
         "can_redeem": True,
         "redeem_action_url": reverse("orders:redeem_voucher", args=[voucher.code]),
         "default_redeem_url": reverse("orders:redeem_voucher", args=[voucher.code]),
+        "site_root": get_site_root(request),
     }
     return render(request, "orders/scan_voucher.html", context)
 
@@ -440,6 +518,7 @@ def scan_voucher(request, code):
         "voucher": voucher,
         "can_redeem": request.user.is_staff or request.user.is_superuser,
         "default_redeem_url": reverse("orders:scan_voucher", args=[voucher.code]),
+        "site_root": get_site_root(request),
     }
     return render(request, "orders/scan_voucher.html", context)
 
@@ -472,6 +551,7 @@ def my_wallet(request):
         'expired_vouchers': expired_vouchers,
         'page_title': 'My Wallet',
         "MEDIA_URL": settings.MEDIA_URL,
+        'site_root': get_site_root(request),
     }
 
     return render(request, "orders/my_wallet.html", context)
