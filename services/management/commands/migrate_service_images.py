@@ -43,25 +43,34 @@ class Command(BaseCommand):
                 migrated += 1
                 continue
 
-            # Load the local file
-            local_file = Path(service.img_path.path) if hasattr(service.img_path, "path") else None
-            if not local_file or not local_file.exists():
-                logger.warning("Local file missing for service %s: %s", service.id, current_path)
+            content = None
+
+            # Try to read via the file field/storage
+            try:
+                with service.img_path.open("rb") as f:
+                    content = ContentFile(f.read())
+            except Exception:
+                # Fallback to local filesystem path if available
+                local_file = Path(service.img_path.path) if hasattr(service.img_path, "path") else None
+                if local_file and local_file.exists():
+                    with local_file.open("rb") as f:
+                        content = ContentFile(f.read())
+
+            if content is None:
+                logger.warning("Could not read image for service %s: %s", service.id, current_path)
                 skipped += 1
                 continue
 
             if dry_run:
-                logger.info("[DRY RUN] Would upload %s", local_file)
+                logger.info("[DRY RUN] Would upload %s", current_path)
                 migrated += 1
                 continue
 
             # Upload to default storage
-            with local_file.open("rb") as f:
-                content = ContentFile(f.read())
-                saved_path = default_storage.save(current_path, content)
-                service.img_path.name = saved_path
-                service.save(update_fields=["img_path"])
-                logger.info("Uploaded and updated service %s to %s", service.id, saved_path)
-                migrated += 1
+            saved_path = default_storage.save(current_path, content)
+            service.img_path.name = saved_path
+            service.save(update_fields=["img_path"])
+            logger.info("Uploaded and updated service %s to %s", service.id, saved_path)
+            migrated += 1
 
         self.stdout.write(self.style.SUCCESS(f"Migrated: {migrated}, Skipped: {skipped}"))
