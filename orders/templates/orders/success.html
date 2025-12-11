@@ -3,7 +3,11 @@
 {% block page_header %}
   <div class="text-center my-4">
     <h2 class="service-page heading">Payment successful</h2>
-    <p class="text-muted mb-0">Your vouchers are ready to use.</p>
+    {% if pending_order %}
+      <p class="text-muted mb-0">Payment received. Finalising your vouchers now.</p>
+    {% else %}
+      <p class="text-muted mb-0">Your vouchers are ready to use.</p>
+    {% endif %}
   </div>
 {% endblock page_header %}
 {% block content %}
@@ -14,7 +18,11 @@
           <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mb-4">
             <div>
               <h3 class="heading mb-1">Thank you for your order!</h3>
-              <p class="text-muted mb-1">Payment processed and vouchers issued.</p>
+              {% if pending_order %}
+                <p class="text-muted mb-1">Payment processed. We're issuing your vouchers now.</p>
+              {% else %}
+                <p class="text-muted mb-1">Payment processed and vouchers issued.</p>
+              {% endif %}
               {% if order %}
                 <p class="small text-muted mb-0">Order #{{ order.id }}{% if order.created_at %} • {{ order.created_at|date:"M d, Y H:i" }}{% endif %}</p>
               {% endif %}
@@ -34,14 +42,14 @@
                       <p class="text-uppercase small text-muted mb-1">{{ voucher.service.category.name }}</p>
                       <h5 class="card-title heading mb-2">{{ voucher.service.name }}</h5>
                       <p class="mb-2"><strong>Code:</strong> {{ voucher.code }}</p>
-                      {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
-                      {% with qr_target=site_root|add:redeem_path %}
-                        <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
-                             alt="QR Code for {{ voucher.code }}"
-                             loading="lazy"
-                             decoding="async"
-                             class="img-fluid voucher-qr mb-3">
-                      {% endwith %}
+              {% url 'orders:scan_voucher' voucher.code as redeem_path %}
+              {% with qr_target=site_root|add:redeem_path %}
+                <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
+                     alt="QR Code for {{ voucher.code }}"
+                     loading="lazy"
+                     decoding="async"
+                     class="img-fluid voucher-qr mb-3">
+              {% endwith %}
                       <p class="small text-muted mb-1">Issued: {{ voucher.issued_at|date:"M d, Y" }}</p>
                       <p class="small text-muted mb-3">Expires: {{ voucher.expires_at|date:"M d, Y" }}</p>
                       <a href="{% url 'orders:voucher_detail' voucher.code %}" class="btn btn-outline-secondary mt-auto">View voucher</a>
@@ -51,9 +59,14 @@
               {% endfor %}
             </div>
           {% else %}
-            <div class="alert alert-warning mt-3 mb-0">
-              <p class="mb-1">No vouchers were generated for this order.</p>
-              <p class="mb-0">If you believe this is an error, please contact support with your order ID.</p>
+            <div class="alert {% if pending_order %}alert-info{% else %}alert-warning{% endif %} mt-3 mb-0">
+              {% if pending_order %}
+                <p class="mb-1">We're creating your vouchers now.</p>
+                <p class="mb-0">This can take a few moments. Check My Wallet shortly or refresh this page.</p>
+              {% else %}
+                <p class="mb-1">No vouchers were generated for this order.</p>
+                <p class="mb-0">If you believe this is an error, please contact support with your order ID.</p>
+              {% endif %}
             </div>
           {% endif %}
         </div>

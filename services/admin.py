@@ -1,3 +1,5 @@
+"""Admin registrations for services."""
+
 from django.contrib import admin
 from .models import ServiceCategory, Service, ServiceImage
 

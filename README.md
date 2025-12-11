@@ -17,6 +17,8 @@
   - [Frontend](#frontend)
   - [Backend](#backend)
   - [Tech Stack](#tech-stack)
+  - [Core Technologies \& Frameworks](#core-technologies--frameworks)
+  - [E-commerce \& Payment Integration](#e-commerce--payment-integration)
   - [Data Model](#data-model)
     - [Entities](#entities)
     - [ERD Diagram (Mermaid)](#erd-diagram-mermaid)
@@ -35,6 +37,7 @@
   - [Business Model](#business-model)
   - [Marketing \& SEO](#marketing--seo)
   - [Validation \& Quality](#validation--quality)
+  - [Validation Findings](#validation-findings)
   - [DevOps \& Tooling](#devops--tooling)
   - [Credits](#credits)
   - [License](#license)
@@ -55,8 +58,10 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Repository: [Github](https://github.com/KellyT4425/The_WagClub)
 
 ## Product Screenshots
-- Homepage hero:  
-  <img src="static/images/homepage-hero-img.jpg" alt="Homepage" width="100%" style="max-width: 1100px; height: auto; display: block; margin: 0 auto;" />
+- Homepage hero:
+-
+  <img src="static\images\home-page.png" alt="Homepage" width="50%" style="max-width: 1100px; height: auto; margin: 0 auto;" /> <br>
+  <img src="static\images\service-detail-page.png" alt="Service Page" width="50%" style="max-width: 1100px; height: auto; margin: 0 auto;" />
 - Social mockups: `static/images/facebook-eg.png`, `static/images/insta-post.png`
 - Additional captures: add your own for services list/detail, cart/checkout, and wallet/voucher views.
 
@@ -229,10 +234,10 @@ erDiagram
 - Wireframes: See dedicated section below for current mockups linked from `static/images`.
 
 ## Wireframes
-- Core layout baseline:  
+- Core layout baseline:
   <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="820" />
 
-- Services experience:  
+- Services experience:
   <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="820" />
 
 ## Stripe Payments
@@ -364,8 +369,9 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Templates: `python -m djlint templates orders/templates --check` (formatting suggestions only; no structural errors).
   - Accessibility: WAVE re-check after navbar logo alt fix; QR images have descriptive alt + lazy/async; external links include `rel="noopener"`.
   - Performance/Best Practices: Lighthouse recommended after deploy; hero image optimized (webp/jpg) and fonts preloaded; Stripe JS removed from base to avoid third-party cookies on non-checkout pages.
-  - CSS linting: `npx stylelint "static/**/*.css"` (pass with relaxed rules to avoid visual changes); config in `.stylelintrc.json`.
-  - JS linting: `npx jshint static/js` (no custom JS present to lint).
+- CSS linting: `npx stylelint "static/**/*.css"` (pass with relaxed rules to avoid visual changes); config in `.stylelintrc.json`.
+- JS linting: `npx jshint static/js` (no custom JS present to lint).
+- JS tooling: `node_modules` is dev-only (stylelint/JSHint); keep `node_modules/` and `package-lock.json` ignored in git.
 
 ## Validation Findings
 - Accessibility: Logo alt clarified; QR imagery annotated and lazily loaded; social links hardened with `rel="noopener"`.

@@ -1,9 +1,8 @@
+"""Service catalogue views: home, listing with search, and detail pages."""
+
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from .models import Service
-
-
-# Create your views here.
 
 
 def home(request):
@@ -13,7 +12,12 @@ def home(request):
 
 def service_list(request):
     """List services by category with optional search filtering."""
-    query = request.GET.get("q", "").strip()
+    query = (
+        request.GET.get("q")
+        or request.GET.get("query")
+        or request.GET.get("search")
+        or ""
+    ).strip()
 
     # Base queryset
     services_qs = Service.objects.filter(is_active=True).select_related("category")

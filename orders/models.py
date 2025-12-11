@@ -1,3 +1,5 @@
+"""Core models and configuration for orders."""
+
 from django.db import models
 from services.models import Service
 from django.contrib.auth import get_user_model

@@ -18,9 +18,9 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="voucher-card h-100">
                         <div class="voucher-card-header issued-bg heading text-center">{{ voucher.service.name }}</div>
-                        <div class="voucher-card-body text-center">
+                            <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
-                                {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+                                {% url 'orders:scan_voucher' voucher.code as redeem_path %}
                                 {% with qr_target=site_root|add:redeem_path %}
                                     <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                                          alt="QR code for voucher {{ voucher.code }}"
@@ -60,7 +60,7 @@
                         <div class="voucher-card h-100">
                             <div class="voucher-card-header redeemed-bg heading text-center">{{ voucher.service.name }}</div>
                             <div class="voucher-card-body text-center">
-                                {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+                                {% url 'orders:scan_voucher' voucher.code as redeem_path %}
                                 {% with qr_target=site_root|add:redeem_path %}
                                     <div class="voucher-qr-box mb-2">
                                         <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"

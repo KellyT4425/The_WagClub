@@ -1,3 +1,5 @@
+"""Admin registrations for orders."""
+
 from django.contrib import admin
 from .models import Order, OrderItem, Voucher
 

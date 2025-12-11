@@ -1,3 +1,4 @@
+# robots.txt generated for The Wag Club (public sitemap crawl allowed)
 User-agent: *
 Disallow:
 Sitemap: https://the-wagclub-0b0521e2a364.herokuapp.com/sitemap.xml

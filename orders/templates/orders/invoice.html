@@ -86,7 +86,7 @@
                 </table>
                 <!-- QR Code -->
                 <div class="qr-code-container">
-                    {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
+                    {% url 'orders:scan_voucher' voucher.code as redeem_path %}
                     {% with qr_target=site_root|add:redeem_path %}
                         <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                              alt="QR code for voucher {{ voucher.code }}"

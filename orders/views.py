@@ -1,3 +1,5 @@
+"""Order and voucher views: checkout, Stripe webhooks, wallets, QR/redemption."""
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from services.models import Service
@@ -253,7 +255,7 @@ def generate_qr_code(voucher, site_url=None):
     """Generate and attach a QR image for a voucher that points to staff redeem."""
     site_root = site_url or getattr(settings, "SITE_URL", "")
     site_root = (site_root or "http://localhost:8000").rstrip("/")
-    redeem_path = reverse("orders:redeem_voucher", args=[voucher.code])
+    redeem_path = reverse("orders:scan_voucher", args=[voucher.code])
     redeem_url = f"{site_root}{redeem_path}"
 
     qr = qrcode.QRCode(
@@ -379,17 +381,22 @@ def success_view(request):
         user=order_user, is_paid=True, stripe_session_id=session_id
     ).order_by('-created_at').first()
 
+    pending = False
+    vouchers = []
+
     if not order:
-        messages.warning(
-            request,
-            "We couldn't find your order for this payment yet. "
-            "Please check again in a moment or contact support.",
-        )
-        return redirect('orders:cart')
+        pending = True
+        try:
+            order = build_order_from_session(order_user, stripe_session, metadata, session_id)
+            if order:
+                vouchers = Voucher.objects.filter(order_item__order=order)
+                pending = False
+        except Exception:
+            pending = True
+    else:
+        vouchers = Voucher.objects.filter(order_item__order=order)
 
-    vouchers = Voucher.objects.filter(order_item__order=order)
-
-    if 'cart' in request.session:
+    if not pending and 'cart' in request.session:
         del request.session['cart']
         request.session.modified = True
 
@@ -397,12 +404,72 @@ def success_view(request):
         'order': order,
         'vouchers': vouchers,
         'site_root': get_site_root(request),
+        'pending_order': pending,
+        'session_id': session_id,
     })
 
 
 def cancel_view(request):
     """Display page when checkout is canceled."""
     return render(request, 'orders/cancel.html')
+
+
+def build_order_from_session(user, stripe_session, metadata, session_id):
+    """
+    Fallback: create order/vouchers from the Stripe session metadata when webhook hasn't completed yet.
+    Returns the order or None.
+    """
+    if metadata is None:
+        return None
+
+    cart_items_str = metadata.get('cart_items', '[]')
+    try:
+        cart_items = ast.literal_eval(cart_items_str)
+    except Exception:
+        cart_items = []
+
+    order, created = Order.objects.get_or_create(
+        stripe_session_id=session_id,
+        defaults={
+            "user": user,
+            "is_paid": True,
+            "created_at": timezone.now(),
+        },
+    )
+
+    # If order already existed, don't recreate items
+    if not created:
+        return order
+
+    for item_data in cart_items:
+        try:
+            service_id = item_data.get('id')
+            total_quantity = int(item_data.get('quantity', 1))
+            service = Service.objects.get(id=service_id)
+            price = float(item_data.get('price', service.price))
+
+            order_item = OrderItem.objects.create(
+                order=order,
+                service=service,
+                quantity=total_quantity,
+                price=price
+            )
+
+            for _ in range(total_quantity):
+                voucher_code = str(uuid.uuid4())[:16]
+                voucher = Voucher(
+                    service=service,
+                    order_item=order_item,
+                    user=user,
+                    code=voucher_code,
+                    status="ISSUED"
+                )
+                generate_qr_code(voucher)
+                voucher.save()
+        except Exception:
+            continue
+
+    return order
 
 
 @login_required

@@ -8,20 +8,24 @@
     {{ block.super }}
 {% endblock corejs %}
 {% block page_header %}
-    <div class="text-center">
-        <h2 class="service-page heading">Services</h2>
+    <div class="text-center my-4">
+        <h1 class="service-page heading">Services</h1>
+        <p class="text-muted mb-0">Browse our passes, packages, and offers.</p>
     </div>
 {% endblock page_header %}
 {% block content %}
     {% if search_query %}
         <div class="container mb-4">
-            <div class="alert alert-info shadow-sm">
-                Showing results for "<strong>{{ search_query }}</strong>".
-                {% if search_results %}
-                    Found {{ search_results|length }} service{{ search_results|length|pluralize }}.
-                {% else %}
-                    No services match your search yet.
-                {% endif %}
+            <div class="alert alert-info shadow-sm d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                <div>
+                    Showing results for "<strong>{{ search_query }}</strong>".
+                    {% if search_results %}
+                        Found {{ search_results|length }} service{{ search_results|length|pluralize }}.
+                    {% else %}
+                        No services match your search yet.
+                    {% endif %}
+                </div>
+                <a href="{% url 'services:service_list' %}" class="btn btn-outline-primary btn-sm">Clear search</a>
             </div>
         </div>
         {% if search_results %}
@@ -29,7 +33,7 @@
                 <div class="row g-4 space-row">
                     {% for s in search_results %}
                         <div class="col-12 col-sm-6 col-lg-3">
-                            <div class="card custom-card">
+                            <div class="card custom-card h-100">
                                 {% if s.img_path %}
                                     <img src="{{ s.img_path.url }}"
                                          class="card-img-top"
@@ -59,9 +63,10 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="service_id" value="{{ s.id }}">
                                         <button type="submit"
-                                                class="btn btn-sm"
+                                                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2"
                                                 aria-label="Add {{ s.name }} to cart">
-                                            <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                            <img src="{% static 'images/add-to-cart.svg' %}" alt="" aria-hidden="true">
+                                            <span>Add to cart</span>
                                         </button>
                                     </form>
                                 </div>
@@ -70,11 +75,18 @@
                     {% endfor %}
                 </div>
             </div>
+        {% else %}
+            <div class="container mb-5">
+                <div class="card custom-card p-4 text-center">
+                    <p class="mb-3 text-muted">Try a different keyword or browse all services below.</p>
+                    <a href="{% url 'services:service_list' %}" class="btn btn-primary">Browse all services</a>
+                </div>
+            </div>
         {% endif %}
     {% endif %}
     <!-- Passes -->
     <div>
-        <h3 class="text-center heading service-section-title">Passes</h3>
+        <h2 class="text-center heading service-section-title">Passes</h2>
         <div class="container fun-passes">
             <div class="row g-4 space-row">
                 {% for s in doggy_daycare_pass %}
@@ -107,12 +119,13 @@
                                       class="d-inline">
                                     {% csrf_token %}
                                     <input type="hidden" name="service_id" value="{{ s.id }}">
-                                    <button type="submit"
-                                            class="btn btn-sm"
-                                            aria-label="Add {{ s.name }} to cart">
-                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
-                                    </button>
-                                </form>
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2"
+                                        aria-label="Add {{ s.name }} to cart">
+                                    <img src="{% static 'images/add-to-cart.svg' %}" alt="" aria-hidden="true">
+                                    <span>Add to cart</span>
+                                </button>
+                            </form>
                             </div>
                         </div>
                     </div>
@@ -122,12 +135,64 @@
     </div>
     <!-- Packages -->
     <div>
-        <h3 class="text-center heading service-section-title">Packages</h3>
+        <h2 class="text-center heading service-section-title">Packages</h2>
         <div class="container fun-passes">
             <div class="row space-row">
                 {% for s in doggy_grooming_packs %}
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card custom-card">
+                            {% if s.img_path %}
+                                <img src="{{ s.img_path.url }}"
+                                     class="card-img-top"
+                                     alt="{{ s.alt_text|default:s.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    Duration:
+                                    {% if s.duration_hours %}
+                                        {{ s.duration_hours|floatformat:2 }}h
+                                    {% else %}
+                                        8.30am - 18.30pm(daily)
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
+                            </ul>
+                            <div class="card-body">
+                                <a href="{% url 'services:service_detail' s.slug %}"
+                                   class="card-link btn btn-sm btn-primary">Details</a>
+                                    <form action="{% url 'orders:add_to_cart' %}"
+                                          method="post"
+                                          class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="service_id" value="{{ s.id }}">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2"
+                                                aria-label="Add {{ s.name }} to cart">
+                                            <img src="{% static 'images/add-to-cart.svg' %}" alt="" aria-hidden="true">
+                                            <span>Add to cart</span>
+                                        </button>
+                                    </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Offers -->
+    <div class="mt-4">
+        <h2 class="text-center heading service-section-title">Offers</h2>
+        <div class="alert alert-warning wag-offer-alert text-center shadow-sm">
+            <strong>Don't forget!</strong> Check out our special offers - more wag for less!
+        </div>
+        <div class="container fun-passes">
+            <div class="row space-row">
+                {% for s in pet_offers %}
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card custom-card h-100">
                             {% if s.img_path %}
                                 <img src="{{ s.img_path.url }}"
                                      class="card-img-top"
@@ -156,66 +221,16 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="service_id" value="{{ s.id }}">
                                     <button type="submit"
-                                            class="btn btn-sm"
+                                            class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2"
                                             aria-label="Add {{ s.name }} to cart">
-                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
+                                        <img src="{% static 'images/add-to-cart.svg' %}" alt="" aria-hidden="true">
+                                        <span>Add to cart</span>
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
-            </div>
-        </div>
-    </div>
-    <!-- Offers -->
-    <div>
-        <h3 class="text-center heading service-section-title">Offers</h3>
-        <div class="alert alert-warning wag-offer-alert text-center shadow-sm">
-            <strong>Don’t forget!</strong> Check out our special offers — more wag for less!🐾
-            <div class="container fun-passes">
-                <div class="row space-row">
-                    {% for s in pet_offers %}
-                        <div class="col-12 col-sm-6 col-lg-3">
-                            <div class="card custom-card">
-                                {% if s.img_path %}
-                                    <img src="{{ s.img_path.url }}"
-                                         class="card-img-top"
-                                         alt="{{ s.alt_text|default:s.name }}">
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title text-center heading">{{ s.name }}</h5>
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        Duration:
-                                        {% if s.duration_hours %}
-                                            {{ s.duration_hours|floatformat:2 }}h
-                                        {% else %}
-                                            8.30am - 18.30pm(daily)
-                                        {% endif %}
-                                    </li>
-                                    <li class="list-group-item">Price: €{{ s.price|floatformat:2 }}</li>
-                                </ul>
-                                <div class="card-body">
-                                    <a href="{% url 'services:service_detail' s.slug %}"
-                                       class="card-link btn btn-sm btn-primary">Details</a>
-                                    <form action="{% url 'orders:add_to_cart' %}"
-                                          method="post"
-                                          class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="service_id" value="{{ s.id }}">
-                                        <button type="submit"
-                                                class="btn btn-sm"
-                                                aria-label="Add {{ s.name }} to cart">
-                                            <img src="{% static 'images/add-to-cart.svg' %}" alt="Add to cart">
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
             </div>
         </div>
     </div>

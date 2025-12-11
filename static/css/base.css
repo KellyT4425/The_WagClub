@@ -665,6 +665,10 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.auth-card.auth-wide {
+    max-width: 520px;
+}
+
 .auth-card h3 {
     font-family: "Patrick Hand SC", cursive;
     font-size: 2rem;
