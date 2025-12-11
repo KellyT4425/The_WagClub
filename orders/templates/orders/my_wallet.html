@@ -18,7 +18,7 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="voucher-card h-100">
                         <div class="voucher-card-header issued-bg heading text-center">{{ voucher.service.name }}</div>
-                            <div class="voucher-card-body text-center">
+                        <div class="voucher-card-body text-center">
                             <div class="voucher-qr-box">
                                 {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
                                 {% with qr_target=site_root|add:redeem_path %}
@@ -28,14 +28,15 @@
                                          decoding="async">
                                 {% endwith %}
                             </div>
+                            <p class="mb-1 fw-semibold heading">{{ voucher.service.category.name }}</p>
                             <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
-                            <p class="mb-1"><strong>Status:</strong> Active</p>
+                            <p class="mb-1 text-success"><strong>Status:</strong> Active</p>
                             <p class="mb-0"><strong>Expires:</strong> {{ voucher.expires_at|date:"F j, Y" }}</p>
                         </div>
-                        <div class="voucher-card-footer">
-                            <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
+                        <div class="voucher-card-footer gap-2">
                             <a href="{% url 'orders:voucher_detail' voucher.code %}"
                                class="btn btn-sm btn-primary">View Details</a>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
                         </div>
                     </div>
                 </div>
@@ -68,6 +69,7 @@
                                              decoding="async">
                                     </div>
                                 {% endwith %}
+                                <p class="mb-1 fw-semibold heading">{{ voucher.service.category.name }}</p>
                                 <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
                                 <p class="mb-1 text-success"><strong>Status:</strong> Redeemed</p>
                                 {% if voucher.redeemed_at %}
@@ -95,6 +97,7 @@
                         <div class="voucher-card h-100">
                             <div class="voucher-card-header expired-bg heading text-center">{{ voucher.service.name }}</div>
                             <div class="voucher-card-body text-center">
+                                <p class="mb-1 fw-semibold heading">{{ voucher.service.category.name }}</p>
                                 <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
                                 <p class="mb-1 text-danger"><strong>Status:</strong> Expired</p>
                                 <p class="mb-0 small text-muted">Expired: {{ voucher.expires_at|date:"F j, Y" }}</p>

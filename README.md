@@ -1,4 +1,7 @@
-![Business Logo](static/images/business.png)
+<img src="static/images/business.png"
+     alt="The Wag Club logo"
+     width="85%"
+     style="max-width: 900px; height: auto; display: block; margin: 0 0 1.5rem 0;" />
 
 # The Wag Club
 > Pampering pups, one wag at a time.
@@ -52,15 +55,10 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Repository: [Github](https://github.com/KellyT4425/The_WagClub)
 
 ## Product Screenshots
-Replace the placeholders with your captures (examples below point to `static/images/*`):
-
-<img src="static/images/homepage-hero-img.jpg" alt="Homepage" width="820" />
-
-- Services listing: `static/images/services-list.png`
-- Cart & checkout: `static/images/cart-checkout.png`
-- Wallet & voucher detail: `static/images/wallet.png`
-- Admin/staff view (optional): `static/images/admin.png`
-- Social page (alt): `static/images/facebook-eg.png` / `static/images/insta-post.png`
+- Homepage hero:  
+  <img src="static/images/homepage-hero-img.jpg" alt="Homepage" width="100%" style="max-width: 1100px; height: auto; display: block; margin: 0 auto;" />
+- Social mockups: `static/images/facebook-eg.png`, `static/images/insta-post.png`
+- Additional captures: add your own for services list/detail, cart/checkout, and wallet/voucher views.
 
 ## Features
 - Service browsing with categories (Passes, Packages, Offers) and search.
@@ -109,6 +107,14 @@ Replace the placeholders with your captures (examples below point to `static/ima
 | Environment | `python-dotenv`, virtualenv/venv |
 | Deployment | Heroku (Python buildpack, Postgres add-on) |
 | Version Control | Git & GitHub |
+
+## Core Technologies & Frameworks
+- Django 5.x — backend framework for models, routing, auth. Docs: https://docs.djangoproject.com/
+- Python 3.12 — backend language runtime. Docs: https://www.python.org/doc/
+- PostgreSQL — relational database for development/production. Docs: https://www.postgresql.org/docs/
+
+## E-commerce & Payment Integration
+- Stripe Checkout & Webhooks for payment flow, order creation, and voucher issuance. Docs: https://stripe.com/docs/checkout
 
 ## Data Model
 ### Entities
@@ -352,6 +358,19 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Python: Ruff linting; Django `check`; code formatted PEP8-style.
 - JS: Minimal ES6 usage; JSHint run with modern syntax allowances.
 - Templates: djLint for Django template formatting.
+- Latest checks:
+  - Python lint: `python -m ruff check orders services project_core` (pass).
+  - Django system check: `python manage.py check` (pass).
+  - Templates: `python -m djlint templates orders/templates --check` (formatting suggestions only; no structural errors).
+  - Accessibility: WAVE re-check after navbar logo alt fix; QR images have descriptive alt + lazy/async; external links include `rel="noopener"`.
+  - Performance/Best Practices: Lighthouse recommended after deploy; hero image optimized (webp/jpg) and fonts preloaded; Stripe JS removed from base to avoid third-party cookies on non-checkout pages.
+  - CSS linting: `npx stylelint "static/**/*.css"` (pass with relaxed rules to avoid visual changes); config in `.stylelintrc.json`.
+  - JS linting: `npx jshint static/js` (no custom JS present to lint).
+
+## Validation Findings
+- Accessibility: Logo alt clarified; QR imagery annotated and lazily loaded; social links hardened with `rel="noopener"`.
+- Performance: Hero background compressed and served via `image-set`; Google Fonts preconnect/preload with `display=swap`; global Stripe script removed to limit third-party cookies.
+- Linters: Ruff clean for `orders`, `services`, `project_core`; `manage.py check` passes; djLint reports formatting-only diffs (no template errors); stylelint passes with current config; no custom JS to lint.
 
 ## DevOps & Tooling
 - Deployment: Heroku (Python buildpack, Postgres add-on), `Procfile` with gunicorn, WhiteNoise static serving.
@@ -360,11 +379,15 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Version control: Git/GitHub; environment via `.env` (python-dotenv locally).
 
 ## Credits
-- Design: The Wag Club brand assets (logo, palette, typography).
-- Images: Stored in `static/images` (hero, service imagery, social mockups).
-- Libraries: Django, Bootstrap, Stripe, qrcode, Cloudinary, WhiteNoise, Django AllAuth.
-- Tools/References: Stripe docs (Checkout, Webhooks, CLI), Django docs (storage, management commands), Cloudinary docs (Django storage), Heroku runtime/buildpack docs; Ruff for linting.
-- Testing/ops: `migrate_media_to_cloudinary`, `check_media_urls`, `migrate_media_to_cloudinary`, Stripe CLI for webhook/checkout event testing.
+- Design/Assets: The Wag Club brand (logo, palette, typography); imagery in `static/images` (hero, services, socials). Palette anchored on warm neutrals (#e3dad2, #c7a77b, #1a1a1a).
+- Core libraries: Django, Bootstrap 5, Stripe (Checkout/Payments API/Webhooks), qrcode, Pillow (image processing), Cloudinary (media/QR storage), WhiteNoise (static files), Django AllAuth (auth).
+- Docs/References: Django docs; Bootstrap docs; Stripe docs (Checkout, Payments API, Webhooks); Cloudinary docs; WhiteNoise docs; Django AllAuth docs; Heroku runtime/buildpack docs.
+- Tooling/Validation: Ruff, djLint, stylelint (standard config), JSHint; W3C HTML/CSS validators; Lighthouse; WAVE; Chrome DevTools.
+- Testing/Ops: Stripe Test Mode tools (test cards/webhook replay/session inspection); `migrate_media_to_cloudinary`; `check_media_urls`; Stripe CLI for webhook/checkout event testing.
+- Media sources: Project images from `static/images`; if supplemented with stock, use licensed sources such as Pexels/Unsplash and credit photographers as required.
+- Planning/Docs: GitHub Projects (Kanban); wireframes (Balsamiq/Canva if used); ERD via Lucidchart/Draw.io.
+- Error templates: Custom `404.html`/`500.html` per Django guidance.
+- Other Python deps (see `requirements.txt`): `dj_database_url`, `psycopg2`/`psycopg2-binary`, `gunicorn`, `django-cloudinary-storage`, `python-dotenv`, `stripe`.
 
 ## License
 This project is for educational purposes. Review third-party licenses for dependencies (Django, Bootstrap, Stripe, Cloudinary, etc.) before commercial use.

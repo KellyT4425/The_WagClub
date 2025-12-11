@@ -1,11 +1,20 @@
+:root {
+    --wag-olive: #5d583c;
+    --wag-sand: #d2b998;
+    --wag-mauve: #aba0a4;
+    --wag-sage: #b2b47e;
+    --wag-ink: #1a1a1a;
+    --wag-cream: #e3dad2;
+}
+
 /* ========== GLOBAL TYPOGRAPHY & LAYOUT ========== */
 
 body {
-    font-family: "Lato", sans-serif;
+    font-family: Lato, sans-serif;
     font-weight: 400;
     font-style: normal;
-    background-color: #e3dad2;
-    color: #1a1a1a;
+    background-color: var(--wag-cream);
+    color: var(--wag-ink);
     line-height: 1.6;
 }
 
@@ -29,7 +38,7 @@ main {
 /* ========== HERO / HOME ========== */
 
 .home-img {
-    background-color: #e3dad2;
+    background-color: var(--wag-cream);
     background-image: url("../images/homepage-hero-img-opt.jpg");
     background-image: image-set(
         url("../images/homepage-hero-img-opt.webp") type("image/webp"),
@@ -70,6 +79,8 @@ main {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 18px;
+    max-width: 640px;
+    margin: 0 auto;
 }
 
 /* Hero search bar styling */
@@ -94,8 +105,8 @@ main {
 }
 
 #search-bar .btn {
-    background: linear-gradient(135deg, #f7e9d5, #e2c9a1);
-    color: #1a1a1a;
+    background: linear-gradient(135deg, var(--wag-sand), var(--wag-sage));
+    color: var(--wag-ink);
     border: none;
     font-weight: 700;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22);
@@ -115,12 +126,12 @@ main {
 }
 
 .navbar-toggler {
-    border: 1px solid #c7a77b;
+    border: 1px solid var(--wag-sand);
     padding: 0.35rem 0.55rem;
 }
 
 .navbar-toggler:focus {
-    box-shadow: 0 0 0 0.15rem rgba(199, 167, 123, 0.4);
+    box-shadow: 0 0 0 0.15rem rgba(210, 185, 152, 0.4);
 }
 
 .navbar-toggler-icon {
@@ -130,20 +141,20 @@ main {
 
 
 .nav-link {
-    color: #1a1a1a !important;
+    color: var(--wag-ink) !important;
     font-weight: 500;
     letter-spacing: 0.5px;
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: #c7a77b !important;
+    color: var(--wag-olive) !important;
 }
 
 /* Make active links easier to see */
 .nav-link.active,
 .dropdown-item.active {
-    color: #c7a77b !important;
+    color: var(--wag-olive) !important;
     font-weight: 600;
 }
 
@@ -151,18 +162,18 @@ main {
 
 .foot-bar {
     background-color: #ffffff;
-    color: #1a1a1a;
+    color: var(--wag-ink);
     border-top: 1px solid #ccc;
     font-size: 0.95rem;
 }
 
 .foot-bar a {
-    color: #1a1a1a;
+    color: var(--wag-ink);
     transition: color .2s ease;
 }
 
 .foot-bar a:hover {
-    color: #c7a77b;
+    color: var(--wag-olive);
     text-decoration: none;
 }
 
@@ -245,15 +256,21 @@ main {
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 0.6px;
-    color: #1a1a1a;
+    color: var(--wag-ink);
     margin: 2rem 0 1rem;
+}
+
+.service-page {
+    font-size: 2.2rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
 }
 
 .service-pill {
     display: inline-block;
     padding: 0.4rem 0.75rem;
-    background: #f7e9d5;
-    color: #1a1a1a;
+    background: var(--wag-sand);
+    color: var(--wag-ink);
     border-radius: 999px;
     font-weight: 600;
     font-size: 0.9rem;
@@ -287,8 +304,8 @@ main {
 }
 
 .form-control:focus {
-    border-color: #c7a77b;
-    box-shadow: 0 0 5px rgba(199, 167, 123, 0.4);
+    border-color: var(--wag-sand);
+    box-shadow: 0 0 5px rgba(210, 185, 152, 0.4);
 }
 
 .btn {
@@ -310,21 +327,21 @@ main {
 }
 
 .btn-primary {
-    background-color: #1a1a1a;
-    border-color: #1a1a1a;
+    background-color: var(--wag-olive);
+    border-color: var(--wag-olive);
     color: #fff;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background-color: #5d583c !important;
-    border-color: #c7a77b;
+    background-color: #4a4530 !important;
+    border-color: var(--wag-sand);
     color: #fff;
 }
 
 .btn-outline-secondary {
-    color: #1a1a1a;
-    border-color: #1a1a1a;
+    color: var(--wag-ink);
+    border-color: var(--wag-ink);
     background-color: transparent;
 }
 
@@ -347,15 +364,15 @@ main {
 }
 
 .btn-info {
-    background-color: #c7a77b;
-    border-color: #c7a77b;
-    color: #1a1a1a;
+    background-color: var(--wag-sand);
+    border-color: var(--wag-sand);
+    color: var(--wag-ink);
 }
 
 .btn-info:hover,
 .btn-info:focus {
-    background-color: #b3946a;
-    border-color: #b3946a;
+    background-color: #bfa47a;
+    border-color: #bfa47a;
     color: #fff;
 }
 
@@ -717,9 +734,6 @@ main {
         font-size: 1.1rem;
     }
 
-    .hero-text-box {
-        margin-bottom: 20rem;
-    }
 }
 
 /* =======================
@@ -837,5 +851,10 @@ main {
 
     .auth-card {
         padding: 2rem 1.5rem;
+    }
+
+    .service-page {
+        font-size: 1.8rem;
+        letter-spacing: 0.3px;
     }
 }

@@ -14,6 +14,12 @@
 - US-Voucher-01: As staff, I can scan/redeem vouchers so I can validate them on-site.
 - US-Admin-01: As an admin, I can manage services so I can keep offerings current.
 
+## Linting & Checks
+- Python: `python manage.py check`, `ruff check orders services project_core` (pass).
+- Templates: `djlint templates orders/templates --check` (formatting suggestions only).
+- CSS: `npx stylelint "static/**/*.css"` (pass with project config).
+- JS: `npx jshint static/js` (no custom JS present to lint).
+
 ## Frontend & Navigation
 - Home load: Page renders hero, nav, footer, toasts hidden until messages.
 - Navigation links: Home, Services, Cart, Dashboard dropdown, footer Reviews/Contact all navigate correctly.
@@ -63,7 +69,7 @@
 - Social links: Footer Instagram and Facebook links open in new tab to correct pages.
 
 ## Accessibility
-- Alt text: Images have meaningful alt attributes (logo, services, social icons).
+- Alt text: Images have meaningful alt attributes (logo, services, QR codes, social icons).
 - Keyboard: Links/buttons focusable; nav toggle reachable via keyboard.
 - Forms: Labels associated, required fields marked; error states readable.
 - Contrast: Buttons/text meet contrast on primary backgrounds.
