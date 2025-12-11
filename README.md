@@ -1,7 +1,4 @@
-<img src="static/images/business.png"
-     alt="The Wag Club logo"
-     width="85%"
-     style="max-width: 900px; height: auto; display: block; margin: 0 0 1.5rem 0;" />
+<p align="center"><img src="static/images/business.png" alt="The Wag Club logo" width="720"></p>
 
 # The Wag Club
 > Pampering pups, one wag at a time.
@@ -55,18 +52,28 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 
 ## Live Demo & Repository
 - Live Site (Heroku): [Heroku](https://the-wagclub-0b0521e2a364.herokuapp.com/)
-- Repository: [Github](https://github.com/KellyT4425/The_WagClub)
+- Repository: [GitHub](https://github.com/KellyT4425/The_WagClub)
 
 ## Product Screenshots
-- Homepage hero:
--
-  <img src="static\images\home-page.png" alt="Homepage" width="50%" style="max-width: 1100px; height: auto; margin: 0 auto;" /> <br>
-  <img src="static\images\service-detail-page.png" alt="Service Page" width="50%" style="max-width: 1100px; height: auto; margin: 0 auto;" />
-- Social mockups: `static/images/facebook-eg.png`, `static/images/insta-post.png`
-- Additional captures: add your own for services list/detail, cart/checkout, and wallet/voucher views.
+- Homepage hero  
+  <img src="static/images/home-page.png" alt="Homepage hero with call-to-action" width="820" />
+- Services list with search results  
+  <img src="static/images/search-results.png" alt="Services list showing search results" width="820" />
+- Service detail page  
+  <img src="static/images/service-detail-page.png" alt="Service detail page with add to cart" width="820" />
+- Cart and checkout flow  
+  <img src="static/images/cart-page.png" alt="Cart page ready for checkout" width="820" />
+- Checkout (Stripe session)  
+  <img src="static/images/checkout.png" alt="Stripe checkout session" width="640" />
+- Wallet with vouchers  
+  <img src="static/images/my-wallet.png" alt="Wallet view showing active vouchers" width="820" />
+- Invoice / receipt with QR  
+  <img src="static/images/invoice.png" alt="Invoice with QR code" width="820" />
+- Success page (post-payment)  
+  <img src="static/images/success-view.png" alt="Order success page" width="820" />
 
 ## Features
-- Service browsing with categories (Passes, Packages, Offers) and search.
+- Service browsing with categories (Passes, Packages, Offers) and search from the home hero (results surface on the Services page with the full catalogue below).
 - Cart and checkout via Stripe Checkout Sessions with order metadata.
 - Voucher generation per line item quantity, including QR codes and expiry.
 - Customer wallet grouped by status: Active, Redeemed, Expired.
@@ -217,8 +224,8 @@ erDiagram
 ```
 
 ## User Experience
-- Navigation: clear navbar (Home, Services, Cart, Account), footer with newsletter + socials.
-- Search/filters: services list supports search; detail pages show gallery + add-to-cart.
+- Navigation: clear navbar (Home, Services, Cart, Account), footer with newsletter + socials; mobile shows a single vertical toggle with signed-in indicator.
+- Search/filters: search bar on the home hero routes to Services with results highlighted above the catalogue; detail pages show gallery + add-to-cart.
 - Vouchers: wallet grouped by Active/Redeemed/Expired; status badges and QR for active.
 - Redemption: staff-only endpoint; customers see status, not redeem controls.
 - Feedback: toast messages, form errors visible; success states after checkout/subscription.
@@ -227,18 +234,21 @@ erDiagram
 
 ## Design & Branding
 - Typography: Patrick Hand SC (headings/accent) and Lato (body) via Google Fonts; handwritten accent for warmth, clean sans for readability.
-- Palette: Soft neutrals with green/orange/red status accents for voucher states; transparent search bar and bordered info cards for clarity.
+- Palette: #5D583C (olive), #D2B998 (sand), #ABA0A4 (mauve), #B2B47E (sage), with #1A1A1A (ink) and #F7F2EA (cream) for contrast. Used for backgrounds, buttons, badges, and alerts with accessible pairings.
 - Icons: Font Awesome for UI glyphs; branded paw/QR assets in `static/images`.
 - Favicon: Included under `static/images` to keep brand presence across tabs/devices.
-- Layout: Mobile-first Bootstrap 5 grid; consistent card spacing, badges for statuses, and responsive footer (newsletter + socials).
+- Layout: Mobile-first Bootstrap 5 grid; consistent card spacing, badges for statuses, responsive footer (newsletter + socials), and accessible nav toggle/sign-in indicator on mobile.
+- Palette reference:  
+  <img src="static/images/colour-palettep5.png" alt="Brand colour palette swatches" width="620" />
+- Contrast grid:  
+  <img src="static/images/contrast-grid.png" alt="Foreground/background contrast grid for accessibility" width="620" />
 - Wireframes: See dedicated section below for current mockups linked from `static/images`.
 
 ## Wireframes
-- Core layout baseline:
-  <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="820" />
-
-- Services experience:
-  <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="820" />
+- Core layout baseline  
+  <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="520" />
+- Services experience  
+  <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="520" />
 
 ## Stripe Payments
 - Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
@@ -279,7 +289,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - `CLOUDINARY_URL` — Cloudinary media storage URL.
 - `STRIPE_SECRET_KEY` — Stripe secret key.
 - `STRIPE_PUBLISHABLE_KEY` — Stripe publishable key.
-- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret.
+- `STRIPE_WEBHOOK` — Stripe webhook signing secret (as used in settings).
 - `SITE_URL` — base URL for building absolute QR links (set to your deployed domain).
 - Email (if using SMTP): `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT=587`, `EMAIL_USE_TLS=True`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`.
 
@@ -306,11 +316,13 @@ Set these in `.env` locally and in Heroku config vars for production:
 
 ## Testing
 - Automated: `python manage.py test`
-  - Checkout session creation
-  - Webhook-driven order/voucher generation
-  - Service list view populates categories
+  - Checkout session creation (empty cart, login required)
+  - Stripe webhook: success, idempotency, bad signature, missing metadata
+  - Success view: avoids duplicate orders; handles unauthenticated metadata
+  - Vouchers: QR endpoint, wallet grouping, owner checks, scan/redeem (staff only, expired blocked, invalid code 404)
+  - Services: list categories, search filter, no-results message
   - Update tests as you add features; rerun after migrations/major changes.
-- Latest run: `python manage.py test` (14 tests, pass; system check clean).
+- Latest run: `python manage.py test` (21 tests, pass; system check clean).
 - Manual: key flows exercised on desktop/mobile:
   - Add to cart → Stripe Checkout → success clears cart
   - Vouchers in wallet (Active/Redeemed/Expired) with QR visible for Active
@@ -368,7 +380,7 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Django system check: `python manage.py check` (pass).
   - Templates: `python -m djlint templates orders/templates --check` (formatting suggestions only; no structural errors).
   - Accessibility: WAVE re-check after navbar logo alt fix; QR images have descriptive alt + lazy/async; external links include `rel="noopener"`.
-  - Performance/Best Practices: Lighthouse recommended after deploy; hero image optimized (webp/jpg) and fonts preloaded; Stripe JS removed from base to avoid third-party cookies on non-checkout pages.
+  - Performance/Best Practices: Lighthouse recommended after deploy; hero image optimized (webp/jpg) and fonts preloaded; Stripe JS loaded only on checkout pages to minimise third-party cookie noise.
 - CSS linting: `npx stylelint "static/**/*.css"` (pass with relaxed rules to avoid visual changes); config in `.stylelintrc.json`.
 - JS linting: `npx jshint static/js` (no custom JS present to lint).
 - JS tooling: `node_modules` is dev-only (stylelint/JSHint); keep `node_modules/` and `package-lock.json` ignored in git.
@@ -388,9 +400,10 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Design/Assets: The Wag Club brand (logo, palette, typography); imagery in `static/images` (hero, services, socials). Palette anchored on warm neutrals (#e3dad2, #c7a77b, #1a1a1a).
 - Core libraries: Django, Bootstrap 5, Stripe (Checkout/Payments API/Webhooks), qrcode, Pillow (image processing), Cloudinary (media/QR storage), WhiteNoise (static files), Django AllAuth (auth).
 - Docs/References: Django docs; Bootstrap docs; Stripe docs (Checkout, Payments API, Webhooks); Cloudinary docs; WhiteNoise docs; Django AllAuth docs; Heroku runtime/buildpack docs.
+- Design tools: Canva (for business tag/brand PNG assets), Balsamiq/Canva (wireframes), Lucidchart/Draw.io (ERD).
 - Tooling/Validation: Ruff, djLint, stylelint (standard config), JSHint; W3C HTML/CSS validators; Lighthouse; WAVE; Chrome DevTools.
 - Testing/Ops: Stripe Test Mode tools (test cards/webhook replay/session inspection); `migrate_media_to_cloudinary`; `check_media_urls`; Stripe CLI for webhook/checkout event testing.
-- Media sources: Project images from `static/images`; if supplemented with stock, use licensed sources such as Pexels/Unsplash and credit photographers as required.
+- Media sources: Project images from `static/images`; Canva-created business tags/brand PNGs; if supplemented with stock, use licensed sources such as Pexels/Unsplash and credit photographers as required.
 - Planning/Docs: GitHub Projects (Kanban); wireframes (Balsamiq/Canva if used); ERD via Lucidchart/Draw.io.
 - Error templates: Custom `404.html`/`500.html` per Django guidance.
 - Other Python deps (see `requirements.txt`): `dj_database_url`, `psycopg2`/`psycopg2-binary`, `gunicorn`, `django-cloudinary-storage`, `python-dotenv`, `stripe`.

@@ -40,3 +40,18 @@ class ServiceListViewTests(TestCase):
         self.assertContains(response, "Daycare 1")
         self.assertContains(response, "Groom Pack")
         self.assertContains(response, "Special Offer")
+
+    def test_service_search_filters_results(self):
+        response = self.client.get(reverse("services:service_list"), {"q": "groom"})
+        self.assertEqual(response.status_code, 200)
+        # Context search_results should only include the matching service
+        results = response.context["search_results"]
+        self.assertEqual(results.count(), 1)
+        self.assertEqual(results.first().name, "Groom Pack")
+
+    def test_service_search_no_results_shows_message(self):
+        response = self.client.get(reverse("services:service_list"), {"q": "cat"})
+        self.assertEqual(response.status_code, 200)
+        results = response.context["search_results"]
+        self.assertEqual(results.count(), 0)
+        self.assertContains(response, "Try a different keyword")

@@ -54,6 +54,13 @@ class OrderViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/accounts/login/", response["Location"])
 
+    def test_create_checkout_session_redirects_with_empty_cart(self):
+        """Logged-in user posting with an empty cart should be bounced back to cart."""
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.post(reverse("orders:create_checkout_session"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("orders:cart"), response["Location"])
+
     @patch("stripe.checkout.Session.create")
     def test_create_checkout_session_redirects_to_stripe(self, mock_create):
         mock_create.return_value = SimpleNamespace(
@@ -147,6 +154,33 @@ class OrderViewsTests(TestCase):
         self.assertEqual(
             Order.objects.first().stripe_session_id, session_id
         )
+
+    @patch("stripe.Webhook.construct_event")
+    def test_webhook_bad_signature_returns_400(self, mock_construct_event):
+        mock_construct_event.side_effect = ValueError("bad payload")
+        response = self.client.post(
+            reverse("orders:stripe_webhook"),
+            data="{}",
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE="sig",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Order.objects.count(), 0)
+
+    @patch("stripe.Webhook.construct_event")
+    def test_webhook_missing_metadata_no_order(self, mock_construct_event):
+        mock_construct_event.return_value = {
+            "type": "checkout.session.completed",
+            "data": {"object": SimpleNamespace(id="sess_no_meta", metadata=None)},
+        }
+        response = self.client.post(
+            reverse("orders:stripe_webhook"),
+            data="{}",
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE="sig",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Order.objects.count(), 0)
 
     @patch("stripe.checkout.Session.retrieve")
     def test_success_view_does_not_duplicate_order_creation(self, mock_retrieve):
@@ -373,3 +407,30 @@ class OrderViewsTests(TestCase):
         voucher.refresh_from_db()
         self.assertEqual(voucher.status, "REDEEMED")
         self.assertEqual(response.status_code, 302)
+
+    def test_scan_voucher_expired_blocked(self):
+        order = Order.objects.create(user=self.user, is_paid=True)
+        order_item = OrderItem.objects.create(
+            order=order, service=self.service, quantity=1, price=self.service.price
+        )
+        voucher = Voucher.objects.create(
+            service=self.service,
+            order_item=order_item,
+            user=self.user,
+            code="expiredscan",
+            status="EXPIRED",
+            expires_at=timezone.now(),
+        )
+        User.objects.create_user(
+            username="staff2", email="staff2@example.com", password="pass1234", is_staff=True
+        )
+        self.client.login(username="staff2", password="pass1234")
+        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        voucher.refresh_from_db()
+        self.assertEqual(voucher.status, "EXPIRED")
+        self.assertEqual(response.status_code, 302)
+
+    def test_scan_voucher_404_for_invalid_code(self):
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.get(reverse("orders:scan_voucher", args=["nocode"]))
+        self.assertEqual(response.status_code, 404)
