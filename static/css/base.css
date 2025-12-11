@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Patrick+Hand+SC&display=swap');
-
 /* ========== GLOBAL TYPOGRAPHY & LAYOUT ========== */
 
 body {
@@ -31,7 +29,14 @@ main {
 /* ========== HERO / HOME ========== */
 
 .home-img {
-    background: url("../images/homepage-hero-img.jpg") no-repeat center center fixed;
+    background-color: #e3dad2;
+    background-image: url("../images/homepage-hero-img-opt.jpg");
+    background-image: image-set(
+        url("../images/homepage-hero-img-opt.webp") type("image/webp"),
+        url("../images/homepage-hero-img-opt.jpg") type("image/jpeg")
+    );
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
     min-height: 100vh;
     margin: 0;

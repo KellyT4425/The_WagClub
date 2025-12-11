@@ -19,6 +19,7 @@
     - [ERD Diagram (Mermaid)](#erd-diagram-mermaid)
   - [User Experience](#user-experience)
   - [Design \& Branding](#design--branding)
+  - [Wireframes](#wireframes)
   - [Stripe Payments](#stripe-payments)
   - [Deployment (Heroku)](#deployment-heroku)
   - [Local Development](#local-development)
@@ -219,7 +220,14 @@ erDiagram
 - Icons: Font Awesome for UI glyphs; branded paw/QR assets in `static/images`.
 - Favicon: Included under `static/images` to keep brand presence across tabs/devices.
 - Layout: Mobile-first Bootstrap 5 grid; consistent card spacing, badges for statuses, and responsive footer (newsletter + socials).
-- Wireframes: Include/export your key page mockups (home, services list/detail, cart/checkout, wallet) under `static/docs/` and reference them here if required by assessment.
+- Wireframes: See dedicated section below for current mockups linked from `static/images`.
+
+## Wireframes
+- Core layout baseline:  
+  <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="820" />
+
+- Services experience:  
+  <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="820" />
 
 ## Stripe Payments
 - Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
