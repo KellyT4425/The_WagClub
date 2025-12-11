@@ -22,7 +22,10 @@
                             <div class="voucher-qr-box">
                                 {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
                                 {% with qr_target=site_root|add:redeem_path %}
-                                    <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}" alt="Voucher QR Code">
+                                    <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
+                                         alt="QR code for voucher {{ voucher.code }}"
+                                         loading="lazy"
+                                         decoding="async">
                                 {% endwith %}
                             </div>
                             <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
@@ -59,7 +62,10 @@
                                 {% url 'orders:redeem_voucher' voucher.code as redeem_path %}
                                 {% with qr_target=site_root|add:redeem_path %}
                                     <div class="voucher-qr-box mb-2">
-                                        <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}" alt="Voucher QR Code">
+                                        <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
+                                             alt="QR code for voucher {{ voucher.code }}"
+                                             loading="lazy"
+                                             decoding="async">
                                     </div>
                                 {% endwith %}
                                 <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>

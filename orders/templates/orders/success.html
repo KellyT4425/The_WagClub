@@ -38,6 +38,8 @@
                       {% with qr_target=site_root|add:redeem_path %}
                         <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                              alt="QR Code for {{ voucher.code }}"
+                             loading="lazy"
+                             decoding="async"
                              class="img-fluid voucher-qr mb-3">
                       {% endwith %}
                       <p class="small text-muted mb-1">Issued: {{ voucher.issued_at|date:"M d, Y" }}</p>

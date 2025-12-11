@@ -17,6 +17,8 @@
         {% with qr_target=site_root|add:redeem_path %}
           <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                alt="QR Code for voucher {{ voucher.code }}"
+               loading="lazy"
+               decoding="async"
                class="voucher-qr mb-3">
         {% endwith %}
         <p class="mb-1"><strong>Code:</strong> {{ voucher.code }}</p>
