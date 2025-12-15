@@ -5,15 +5,6 @@ Manual test cases grouped by area. Columns: step, expected outcome, result, and 
 Automated tests (latest run):
 - `python manage.py test` — 21 tests passing; covers service search (results and empty), checkout session (empty cart/login), Stripe webhook success/idempotent/bad signature/missing metadata, success view duplication guard, voucher QR/wallet/owner checks, staff scan/redeem (including expired block, invalid code 404).
 
-### User Stories (Manual Validation)
-- US-Auth-01: Register, login, logout, password reset flows validated in Authentication table.
-- US-Services-01: Browse and search services; see detail and add to cart (Homepage/Services tables).
-- US-Cart-01: Add/remove items; empty cart messaging; proceed to checkout (Cart table).
-- US-Pay-01: Stripe Checkout session opens with correct items; success page after payment (Cart & Orders tables).
-- US-Order-01: Vouchers created post-payment; wallet shows statuses; invoice available (Orders table).
-- US-Voucher-01: Staff can scan/redeem; non-staff blocked; expired blocked; invalid code 404 (Redemption table).
-- US-Admin-01: Admin CRUD on services/vouchers validated (Admin table).
-
 ### Homepage & Navigation
 | Test # | Step | Expected | Result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -28,7 +19,7 @@ Automated tests (latest run):
 | Test # | Step | Expected | Result | Evidence |
 | --- | --- | --- | --- | --- |
 | A1 | Register new user | Account created; signed-in state shown | Pass | <img src="static/images/register-form-validation1.png" alt="Register validation" width="360"> |
-| A2 | Login existing user | Redirect to home; nav shows signed-in indicator | Pass | <img src="static/images/signed-in-user-toggle.png" alt="Signed in" width="260"> |
+| A2 | Login existing user | Redirect to home; nav shows signed-in indicator | Pass | <img src="static/images/signin-badge.png" alt="Signed in badge" width="260"> |
 | A3 | Logout | Prompts confirm; returns to guest nav | Pass | <img src="static/images/signout-page.png" alt="Sign out" width="320"> |
 | A4 | Forgot password | Email sent; reset link form loads; reset success | Pass | <img src="static/images/email-reset-password.png" alt="Reset email" width="320"> <br> <img src="static/images/password-form-validation.png" alt="Reset form" width="320"> <br> <img src="static/images/password-email-sent.png" alt="Reset sent" width="320"> |
 
@@ -43,11 +34,11 @@ Automated tests (latest run):
 | --- | --- | --- | --- | --- |
 | C1 | Add to cart from detail | Item appears in cart with correct price | Pass | <img src="static/images/service-detail-page.png" alt="Service detail add to cart" width="420"> |
 | C2 | View cart | Items listed; totals correct; checkout button visible | Pass | <img src="static/images/cart-page.png" alt="Cart page" width="420"> |
-| C3 | Remove item | Item removed; empty cart message if none remain | Pass | (manual verify) |
+| C3 | Remove item | Item removed; empty cart message if none remain | Pass | Verified in UI |
 | C4 | Start checkout | Stripe Checkout opens with correct line items | Pass | <img src="static/images/checkout.png" alt="Stripe checkout session" width="420"> |
 | C5 | Empty cart state | Shows empty cart message and CTA | Pass | <img src="static/images/empty-cart.png" alt="Empty cart" width="420"> |
-| C6 | Cancel checkout | Stripe cancel returns to cart with items intact | Pass | (manual verify) |
-| C7 | Failed payment path | Stripe failure page reached; no order created | Pass | (manual verify) |
+| C6 | Cancel checkout | Stripe cancel returns to cart with items intact | Pass | Verified via Stripe test |
+| C7 | Failed payment path | Stripe failure page reached; no order created | Pass | Verified via Stripe test |
 
 ### Orders, Vouchers, Wallet
 | Test # | Step | Expected | Result | Evidence |
@@ -109,6 +100,7 @@ Automated tests (latest run):
 | L6 | W3C HTML | Validate deployed pages via W3C HTML validator | Pass | Validator results (manual) |
 | L7 | W3C CSS | Validate deployed CSS via W3C CSS validator | Pass | Validator results (manual) |
 | L8 | Lighthouse/WAVE | Accessibility/Best Practices/SEO | Pass | Lighthouse/WAVE runs post-fixes |
+| L9 | Python tests | `python manage.py test` | Pass | 21 tests passing (local run) |
 
 ### Search Engine / Responsiveness Checks
 - Meta: Title/description present; favicons load; `robots.txt` and `/sitemap.xml` reachable.

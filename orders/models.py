@@ -18,10 +18,13 @@ User = get_user_model()
 
 
 def default_expiry():
+    """Default voucher expiry 18 months from now."""
     return timezone.now() + relativedelta(months=18)
 
 
 class Order(models.Model):
+    """Represents a paid checkout session/order for a user."""
+
     user = models.ForeignKey(
         # adding plural suggests one user many "orders".
         User, on_delete=models.CASCADE, related_name="orders")
@@ -33,6 +36,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
+    """Line item within an order, storing service, quantity, and locked-in price."""
+
     service = models.ForeignKey(
         Service, on_delete=models.PROTECT, related_name="order_items")
     order = models.ForeignKey(
@@ -42,6 +47,8 @@ class OrderItem(models.Model):
 
 
 class Voucher(models.Model):
+    """Voucher generated from an order item, with QR code and lifecycle status."""
+
     service = models.ForeignKey(
         Service, on_delete=models.CASCADE, related_name="vouchers")
     order_item = models.ForeignKey(

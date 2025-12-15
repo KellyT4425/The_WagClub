@@ -246,9 +246,9 @@ erDiagram
 
 ## Wireframes
 - Core layout baseline  
-  <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="520" />
+  <img src="static/images/wireframes/wireframe-base.png" alt="Wireframe - base layout" width="520" />
 - Services experience  
-  <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="520" />
+  <img src="static/images/wireframes/wireframe-services.png" alt="Wireframe - services flow" width="520" />
 
 ## Stripe Payments
 - Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
@@ -336,11 +336,20 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Customer order history and invoices archive
   - Discount codes and promotional bundles
   - Reviews/ratings for services
+  - Profile and pet management (edit/delete account details and pet info)
+  - Downloadable vouchers (PDF/print-ready)
 - Admin/staff:
   - Staff dashboard with voucher search/filter
   - Bulk actions for voucher status/expiry
   - Rich analytics (redemption rates, revenue by service)
   - Waitlist or repeat/favourites flows (exploratory)
+- Deferred user stories (future sprints/backlog):
+  - Push/email alerts for voucher expiry and order confirmations
+  - Discount codes and promo campaigns
+  - Reviews/ratings and richer service discovery
+  - Staff dashboard with filters/analytics
+  - Saved favourites/recurring bookings
+  - Admin-side review management and profile/pet data oversight
 
 ## User Guide
 - Browse services: go to Services, search/filter, view details, add to cart.
@@ -358,16 +367,21 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Security: keep secrets in env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `CLOUDINARY_*`, `SECRET_KEY`, etc.), DEBUG off in prod.
 - CRUD: full CRUD available via Django admin for all models; user-facing flows cover create/read/update where applicable (cart/checkout/vouchers).
 
+## User Stories & Tracking
+- Tracked in GitHub issues/Projects (Must/Should haves). Closed Must-haves include: Browse Services (#1), View Service Details (#2), Search/Filter Services (#3), Add to Cart (#4), Pay with Stripe (#5), Receive Voucher (#6), Order Confirmation (#7), Create Account (#9), Secure Login (#10), View Orders/Wallet (#11), Reset Password (#15), Cart (#16), Admin Manage Services (#17), Admin Manage Vouchers (#19).
+- Should-haves completed: Admin Manage Vouchers (#19).
+- Deferred/backlog items are listed under Future Enhancements (profile/pet management, downloadable vouchers, reviews/discounts, staff dashboard, favourites/recurring, alerts).
+
 ## Business Model
 - Revenue: paid daycare/grooming services purchased online; each purchase issues vouchers for on-site redemption.
 - Flow: cart → Stripe Checkout → webhook creates order/vouchers → wallet for customer → staff redeem on scan.
 - Value: simplifies booking and redemption, provides clear statuses (Active/Redeemed/Expired), and staff-controlled redemption.
 
 ## Marketing & SEO
-- Social: Instagram link in footer; Facebook Business Page placeholder is linked in footer (`https://www.facebook.com/profile.php?id=61584298172958`)—replace with your real page if different. Include live/placeholder screenshots in Product Screenshots for assessment.
+- Social: Instagram link in footer; Facebook Business Page link in footer (`https://www.facebook.com/TheWagClubBiz`).
 - Newsletter: footer signup stored in `NewsletterSignup`.
 - SEO: meta description/keywords in `base.html`, title block; `robots.txt` allows all and points to `/sitemap.xml`; `sitemap.xml` lists key pages (home, services, wallet, login, signup); 404 page present. Add per-page meta if desired.
-- Agile/UX: maintain user stories/backlog in your Agile board and link it here; include wireframes/mockups (e.g., in `static/docs/`) and reference them in this README for assessment.
+- Agile/UX: maintain user stories/backlog in your Agile board; include wireframes/mockups and reference them here for assessment.
 
 ## Validation & Quality
 - HTML/CSS: W3C validators on deployed pages; vendor prefixes retained for cross-browser support.
@@ -397,16 +411,63 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Version control: Git/GitHub; environment via `.env` (python-dotenv locally).
 
 ## Credits
-- Design/Assets: The Wag Club brand (logo, palette, typography); imagery in `static/images` (hero, services, socials). Palette anchored on warm neutrals (#e3dad2, #c7a77b, #1a1a1a).
-- Core libraries: Django, Bootstrap 5, Stripe (Checkout/Payments API/Webhooks), qrcode, Pillow (image processing), Cloudinary (media/QR storage), WhiteNoise (static files), Django AllAuth (auth).
-- Docs/References: Django docs; Bootstrap docs; Stripe docs (Checkout, Payments API, Webhooks); Cloudinary docs; WhiteNoise docs; Django AllAuth docs; Heroku runtime/buildpack docs.
-- Design tools: Canva (for business tag/brand PNG assets), Balsamiq/Canva (wireframes), Lucidchart/Draw.io (ERD).
-- Tooling/Validation: Ruff, djLint, stylelint (standard config), JSHint; W3C HTML/CSS validators; Lighthouse; WAVE; Chrome DevTools.
-- Testing/Ops: Stripe Test Mode tools (test cards/webhook replay/session inspection); `migrate_media_to_cloudinary`; `check_media_urls`; Stripe CLI for webhook/checkout event testing.
-- Media sources: Project images from `static/images`; Canva-created business tags/brand PNGs; if supplemented with stock, use licensed sources such as Pexels/Unsplash and credit photographers as required.
-- Planning/Docs: GitHub Projects (Kanban); wireframes (Balsamiq/Canva if used); ERD via Lucidchart/Draw.io.
-- Error templates: Custom `404.html`/`500.html` per Django guidance.
-- Other Python deps (see `requirements.txt`): `dj_database_url`, `psycopg2`/`psycopg2-binary`, `gunicorn`, `django-cloudinary-storage`, `python-dotenv`, `stripe`.
+
+### Primary Documentation
+- [Django Docs](https://docs.djangoproject.com/en/5.2/): project setup, models, forms, templates, messages, middleware, static files, sites framework, auth backends, password validation/hashing, time zones.
+- [django-allauth Docs](https://docs.allauth.org/en/latest/): configuration, templates, custom forms, account settings (login methods, signup fields, default protocol).
+- [crispy-forms](https://django-crispy-forms.readthedocs.io/en/latest/) & crispy-bootstrap-5 docs.
+- [Bootstrap 5 Docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/).
+- [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event) (JS DOM: addEventListener, DOMContentLoaded, querySelector, optional chaining, defer).
+
+### Python/Django Packages Used
+- django, django-allauth, crispy-forms, crispy-bootstrap5
+- dj-database-url, python-dotenv
+- [django-axes](https://pypi.org/project/django-axes/) (brute-force protection)
+- [stripe](https://pypi.org/project/stripe/), [qrcode](https://pypi.org/project/qrcode/), [Pillow](https://pypi.org/project/Pillow/)
+- [cloudinary](https://pypi.org/project/cloudinary/) / [django-cloudinary-storage](https://pypi.org/project/django-cloudinary-storage/)
+- [whitenoise](https://whitenoise.readthedocs.io/en/latest/)
+- [gunicorn](https://gunicorn.org/) (production WSGI server)
+- [psycopg2-binary](https://pypi.org/project/psycopg2-binary/) (PostgreSQL driver)
+- django-axes, django-summernote
+
+### Frontend & Assets
+- [Google Fonts](https://fonts.google.com/): Patrick Hand SC, Lato
+- Bootstrap 5 components (cards, tables, buttons, utilities)
+- Favicon/icons: [favicon.io](https://favicon.io/) and Font Awesome
+- Colour palette: [Canva Generator](https://www.canva.com/colors/color-palette-generator/)
+- Brand assets: The Wag Club logo/palette; Canva-created business tags/PNG assets; imagery in `static/images`
+
+### Validation & Testing
+- W3C [HTML Validator](https://validator.w3.org/), W3C [CSS Validator](https://jigsaw.w3.org/css-validator/)
+- [JSHint](https://jshint.com/) (ES6+ audit notes)
+- [djLint](https://djlint.com/) (Django template formatting)
+- Ruff, Stylelint, AutoPEP8/CI Python linter
+- [Lighthouse](testing.md) (Performance, Accessibility, Best Practices, SEO)
+- [WAVE](https://wave.webaim.org/) accessibility checks
+- Manual testing: see [testing.md](testing.md)
+- Python: `python manage.py test` (unit tests for services search, checkout/webhooks, vouchers, scan/redeem); `ruff` lint.
+- JS/CSS: `npx jshint static/js` (minimal custom JS), `npx stylelint "static/**/*.css"`
+
+### DevOps & Deployment
+- [Heroku](https://id.heroku.com/login) (platform, release phase), Heroku CLI
+- WhiteNoise static file serving
+- Django email utilities (`EmailMultiAlternatives`, `render_to_string`, `build_absolute_uri`)
+- Stripe Test Mode tools, Stripe CLI (webhook/checkout events)
+
+### Learning References
+- [Stack Overflow](https://stackoverflow.com/questions) threads (defensive DOM handling/null checks)
+- freeCodeCamp / CSS-Tricks guides on DOM safety and conditional handlers
+
+### Attribution & Licenses
+- Fonts and icons licensed per providers; favicons via favicon.io
+- Third-party images/screenshots credited where used; project images in `static/images`; Canva palette/assets.
+- Custom error templates `404.html`/`500.html` follow Django guidance.
+
+### Planning & Docs
+- GitHub Projects (Kanban) for user stories; wireframes via Balsamiq/Canva; ERD via Lucidchart/Draw.io; README/testing docs.
+
+### Support & Guidance
+- Mentor [Daniel Hamilton](https://www.linkedin.com/in/hamiltondl/) provided guidance throughout development and production readiness.
 
 ## License
 This project is for educational purposes. Review third-party licenses for dependencies (Django, Bootstrap, Stripe, Cloudinary, etc.) before commercial use.

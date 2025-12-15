@@ -87,6 +87,8 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
 
+    'axes',
+
     # Crispy forms
     'crispy_forms',
     'crispy_bootstrap5',
@@ -113,6 +115,7 @@ ACCOUNT_FORMS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'axes.middleware.AxesMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -178,6 +181,8 @@ else:
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 AUTHENTICATION_BACKENDS = [
+
+    'axes.backends.AxesBackend',
 
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -292,6 +297,16 @@ STORAGES = {
 
 # Base site URL used for QR codes / absolute links
 SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+
+# django-axes: brute-force protection
+AXES_ENABLED = True
+AXES_FAILURE_LIMIT = int(os.getenv("AXES_FAILURE_LIMIT", 5))
+AXES_COOLOFF_TIME = 1  # hours
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_LOCK_OUT_BY_USER = True
+AXES_LOCK_OUT_BY_IP_ONLY = False
+AXES_RESET_ON_SUCCESS = True
+AXES_CACHE = "default"
 
 # Logging to stdout so production errors emit tracebacks to Heroku logs
 LOGGING = {
