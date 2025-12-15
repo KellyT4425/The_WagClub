@@ -37,7 +37,6 @@
   - [Business Model](#business-model)
   - [Marketing \& SEO](#marketing--seo)
   - [Validation \& Quality](#validation--quality)
-  - [Validation Findings](#validation-findings)
   - [DevOps \& Tooling](#devops--tooling)
   - [Credits](#credits)
     - [Primary Documentation](#primary-documentation)
@@ -67,26 +66,22 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Repository: [GitHub](https://github.com/KellyT4425/The_WagClub)
 
 ## Product Screenshots
-- Homepage hero
+- Homepage hero  
   <img src="static/images/home-page.png" alt="Homepage hero with call-to-action" width="820" />
-- Services list with search results
+- Services list with search results  
   <img src="static/images/search-results.png" alt="Services list showing search results" width="820" />
-- Service detail page
+- Service detail page  
   <img src="static/images/service-detail-page.png" alt="Service detail page with add to cart" width="820" />
-- Cart and checkout flow
+- Cart and checkout flow  
   <img src="static/images/cart-page.png" alt="Cart page ready for checkout" width="820" />
-- Checkout (Stripe session)
+- Checkout (Stripe session)  
   <img src="static/images/checkout.png" alt="Stripe checkout session" width="640" />
-- Wallet with vouchers
+- Wallet with vouchers  
   <img src="static/images/my-wallet.png" alt="Wallet view showing active vouchers" width="820" />
-- Invoice / receipt with QR
+- Invoice / receipt with QR  
   <img src="static/images/invoice.png" alt="Invoice with QR code" width="820" />
 - Success page (post-payment)  
   <img src="static/images/success-view.png" alt="Order success page" width="820" />
-- HTML validation (examples)  
-  <img src="static/images/html-home-validator.png" alt="Home page HTML validation" width="360"> <img src="static/images/html-services-validator.png" alt="Services page HTML validation" width="360">  
-  <img src="static/images/html-details-validator.png" alt="Service detail HTML validation" width="360"> <img src="static/images/html-cart-validator.png" alt="Cart HTML validation" width="360">  
-  <img src="static/images/html-wallet-validator.png" alt="Wallet HTML validation" width="360"> <img src="static/images/html-invoice-validator.png" alt="Invoice HTML validation" width="360"> <img src="static/images/html-voucher-detail-validator.png" alt="Voucher detail HTML validation" width="360">
 
 ## Features
 - Service browsing with categories (Passes, Packages, Offers) and search from the home hero (results surface on the Services page with the full catalogue below).
@@ -95,15 +90,17 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Customer wallet grouped by status: Active, Redeemed, Expired.
 - Voucher detail and printable invoice with QR code.
 - Staff redemption via scan or manual code lookup.
-- Authentication (register, login, logout, password reset) via Django AllAuth.
-- Responsive UI with Bootstrap 5 and custom branding.
-- Social proof: footer links to reviews/contact plus Instagram and Facebook presence.
+- Authentication (register, login, logout, password reset) via Django AllAuth with signed-in indicator in the nav.
+- Responsive UI with Bootstrap 5 and custom branding; mobile nav collapses to a single toggle.
+- Newsletter signup + social links (Facebook/Instagram) in footer for marketing/engagement.
+- Security hardening with django-axes (brute-force protection) and env-managed secrets.
 
 ## Frontend
 - Templates: Django templates with Bootstrap 5, custom CSS in `static/css/base.css`.
 - Layout: responsive navbar, footer social links, toast notifications for feedback.
 - Pages: home hero, services list/detail, cart/checkout, wallet, voucher detail/invoice, staff scan/redeem.
 - UX: search/filter on services; status badges for vouchers (Active/Redeemed/Expired); accessible form controls and alt text on imagery.
+- Forms/CRUD: AllAuth signup/login/reset; newsletter signup stored; cart add/update/remove (delete UI for cart items) without admin access.
 - Icons: Font Awesome for UI glyphs; branded imagery in `static/images`.
 
 ## Backend
@@ -114,6 +111,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
   - Vouchers generated per quantity with unique codes and QR images, default expiry 18 months.
   - Wallet views filter vouchers by status; staff-only redemption via `scan_voucher`/`redeem_voucher`.
 - Auth: Django AllAuth for registration/login/logout/password reset.
+- Security: `django-axes` for brute-force protection; secrets in env vars; DEBUG off in production.
 - Media: Cloudinary for images; QR codes stored via ImageField.
 - Static: WhiteNoise for compressed static serving; Bootstrap/FontAwesome from CDNs.
 - Management commands for media health:
@@ -132,6 +130,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 | Media Storage | Cloudinary (`django-cloudinary-storage`) |
 | Static Files | WhiteNoise (compressed & cached) |
 | QR Generation | `qrcode` |
+| Security | `django-axes` (brute-force protection) |
 | Environment | `python-dotenv`, virtualenv/venv |
 | Deployment | Heroku (Python buildpack, Postgres add-on) |
 | Version Control | Git & GitHub |
@@ -153,6 +152,9 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - `OrderItem`: Line items within an order, storing service, quantity, and locked-in price.
 - `Voucher`: Generated per order item *and* quantity (multiple vouchers per item when quantity > 1); tracks code, QR image, status (ISSUED, REDEEMED, EXPIRED), issued/redeemed/expiry timestamps, and expiry (default 18 months).
 - `User`: Django auth user (owner of orders and vouchers).
+- `NewsletterSignup`: Captures newsletter subscriptions from the footer form.
+
+> Custom models built for this project (ServiceCategory, Service, ServiceImage, Order, OrderItem, Voucher, NewsletterSignup) satisfy the requirement for at least three original models with associated functionality.
 
 ### ERD Diagram (Mermaid)
 ```mermaid
@@ -254,16 +256,16 @@ erDiagram
 - Icons: Font Awesome for UI glyphs; branded paw/QR assets in `static/images`.
 - Favicon: Included under `static/images` to keep brand presence across tabs/devices.
 - Layout: Mobile-first Bootstrap 5 grid; consistent card spacing, badges for statuses, responsive footer (newsletter + socials), and accessible nav toggle/sign-in indicator on mobile.
-- Palette reference:
+- Palette reference:  
   <img src="static/images/colour-palettep5.png" alt="Brand colour palette swatches" width="620" />
-- Contrast grid:
+- Contrast grid:  
   <img src="static/images/contrast-grid.png" alt="Foreground/background contrast grid for accessibility" width="620" />
 - Wireframes: See dedicated section below for current mockups linked from `static/images`.
 
 ## Wireframes
-- Core layout baseline
+- Core layout baseline  
   <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="520" />
-- Services experience
+- Services experience  
   <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="520" />
 
 ## Stripe Payments
@@ -398,8 +400,8 @@ Set these in `.env` locally and in Heroku config vars for production:
 ## Marketing & SEO
 - Social: Instagram link in footer; Facebook Business Page link in footer (`https://www.facebook.com/profile.php?id=61584298172958`).
 - Newsletter: footer signup stored in `NewsletterSignup`.
-- SEO: meta description/keywords in `base.html`, title block; `robots.txt` allows all and points to `/sitemap.xml`; `sitemap.xml` lists key pages (home, services, wallet, login, signup); 404 page present. Add per-page meta if desired.
-- Agile/UX: user stories/backlog tracked in Kanban: (`https://github.com/users/KellyT4425/projects/10/views/1`); include wireframes/mockups and reference them here for assessment.
+- SEO: meta description/keywords in `base.html`, title block; `robots.txt` allows all and points to `/sitemap.xml`; `sitemap.xml` lists key pages (home, services, wallet, login, signup); custom `404.html` present. External social links include `rel="noopener"`.
+- Agile/UX: user stories/backlog tracked in Kanban: (`https://github.com/users/KellyT4425/projects/10/views/1`) (board is public); include wireframes/mockups and reference them here for assessment.
 
 ## Validation & Quality
 - HTML/CSS: W3C validators on deployed pages; vendor prefixes retained for cross-browser support.
@@ -407,6 +409,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Python: Ruff linting; Django `check`; code formatted PEP8-style.
 - JS: Minimal ES6 usage; JSHint run with modern syntax allowances.
 - Templates: djLint for Django template formatting.
+- Error handling: custom `404.html` and other error pages; DEBUG set to `False` in production (configure via env).
 - Latest checks:
   - Python lint: `python -m ruff check orders services project_core` (pass).
   - Django system check: `python manage.py check` (pass).
@@ -416,11 +419,6 @@ Set these in `.env` locally and in Heroku config vars for production:
 - CSS linting: `npx stylelint "static/**/*.css"` (pass with relaxed rules to avoid visual changes); config in `.stylelintrc.json`.
 - JS linting: `npx jshint static/js` (no custom JS present to lint).
 - JS tooling: `node_modules` is dev-only (stylelint/JSHint); keep `node_modules/` and `package-lock.json` ignored in git.
-
-## Validation Findings
-- Accessibility: Logo alt clarified; QR imagery annotated and lazily loaded; social links hardened with `rel="noopener"`.
-- Performance: Hero background compressed and served via `image-set`; Google Fonts preconnect/preload with `display=swap`; global Stripe script removed to limit third-party cookies.
-- Linters: Ruff clean for `orders`, `services`, `project_core`; `manage.py check` passes; djLint reports formatting-only diffs (no template errors); stylelint passes with current config; no custom JS to lint.
 
 ## DevOps & Tooling
 - Deployment: Heroku (Python buildpack, Postgres add-on), `Procfile` with gunicorn, WhiteNoise static serving.

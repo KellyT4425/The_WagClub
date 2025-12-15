@@ -88,6 +88,8 @@ Automated tests (latest run):
 | SEO1 | Meta tags/favicons | Title/description present; favicons load | Pass | (page source verified) |
 | SEO2 | robots/sitemap | `robots.txt` reachable; `/sitemap.xml` lists key pages | Pass | (manual URL check) |
 | SEO3 | External links hardening | Social links `rel="noopener"` and open new tab | Pass | <img src="static/images/footer.png" alt="Footer links" width="360"> |
+| SEO4 | Custom 404 page | `/404` handler renders custom template | Pass | (manual check) |
+| SEO5 | Custom 500 page | Custom 500 template renders on server error | Pass | <img src="static/images/500-error.png" alt="Custom 500 error page" width="360"> |
 
 ### Linting & Validators
 | Test # | Step | Expected | Result | Evidence |
@@ -101,6 +103,7 @@ Automated tests (latest run):
 | L7 | W3C CSS | Validate deployed CSS via W3C CSS validator | Pass | Validator results (manual) |
 | L8 | Lighthouse/WAVE | Accessibility/Best Practices/SEO | Pass | Lighthouse/WAVE runs post-fixes |
 | L9 | Python tests | `python manage.py test` | Pass | 21 tests passing (local run) |
+| L10 | Axes in tests | `AXES_ENABLED=False` during tests to allow test logins | Pass | Set in settings for test runs |
 
 ### HTML Validation Evidence
 | Page | Evidence |
