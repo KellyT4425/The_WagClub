@@ -40,7 +40,7 @@
                   <div class="card voucher-card h-100">
                     <div class="card-body text-center d-flex flex-column">
                       <p class="text-uppercase small text-muted mb-1">{{ voucher.service.category.name }}</p>
-                      <h5 class="card-title heading mb-2">{{ voucher.service.name }}</h5>
+                      <h3 class="card-title heading mb-2">{{ voucher.service.name }}</h3>
                       <p class="mb-2"><strong>Code:</strong> {{ voucher.code }}</p>
               {% url 'orders:scan_voucher' voucher.code as redeem_path %}
               {% with qr_target=site_root|add:redeem_path %}
@@ -48,6 +48,8 @@
                      alt="QR Code for {{ voucher.code }}"
                      loading="lazy"
                      decoding="async"
+                     width="220"
+                     height="220"
                      class="img-fluid voucher-qr mb-3">
               {% endwith %}
                       <p class="small text-muted mb-1">Issued: {{ voucher.issued_at|date:"M d, Y" }}</p>

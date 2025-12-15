@@ -14,6 +14,7 @@ import dj_database_url
 import dotenv
 import stripe
 from django.core.exceptions import ImproperlyConfigured
+import sys
 from pathlib import Path
 from django.contrib.messages import constants as messages
 
@@ -307,6 +308,9 @@ AXES_LOCK_OUT_BY_USER = True
 AXES_LOCK_OUT_BY_IP_ONLY = False
 AXES_RESET_ON_SUCCESS = True
 AXES_CACHE = "default"
+
+if "test" in sys.argv:
+    AXES_ENABLED = False
 
 # Logging to stdout so production errors emit tracebacks to Heroku logs
 LOGGING = {

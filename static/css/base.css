@@ -39,7 +39,6 @@ main {
 
 .home-img {
     background-color: var(--wag-cream);
-    background-image: url("../images/homepage-hero-img-opt.jpg");
     background-image: image-set(
         url("../images/homepage-hero-img-opt.webp") type("image/webp"),
         url("../images/homepage-hero-img-opt.jpg") type("image/jpeg")

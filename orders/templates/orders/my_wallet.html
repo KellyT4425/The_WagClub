@@ -25,7 +25,9 @@
                                     <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                                          alt="QR code for voucher {{ voucher.code }}"
                                          loading="lazy"
-                                         decoding="async">
+                                         decoding="async"
+                                         width="220"
+                                         height="220">
                                 {% endwith %}
                             </div>
                             <p class="mb-1 fw-semibold heading">{{ voucher.service.category.name }}</p>
@@ -66,7 +68,9 @@
                                         <img src="{% url 'orders:qr' %}?t={{ qr_target|urlencode }}"
                                              alt="QR code for voucher {{ voucher.code }}"
                                              loading="lazy"
-                                             decoding="async">
+                                             decoding="async"
+                                             width="220"
+                                             height="220">
                                     </div>
                                 {% endwith %}
                                 <p class="mb-1 fw-semibold heading">{{ voucher.service.category.name }}</p>

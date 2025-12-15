@@ -1,4 +1,6 @@
-<p align="center"><img src="static/images/business.png" alt="The Wag Club logo" width="720"></p>
+<div style="text-align:center;">
+  <img src="static/images/business.png" alt="The Wag Club logo" width="720">
+</div>
 
 # The Wag Club
 > Pampering pups, one wag at a time.
@@ -246,9 +248,9 @@ erDiagram
 
 ## Wireframes
 - Core layout baseline  
-  <img src="static/images/wireframes/wireframe-base.png" alt="Wireframe - base layout" width="520" />
+  <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="520" />
 - Services experience  
-  <img src="static/images/wireframes/wireframe-services.png" alt="Wireframe - services flow" width="520" />
+  <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="520" />
 
 ## Stripe Payments
 - Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
@@ -350,6 +352,7 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Staff dashboard with filters/analytics
   - Saved favourites/recurring bookings
   - Admin-side review management and profile/pet data oversight
+> All items in Future Enhancements are stories not delivered in this sprint and are deferred for subsequent iterations.
 
 ## User Guide
 - Browse services: go to Services, search/filter, view details, add to cart.
@@ -381,7 +384,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Social: Instagram link in footer; Facebook Business Page link in footer (`https://www.facebook.com/TheWagClubBiz`).
 - Newsletter: footer signup stored in `NewsletterSignup`.
 - SEO: meta description/keywords in `base.html`, title block; `robots.txt` allows all and points to `/sitemap.xml`; `sitemap.xml` lists key pages (home, services, wallet, login, signup); 404 page present. Add per-page meta if desired.
-- Agile/UX: maintain user stories/backlog in your Agile board; include wireframes/mockups and reference them here for assessment.
+- Agile/UX: user stories/backlog tracked in Kanban: https://github.com/users/KellyT4425/projects/10/views/1; include wireframes/mockups and reference them here for assessment.
 
 ## Validation & Quality
 - HTML/CSS: W3C validators on deployed pages; vendor prefixes retained for cross-browser support.
@@ -447,6 +450,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Manual testing: see [testing.md](testing.md)
 - Python: `python manage.py test` (unit tests for services search, checkout/webhooks, vouchers, scan/redeem); `ruff` lint.
 - JS/CSS: `npx jshint static/js` (minimal custom JS), `npx stylelint "static/**/*.css"`
+  - Note: django-axes is disabled during test runs to allow test client logins.
 
 ### DevOps & Deployment
 - [Heroku](https://id.heroku.com/login) (platform, release phase), Heroku CLI
