@@ -33,12 +33,22 @@
   - [Future Enhancements](#future-enhancements)
   - [User Guide](#user-guide)
   - [Admin Guide](#admin-guide)
+  - [User Stories \& Tracking](#user-stories--tracking)
   - [Business Model](#business-model)
   - [Marketing \& SEO](#marketing--seo)
   - [Validation \& Quality](#validation--quality)
   - [Validation Findings](#validation-findings)
   - [DevOps \& Tooling](#devops--tooling)
   - [Credits](#credits)
+    - [Primary Documentation](#primary-documentation)
+    - [Python/Django Packages Used](#pythondjango-packages-used)
+    - [Frontend \& Assets](#frontend--assets)
+    - [Validation \& Testing](#validation--testing)
+    - [DevOps \& Deployment](#devops--deployment)
+    - [Learning References](#learning-references)
+    - [Attribution \& Licenses](#attribution--licenses)
+    - [Planning \& Docs](#planning--docs)
+    - [Support \& Guidance](#support--guidance)
   - [License](#license)
 
 ## Overview
@@ -57,21 +67,21 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Repository: [GitHub](https://github.com/KellyT4425/The_WagClub)
 
 ## Product Screenshots
-- Homepage hero  
+- Homepage hero
   <img src="static/images/home-page.png" alt="Homepage hero with call-to-action" width="820" />
-- Services list with search results  
+- Services list with search results
   <img src="static/images/search-results.png" alt="Services list showing search results" width="820" />
-- Service detail page  
+- Service detail page
   <img src="static/images/service-detail-page.png" alt="Service detail page with add to cart" width="820" />
-- Cart and checkout flow  
+- Cart and checkout flow
   <img src="static/images/cart-page.png" alt="Cart page ready for checkout" width="820" />
-- Checkout (Stripe session)  
+- Checkout (Stripe session)
   <img src="static/images/checkout.png" alt="Stripe checkout session" width="640" />
-- Wallet with vouchers  
+- Wallet with vouchers
   <img src="static/images/my-wallet.png" alt="Wallet view showing active vouchers" width="820" />
-- Invoice / receipt with QR  
+- Invoice / receipt with QR
   <img src="static/images/invoice.png" alt="Invoice with QR code" width="820" />
-- Success page (post-payment)  
+- Success page (post-payment)
   <img src="static/images/success-view.png" alt="Order success page" width="820" />
 
 ## Features
@@ -240,16 +250,16 @@ erDiagram
 - Icons: Font Awesome for UI glyphs; branded paw/QR assets in `static/images`.
 - Favicon: Included under `static/images` to keep brand presence across tabs/devices.
 - Layout: Mobile-first Bootstrap 5 grid; consistent card spacing, badges for statuses, responsive footer (newsletter + socials), and accessible nav toggle/sign-in indicator on mobile.
-- Palette reference:  
+- Palette reference:
   <img src="static/images/colour-palettep5.png" alt="Brand colour palette swatches" width="620" />
-- Contrast grid:  
+- Contrast grid:
   <img src="static/images/contrast-grid.png" alt="Foreground/background contrast grid for accessibility" width="620" />
 - Wireframes: See dedicated section below for current mockups linked from `static/images`.
 
 ## Wireframes
-- Core layout baseline  
+- Core layout baseline
   <img src="static/images/wireframe-base.png" alt="Wireframe - base layout" width="520" />
-- Services experience  
+- Services experience
   <img src="static/images/wireframe-services.png" alt="Wireframe - services flow" width="520" />
 
 ## Stripe Payments
@@ -371,9 +381,9 @@ Set these in `.env` locally and in Heroku config vars for production:
 - CRUD: full CRUD available via Django admin for all models; user-facing flows cover create/read/update where applicable (cart/checkout/vouchers).
 
 ## User Stories & Tracking
-- Tracked in GitHub issues/Projects (Must/Should haves). Closed Must-haves include: Browse Services (#1), View Service Details (#2), Search/Filter Services (#3), Add to Cart (#4), Pay with Stripe (#5), Receive Voucher (#6), Order Confirmation (#7), Create Account (#9), Secure Login (#10), View Orders/Wallet (#11), Reset Password (#15), Cart (#16), Admin Manage Services (#17), Admin Manage Vouchers (#19).
-- Should-haves completed: Admin Manage Vouchers (#19).
-- Deferred/backlog items are listed under Future Enhancements (profile/pet management, downloadable vouchers, reviews/discounts, staff dashboard, favourites/recurring, alerts).
+- Kanban board: https://github.com/users/KellyT4425/projects/10/views/1
+- Closed Must-haves: #1 Browse Services, #2 View Service Details, #3 Search/Filter Services, #4 Add to Cart, #5 Pay with Stripe, #6 Receive Voucher, #7 Order Confirmation, #9 Create Account, #10 Secure Login, #11 View Orders/Wallet, #15 Reset Password, #16 Cart, #17 Admin Manage Services, #19 Admin Manage Vouchers.
+- Deferred/backlog: see Future Enhancements (profile/pet management, downloadable vouchers, reviews/discounts, staff dashboard, favourites/recurring, alerts).
 
 ## Business Model
 - Revenue: paid daycare/grooming services purchased online; each purchase issues vouchers for on-site redemption.
@@ -381,10 +391,10 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Value: simplifies booking and redemption, provides clear statuses (Active/Redeemed/Expired), and staff-controlled redemption.
 
 ## Marketing & SEO
-- Social: Instagram link in footer; Facebook Business Page link in footer (`https://www.facebook.com/TheWagClubBiz`).
+- Social: Instagram link in footer; Facebook Business Page link in footer (`https://www.facebook.com/profile.php?id=61584298172958`).
 - Newsletter: footer signup stored in `NewsletterSignup`.
 - SEO: meta description/keywords in `base.html`, title block; `robots.txt` allows all and points to `/sitemap.xml`; `sitemap.xml` lists key pages (home, services, wallet, login, signup); 404 page present. Add per-page meta if desired.
-- Agile/UX: user stories/backlog tracked in Kanban: https://github.com/users/KellyT4425/projects/10/views/1; include wireframes/mockups and reference them here for assessment.
+- Agile/UX: user stories/backlog tracked in Kanban: (`https://github.com/users/KellyT4425/projects/10/views/1`); include wireframes/mockups and reference them here for assessment.
 
 ## Validation & Quality
 - HTML/CSS: W3C validators on deployed pages; vendor prefixes retained for cross-browser support.
