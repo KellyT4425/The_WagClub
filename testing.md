@@ -93,7 +93,7 @@ Automated tests (latest run):
 | Test # | Step | Expected | Result | Evidence |
 | --- | --- | --- | --- | --- |
 | L1 | Django checks | `python manage.py check` | Pass | CLI output (local run) |
-| L2 | Ruff | `ruff check orders services project_core` | Pass | CLI output (local run) |
+| L2 | Ruff (via PEP8 CI) | `ruff check orders services project_core` | Pass | PEP8 CI (https://pep8ci.herokuapp.com/) |
 | L3 | djLint | `djlint templates orders/templates --check` | Pass | CLI output (local run) |
 | L4 | Stylelint | `npx stylelint "static/**/*.css"` | Pass | CLI output (local run) |
 | L5 | JSHint | `npx jshint static/js` | Pass | CLI output (local run) |

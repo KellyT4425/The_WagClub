@@ -458,7 +458,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - W3C [HTML Validator](https://validator.w3.org/), W3C [CSS Validator](https://jigsaw.w3.org/css-validator/)
 - [JSHint](https://jshint.com/) (ES6+ audit notes)
 - [djLint](https://djlint.com/) (Django template formatting)
-- Ruff, Stylelint, AutoPEP8/CI Python linter
+- Ruff, Stylelint, PEP8 CI (https://pep8ci.herokuapp.com/) Python lint
 - [Lighthouse](testing.md) (Performance, Accessibility, Best Practices, SEO)
 - [WAVE](https://wave.webaim.org/) accessibility checks
 - Manual testing: see [testing.md](testing.md)
