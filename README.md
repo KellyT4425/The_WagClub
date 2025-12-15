@@ -278,6 +278,7 @@ erDiagram
 3) `heroku config:set DISABLE_COLLECTSTATIC=0` (only if collectstatic should run).
 4) Deploy via GitHub integration or `git push heroku main`.
 5) Run migrations: `heroku run python manage.py migrate`.
+   - If you add new apps like `django-axes`, rerun migrations so tables (e.g., `axes_accessattempt`) exist in production.
 6) Create superuser: `heroku run python manage.py createsuperuser`.
 7) Add allowed host and CSRF origins for your Heroku domain.
 8) Set Stripe webhook to `https://<your-app>.herokuapp.com/orders/checkout/webhook/` with the signing secret stored in `STRIPE_WEBHOOK_SECRET`.
@@ -426,6 +427,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Media: Cloudinary for service images and generated QR PNGs.
 - CLI/ops: Stripe CLI for test events; `migrate_media_to_cloudinary` and `check_media_urls` for media health.
 - Version control: Git/GitHub; environment via `.env` (python-dotenv locally).
+- Operations: run `python manage.py migrate` after adding apps like `django-axes` to ensure new tables are created in production.
 
 ## Credits
 
