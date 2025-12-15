@@ -114,10 +114,13 @@ Automated tests (latest run):
 | E2 | Order/success notifications (if enabled) | Emails sent on successful checkout | Pending/Manual | (verify on production SMTP inbox) |
 
 ### User Stories (Manual Validation)
-- US-Auth-01: Register, login, logout, password reset flows validated in Authentication table.
-- US-Services-01: Browse/search services; detail + add to cart (Homepage/Services tables).
-- US-Cart-01: Add/remove items; empty cart messaging; checkout (Cart table).
-- US-Pay-01: Stripe Checkout opens with correct items; success page after payment (Cart & Orders).
-- US-Order-01: Vouchers created post-payment; wallet statuses; invoice available (Orders).
-- US-Voucher-01: Staff can scan/redeem; non-staff blocked; expired blocked; invalid code 404 (Redemption).
-- US-Admin-01: Admin CRUD on services/vouchers validated (Admin table).
+| Story ID | Description | Validation | Evidence |
+| --- | --- | --- | --- |
+| US-Auth-01 | Register, login, logout, password reset | Pass | Authentication table (A1–A4) |
+| US-Services-01 | Browse/search services; view detail and add to cart | Pass | Homepage/Services tables (H1–H6, S1–S2) |
+| US-Cart-01 | Add/remove items; empty cart messaging; checkout | Pass | Cart table (C1–C5) |
+| US-Pay-01 | Stripe Checkout with correct items; success page | Pass | Cart/Orders tables (C4–C7, V1) |
+| US-Order-02 | Order confirmation shown after payment | Pass | Orders table (V1) and success-view screenshot |
+| US-Order-01 | Vouchers post-payment; wallet statuses; invoice | Pass | Orders table (V1–V3) |
+| US-Voucher-01 | Staff scan/redeem; non-staff blocked; expired blocked; invalid 404 | Pass | Redemption table (R1–R2) |
+| US-Admin-01 | Admin CRUD on services/vouchers | Pass | Admin table (AD1–AD3) |

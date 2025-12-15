@@ -37,11 +37,15 @@
                                 {% if s.img_path %}
                                     <img src="{{ s.img_path.url }}"
                                          class="card-img-top"
-                                         alt="{{ s.alt_text|default:s.name }}">
+                                         alt="{{ s.alt_text|default:s.name }}"
+                                         loading="lazy"
+                                         decoding="async"
+                                         width="400"
+                                         height="300">
                                 {% endif %}
                                 <div class="card-body text-center">
                                     <span class="service-pill">Search result</span>
-                                    <h5 class="card-title heading mt-2">{{ s.name }}</h5>
+                                    <h3 class="card-title heading mt-2">{{ s.name }}</h3>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
@@ -95,10 +99,14 @@
                             {% if s.img_path %}
                                 <img src="{{ s.img_path.url }}"
                                      class="card-img-top"
-                                     alt="{{ s.alt_text|default:s.name }}">
+                                     alt="{{ s.alt_text|default:s.name }}"
+                                     loading="lazy"
+                                     decoding="async"
+                                     width="400"
+                                     height="300">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                                <h3 class="card-title text-center heading">{{ s.name }}</h3>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
@@ -144,10 +152,14 @@
                             {% if s.img_path %}
                                 <img src="{{ s.img_path.url }}"
                                      class="card-img-top"
-                                     alt="{{ s.alt_text|default:s.name }}">
+                                     alt="{{ s.alt_text|default:s.name }}"
+                                     loading="lazy"
+                                     decoding="async"
+                                     width="400"
+                                     height="300">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                                <h3 class="card-title text-center heading">{{ s.name }}</h3>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
@@ -196,10 +208,14 @@
                             {% if s.img_path %}
                                 <img src="{{ s.img_path.url }}"
                                      class="card-img-top"
-                                     alt="{{ s.alt_text|default:s.name }}">
+                                     alt="{{ s.alt_text|default:s.name }}"
+                                     loading="lazy"
+                                     decoding="async"
+                                     width="400"
+                                     height="300">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title text-center heading">{{ s.name }}</h5>
+                                <h3 class="card-title text-center heading">{{ s.name }}</h3>
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
