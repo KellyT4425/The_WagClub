@@ -39,10 +39,7 @@ main {
 
 .home-img {
     background-color: var(--wag-cream);
-    background-image: image-set(
-        url("../images/homepage-hero-img-opt.webp") type("image/webp"),
-        url("../images/homepage-hero-img-opt.jpg") type("image/jpeg")
-    );
+    background-image: url("../images/homepage-hero-img-opt.webp");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
