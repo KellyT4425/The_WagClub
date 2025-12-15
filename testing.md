@@ -102,6 +102,22 @@ Automated tests (latest run):
 | L8 | Lighthouse/WAVE | Accessibility/Best Practices/SEO | Pass | Lighthouse/WAVE runs post-fixes |
 | L9 | Python tests | `python manage.py test` | Pass | 21 tests passing (local run) |
 
+### HTML Validation Evidence
+| Page | Evidence |
+| --- | --- |
+| Home | <img src="static/images/html-home-validator.png" alt="Home HTML validator" width="320"> |
+| Services | <img src="static/images/html-services-validator.png" alt="Services HTML validator" width="320"> |
+| Service Detail | <img src="static/images/html-details-validator.png" alt="Service detail HTML validator" width="320"> |
+| Cart | <img src="static/images/html-cart-validator.png" alt="Cart HTML validator" width="320"> |
+| Wallet | <img src="static/images/html-wallet-validator.png" alt="Wallet HTML validator" width="320"> |
+| Invoice | <img src="static/images/html-invoice-validator.png" alt="Invoice HTML validator" width="320"> |
+| Voucher Detail | <img src="static/images/html-voucher-detail-validator.png" alt="Voucher detail HTML validator" width="320"> |
+
+### CSS Validation Evidence
+| Evidence |
+| --- |
+| <img src="static/images/css-validator.png" alt="CSS validation" width="320"> |
+
 ### Search Engine / Responsiveness Checks
 - Meta: Title/description present; favicons load; `robots.txt` and `/sitemap.xml` reachable.
 - Links: Social links hardened with `rel="noopener"` and open in new tab.

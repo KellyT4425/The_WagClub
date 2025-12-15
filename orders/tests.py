@@ -55,7 +55,10 @@ class OrderViewsTests(TestCase):
         self.assertIn("/accounts/login/", response["Location"])
 
     def test_create_checkout_session_redirects_with_empty_cart(self):
-        """Logged-in user posting with an empty cart should be bounced back to cart."""
+        """
+        Logged-in user posting with an empty cart should be bounced back to
+        cart.
+        """
         self.client.login(username="testuser", password="pass1234")
         response = self.client.post(reverse("orders:create_checkout_session"))
         self.assertEqual(response.status_code, 302)
@@ -64,7 +67,8 @@ class OrderViewsTests(TestCase):
     @patch("stripe.checkout.Session.create")
     def test_create_checkout_session_redirects_to_stripe(self, mock_create):
         mock_create.return_value = SimpleNamespace(
-            url="https://stripe.test/session")
+            url="https://stripe.test/session"
+        )
         self.client.login(username="testuser", password="pass1234")
 
         session = self.client.session
@@ -89,8 +93,12 @@ class OrderViewsTests(TestCase):
     @patch("stripe.Webhook.construct_event")
     def test_webhook_creates_order_and_vouchers(self, mock_construct_event):
         cart_items = [
-            {"id": str(self.service.id), "name": self.service.name,
-             "price": "12.34", "quantity": 1}
+            {
+                "id": str(self.service.id),
+                "name": self.service.name,
+                "price": "12.34",
+                "quantity": 1,
+            }
         ]
         session_id = "sess_123"
         mock_construct_event.return_value = {
@@ -98,8 +106,10 @@ class OrderViewsTests(TestCase):
             "data": {
                 "object": SimpleNamespace(
                     id=session_id,
-                    metadata={"user_id": str(
-                        self.user.id), "cart_items": str(cart_items)}
+                    metadata={
+                        "user_id": str(self.user.id),
+                        "cart_items": str(cart_items),
+                    },
                 )
             },
         }
@@ -125,8 +135,12 @@ class OrderViewsTests(TestCase):
     @patch("stripe.Webhook.construct_event")
     def test_webhook_is_idempotent(self, mock_construct_event):
         cart_items = [
-            {"id": str(self.service.id), "name": self.service.name,
-             "price": "12.34", "quantity": 1}
+            {
+                "id": str(self.service.id),
+                "name": self.service.name,
+                "price": "12.34",
+                "quantity": 1,
+            }
         ]
         session_id = "sess_dupe"
         mock_construct_event.return_value = {
@@ -134,8 +148,10 @@ class OrderViewsTests(TestCase):
             "data": {
                 "object": SimpleNamespace(
                     id=session_id,
-                    metadata={"user_id": str(
-                        self.user.id), "cart_items": str(cart_items)}
+                    metadata={
+                        "user_id": str(self.user.id),
+                        "cart_items": str(cart_items),
+                    },
                 )
             },
         }
@@ -171,7 +187,11 @@ class OrderViewsTests(TestCase):
     def test_webhook_missing_metadata_no_order(self, mock_construct_event):
         mock_construct_event.return_value = {
             "type": "checkout.session.completed",
-            "data": {"object": SimpleNamespace(id="sess_no_meta", metadata=None)},
+            "data": {
+                "object": SimpleNamespace(
+                    id="sess_no_meta", metadata=None
+                )
+            },
         }
         response = self.client.post(
             reverse("orders:stripe_webhook"),
@@ -183,13 +203,18 @@ class OrderViewsTests(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
     @patch("stripe.checkout.Session.retrieve")
-    def test_success_view_does_not_duplicate_order_creation(self, mock_retrieve):
+    def test_success_view_does_not_duplicate_order_creation(
+        self, mock_retrieve
+    ):
         session_id = "sess_123"
         order = Order.objects.create(
             user=self.user, is_paid=True, stripe_session_id=session_id
         )
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         Voucher.objects.create(
             service=self.service,
@@ -207,7 +232,8 @@ class OrderViewsTests(TestCase):
         self.client.login(username="testuser", password="pass1234")
 
         response = self.client.get(
-            reverse("orders:success") + f"?session_id={session_id}", follow=False
+            reverse("orders:success") + f"?session_id={session_id}",
+            follow=False,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -215,13 +241,18 @@ class OrderViewsTests(TestCase):
         self.assertEqual(response.context["vouchers"].count(), 1)
 
     @patch("stripe.checkout.Session.retrieve")
-    def test_success_view_allows_unauthenticated_with_metadata(self, mock_retrieve):
+    def test_success_view_allows_unauthenticated_with_metadata(
+        self, mock_retrieve
+    ):
         session_id = "sess_unauth"
         order = Order.objects.create(
             user=self.user, is_paid=True, stripe_session_id=session_id
         )
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         Voucher.objects.create(
             service=self.service,
@@ -238,7 +269,8 @@ class OrderViewsTests(TestCase):
         )
 
         response = self.client.get(
-            reverse("orders:success") + f"?session_id={session_id}", follow=False
+            reverse("orders:success") + f"?session_id={session_id}",
+            follow=False,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -250,7 +282,10 @@ class OrderViewsTests(TestCase):
         )
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -262,7 +297,8 @@ class OrderViewsTests(TestCase):
 
         self.client.login(username="other", password="pass1234")
         response = self.client.get(
-            reverse("orders:voucher_detail", args=[voucher.code]))
+            reverse("orders:voucher_detail", args=[voucher.code])
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("orders:my_wallet"), response["Location"])
 
@@ -271,7 +307,10 @@ class OrderViewsTests(TestCase):
             user=self.user, is_paid=True, stripe_session_id="sess_invoice_1"
         )
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -282,7 +321,8 @@ class OrderViewsTests(TestCase):
         )
 
         response = self.client.get(
-            reverse("orders:voucher_invoice", args=[voucher.code]), follow=False
+            reverse("orders:voucher_invoice", args=[voucher.code]),
+            follow=False,
         )
 
         self.assertEqual(response.status_code, 302)
@@ -296,7 +336,10 @@ class OrderViewsTests(TestCase):
             user=self.user, is_paid=True, stripe_session_id="sess_invoice_2"
         )
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -308,7 +351,8 @@ class OrderViewsTests(TestCase):
 
         self.client.login(username="other2", password="pass1234")
         response = self.client.get(
-            reverse("orders:voucher_invoice", args=[voucher.code]), follow=False
+            reverse("orders:voucher_invoice", args=[voucher.code]),
+            follow=False,
         )
 
         self.assertEqual(response.status_code, 404)
@@ -316,7 +360,9 @@ class OrderViewsTests(TestCase):
     def test_admin_delete_user_page_loads(self):
         # Regression guard: ensure the admin delete confirmation page renders
         admin = User.objects.create_superuser(
-            username="admin2", email="admin2@example.com", password="adminpass123"
+            username="admin2",
+            email="admin2@example.com",
+            password="adminpass123",
         )
         url = reverse("admin:auth_user_delete", args=[admin.pk])
         self.client.login(username="admin2", password="adminpass123")
@@ -324,9 +370,16 @@ class OrderViewsTests(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_voucher_qr_endpoint_generates_and_redirects(self):
-        order = Order.objects.create(user=self.user, is_paid=True, stripe_session_id="sess_qr")
+        order = Order.objects.create(
+            user=self.user,
+            is_paid=True,
+            stripe_session_id="sess_qr",
+        )
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -336,14 +389,19 @@ class OrderViewsTests(TestCase):
             status="ISSUED",
         )
 
-        response = self.client.get(reverse("orders:voucher_qr", args=[voucher.code]))
+        response = self.client.get(
+            reverse("orders:voucher_qr", args=[voucher.code])
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn("qrtestcode", response["Location"])
 
     def test_my_wallet_groups_vouchers_by_status(self):
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         issued = Voucher.objects.create(
             service=self.service,
@@ -381,7 +439,10 @@ class OrderViewsTests(TestCase):
     def test_scan_voucher_redeem_requires_staff(self):
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -393,17 +454,24 @@ class OrderViewsTests(TestCase):
 
         # Non-staff cannot redeem
         self.client.login(username="testuser", password="pass1234")
-        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        response = self.client.post(
+            reverse("orders:scan_voucher", args=[voucher.code])
+        )
         voucher.refresh_from_db()
         self.assertEqual(voucher.status, "ISSUED")
         self.assertEqual(response.status_code, 302)
 
         # Staff can redeem
         User.objects.create_user(
-            username="staff", email="staff@example.com", password="pass1234", is_staff=True
+            username="staff",
+            email="staff@example.com",
+            password="pass1234",
+            is_staff=True,
         )
         self.client.login(username="staff", password="pass1234")
-        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        response = self.client.post(
+            reverse("orders:scan_voucher", args=[voucher.code])
+        )
         voucher.refresh_from_db()
         self.assertEqual(voucher.status, "REDEEMED")
         self.assertEqual(response.status_code, 302)
@@ -411,7 +479,10 @@ class OrderViewsTests(TestCase):
     def test_scan_voucher_expired_blocked(self):
         order = Order.objects.create(user=self.user, is_paid=True)
         order_item = OrderItem.objects.create(
-            order=order, service=self.service, quantity=1, price=self.service.price
+            order=order,
+            service=self.service,
+            quantity=1,
+            price=self.service.price,
         )
         voucher = Voucher.objects.create(
             service=self.service,
@@ -422,15 +493,22 @@ class OrderViewsTests(TestCase):
             expires_at=timezone.now(),
         )
         User.objects.create_user(
-            username="staff2", email="staff2@example.com", password="pass1234", is_staff=True
+            username="staff2",
+            email="staff2@example.com",
+            password="pass1234",
+            is_staff=True,
         )
         self.client.login(username="staff2", password="pass1234")
-        response = self.client.post(reverse("orders:scan_voucher", args=[voucher.code]))
+        response = self.client.post(
+            reverse("orders:scan_voucher", args=[voucher.code])
+        )
         voucher.refresh_from_db()
         self.assertEqual(voucher.status, "EXPIRED")
         self.assertEqual(response.status_code, 302)
 
     def test_scan_voucher_404_for_invalid_code(self):
         self.client.login(username="testuser", password="pass1234")
-        response = self.client.get(reverse("orders:scan_voucher", args=["nocode"]))
+        response = self.client.get(
+            reverse("orders:scan_voucher", args=["nocode"])
+        )
         self.assertEqual(response.status_code, 404)

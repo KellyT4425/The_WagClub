@@ -8,41 +8,55 @@ from django.db.models import Q
 SERVICE_CATEGORY = [
     ("Passes", "Day Care Passes"),
     ("Packages", "Grooming Packages"),
-    ("Offers", "Offers")
+    ("Offers", "Offers"),
 ]
 
 
 class ServiceCategory(models.Model):
     name = models.CharField(
-        max_length=30, choices=SERVICE_CATEGORY, help_text="Select a Category")
+        max_length=30,
+        choices=SERVICE_CATEGORY,
+        help_text="Select a Category",
+    )
     slug = models.SlugField(max_length=30, unique=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         """
         Meta options define model-level behavior.
-        - 'verbose_name_plural' sets how this model name appears in the Django admin.
+        - 'verbose_name_plural' sets how this model name appears in the
+          Django admin.
         """
         verbose_name_plural = "Service Categories"
 
     def __str__(self):
         """
-        Returns a readable string showing the service category name.
-        Used by Django admin and shell to identify each service easily.
+        Return a readable string showing the service category name for
+        admin/shell.
         """
         return f"{self.name}"
 
 
 class Service(models.Model):
     category = models.ForeignKey(
-        ServiceCategory, on_delete=models.SET_NULL, null=True, related_name="services")
+        ServiceCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="services",
+    )
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=30, unique=True)
     img_path = models.ImageField(upload_to="services/", blank=True, null=True)
     alt_text = models.TextField(max_length=80, blank=True)
     description = models.TextField(max_length=500)
     duration_hours = models.DecimalField(
-        max_digits=5, decimal_places=2, default=1.00, help_text="Duration (hours)", blank=True, null=True)
+        max_digits=5,
+        decimal_places=2,
+        default=1.00,
+        help_text="Duration (hours)",
+        blank=True,
+        null=True,
+    )
     price = models.DecimalField(max_digits=4, decimal_places=2)
     is_bundle = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -50,14 +64,15 @@ class Service(models.Model):
     class Meta:
         """
         Meta options define model-level behavior.
-        - 'verbose_name_plural' sets how this model name appears in the Django admin.
+        - 'verbose_name_plural' sets how this model name appears in the
+          Django admin.
         """
         verbose_name_plural = "Services"
 
     def __str__(self):
         """
-        Returns a readable string showing the service name and price.
-        Used by Django admin and shell to identify each service easily.
+        Return a readable string with the service name and price for
+        admin/shell.
         """
         return f"{self.name} (€{self.price})"
 

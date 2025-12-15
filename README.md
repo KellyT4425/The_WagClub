@@ -81,8 +81,12 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
   <img src="static/images/my-wallet.png" alt="Wallet view showing active vouchers" width="820" />
 - Invoice / receipt with QR
   <img src="static/images/invoice.png" alt="Invoice with QR code" width="820" />
-- Success page (post-payment)
+- Success page (post-payment)  
   <img src="static/images/success-view.png" alt="Order success page" width="820" />
+- HTML validation (examples)  
+  <img src="static/images/html-home-validator.png" alt="Home page HTML validation" width="360"> <img src="static/images/html-services-validator.png" alt="Services page HTML validation" width="360">  
+  <img src="static/images/html-details-validator.png" alt="Service detail HTML validation" width="360"> <img src="static/images/html-cart-validator.png" alt="Cart HTML validation" width="360">  
+  <img src="static/images/html-wallet-validator.png" alt="Wallet HTML validation" width="360"> <img src="static/images/html-invoice-validator.png" alt="Invoice HTML validation" width="360"> <img src="static/images/html-voucher-detail-validator.png" alt="Voucher detail HTML validation" width="360">
 
 ## Features
 - Service browsing with categories (Passes, Packages, Offers) and search from the home hero (results surface on the Services page with the full catalogue below).
@@ -461,6 +465,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Python: `python manage.py test` (unit tests for services search, checkout/webhooks, vouchers, scan/redeem); `ruff` lint.
 - JS/CSS: `npx jshint static/js` (minimal custom JS), `npx stylelint "static/**/*.css"`
   - Note: django-axes is disabled during test runs to allow test client logins.
+- HTML/CSS validation screenshots are listed in [testing.md](testing.md) (HTML: Home/Services/Detail/Cart/Wallet/Invoice/Voucher; CSS validator).
 
 ### DevOps & Deployment
 - [Heroku](https://id.heroku.com/login) (platform, release phase), Heroku CLI
@@ -470,6 +475,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 
 ### Learning References
 - [Stack Overflow](https://stackoverflow.com/questions) threads (defensive DOM handling/null checks)
+- [Stack Overflow: Where to store secret keys in Django](https://stackoverflow.com/questions/15209978/where-to-store-secret-keys-django) (env/secret key handling in settings)
 - freeCodeCamp / CSS-Tricks guides on DOM safety and conditional handlers
 
 ### Attribution & Licenses

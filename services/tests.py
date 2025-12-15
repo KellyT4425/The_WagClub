@@ -7,8 +7,12 @@ from .models import ServiceCategory, Service
 class ServiceListViewTests(TestCase):
     def setUp(self):
         passes = ServiceCategory.objects.create(name="Passes", slug="passes")
-        packages = ServiceCategory.objects.create(name="Packages", slug="packages")
-        offers = ServiceCategory.objects.create(name="Offers", slug="offers")
+        packages = ServiceCategory.objects.create(
+            name="Packages", slug="packages"
+        )
+        offers = ServiceCategory.objects.create(
+            name="Offers", slug="offers"
+        )
 
         Service.objects.create(
             category=passes,
@@ -42,7 +46,9 @@ class ServiceListViewTests(TestCase):
         self.assertContains(response, "Special Offer")
 
     def test_service_search_filters_results(self):
-        response = self.client.get(reverse("services:service_list"), {"q": "groom"})
+        response = self.client.get(
+            reverse("services:service_list"), {"q": "groom"}
+        )
         self.assertEqual(response.status_code, 200)
         # Context search_results should only include the matching service
         results = response.context["search_results"]
@@ -50,7 +56,9 @@ class ServiceListViewTests(TestCase):
         self.assertEqual(results.first().name, "Groom Pack")
 
     def test_service_search_no_results_shows_message(self):
-        response = self.client.get(reverse("services:service_list"), {"q": "cat"})
+        response = self.client.get(
+            reverse("services:service_list"), {"q": "cat"}
+        )
         self.assertEqual(response.status_code, 200)
         results = response.context["search_results"]
         self.assertEqual(results.count(), 0)

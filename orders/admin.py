@@ -33,7 +33,14 @@ def mark_as_expired(modeladmin, request, queryset):
 
 @admin.register(Voucher)
 class VoucherAdmin(admin.ModelAdmin):
-    list_display = ("code", "user", "service", "status", "issued_at", "expires_at")
+    list_display = (
+        "code",
+        "user",
+        "service",
+        "status",
+        "issued_at",
+        "expires_at",
+    )
     list_filter = ("status", "issued_at", "expires_at", "service")
     search_fields = ("code", "user__email", "user__username", "service__name")
     readonly_fields = ("issued_at", "redeemed_at")

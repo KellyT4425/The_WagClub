@@ -1,27 +1,30 @@
-"""Order and voucher views: checkout, Stripe webhooks, wallets, QR/redemption."""
+"""Order and voucher views: checkout, webhooks, wallet, QR, redemption."""
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from services.models import Service
-from .models import Voucher, Order, OrderItem
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required, user_passes_test
-import stripe
-import uuid
 import ast
-import qrcode
 import hashlib
 from io import BytesIO
-from django.core.files.base import ContentFile
-from django.contrib.auth import get_user_model
-from django.urls import reverse
-from django.conf import settings
+import uuid
+
+import qrcode
+import stripe
 from decimal import Decimal
-from django.utils import timezone
-from django.db import IntegrityError
+
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db import IntegrityError
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from services.models import Service
+
+from .models import Order, OrderItem, Voucher
 
 try:  # Cloudinary upload (optional)
     import cloudinary.uploader as cloud_uploader
@@ -67,68 +70,80 @@ def create_checkout_session(request):
         return redirect("orders:cart")
 
     line_items = []
-    metadata = {'cart_items': []}
+    metadata = {"cart_items": []}
 
     for item_id, item_data in cart.items():
         price_cents = int(Decimal(str(item_data["price"])) * 100)
-        line_items.append({
-            "price_data": {
-                "currency": "eur",
-                "product_data": {
-                    "name": item_data["name"],
-                    "metadata": {
-                        "service_id": item_id,
-                        "user_id": str(request.user.id)
-                    }
+        line_items.append(
+            {
+                "price_data": {
+                    "currency": "eur",
+                    "product_data": {
+                        "name": item_data["name"],
+                        "metadata": {
+                            "service_id": item_id,
+                            "user_id": str(request.user.id),
+                        },
+                    },
+                    "unit_amount": price_cents,  # Amount in cents
                 },
-                "unit_amount": price_cents,  # Amount in cents
-            },
-            "quantity": item_data["quantity"],
-        })
+                "quantity": item_data["quantity"],
+            }
+        )
 
-        metadata['cart_items'].append({
-            'id': item_id,
-            'name': item_data["name"],
-            'price': item_data["price"],
-            'quantity': item_data["quantity"]
-        })
+        metadata["cart_items"].append(
+            {
+                "id": item_id,
+                "name": item_data["name"],
+                "price": item_data["price"],
+                "quantity": item_data["quantity"],
+            }
+        )
 
     try:
         checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
+            payment_method_types=["card"],
             line_items=line_items,
-            mode='payment',
-            customer_email=request.user.email if request.user.is_authenticated else None,
-            success_url=request.build_absolute_uri(
-                reverse('orders:success')) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=request.build_absolute_uri(reverse('orders:cart')),
+            mode="payment",
+            customer_email=(
+                request.user.email if request.user.is_authenticated else None
+            ),
+            success_url=(
+                request.build_absolute_uri(reverse("orders:success"))
+                + "?session_id={CHECKOUT_SESSION_ID}"
+            ),
+            cancel_url=request.build_absolute_uri(reverse("orders:cart")),
             metadata={
-                'user_id': request.user.id if request.user.is_authenticated else None,
-                # Convert to string for metadata
-                'cart_items': str(metadata['cart_items'])
-            }
+                "user_id": (
+                    request.user.id if request.user.is_authenticated else None
+                ),
+                "cart_items": str(metadata["cart_items"]),
+            },
         )
 
         return redirect(checkout_session.url, code=303)
     except Exception as e:
         import traceback
+
         print(traceback.format_exc())  # DEBUG LOGGING
-        messages.error(
-            request, f"Error creating checkout session: {str(e)}")
-        return redirect('orders:cart')
+        messages.error(request, f"Error creating checkout session: {str(e)}")
+        return redirect("orders:cart")
 
 
 @csrf_exempt  # Stripe isn't a browser, so skip CSRF protection
 def stripe_webhook(request):
-    """Handle Stripe webhook events and create orders/vouchers on payment success."""
+    """
+    Handle Stripe webhook events and create orders/vouchers on payment
+    success.
+    """
     import logging
-    logger = logging.getLogger('stripe')
+    logger = logging.getLogger("stripe")
     # LOG INCOMING PAYLOAD
     logger.info(f"Webhook received: {request.body.decode('utf-8')}")
 
     STRIPE_WEBHOOK = settings.STRIPE_WEBHOOK
     payload = request.body
-    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
 
     try:
         event = stripe.Webhook.construct_event(
@@ -138,14 +153,17 @@ def stripe_webhook(request):
         # Invalid payload
         return HttpResponse(status=400)
     except Exception as exc:
-        # Handle signature errors across stripe versions without breaking on AttributeError
-        if SignatureVerificationError and isinstance(exc, SignatureVerificationError):
+        # Handle signature errors across stripe versions without breaking on
+        # AttributeError
+        if SignatureVerificationError and isinstance(
+            exc, SignatureVerificationError
+        ):
             return HttpResponse(status=400)
         raise
 
     # Handle the event types you care about:
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
         session_id = getattr(session, "id", None)
         if session_id is None and isinstance(session, dict):
             session_id = session.get("id")
@@ -160,13 +178,15 @@ def stripe_webhook(request):
                 print("Missing metadata in session")
                 return HttpResponse(status=200)
 
-            user_id = metadata.get('user_id')
+            user_id = metadata.get("user_id")
 
             if not user_id:
                 print("Missing user_id in session metadata")
                 return HttpResponse(status=200)
 
-            if session_id and Order.objects.filter(stripe_session_id=session_id).exists():
+            if session_id and Order.objects.filter(
+                stripe_session_id=session_id
+            ).exists():
                 print(f"Order already processed for session {session_id}")
                 return HttpResponse(status=200)
 
@@ -174,7 +194,7 @@ def stripe_webhook(request):
             user = User.objects.get(id=user_id)
 
             try:
-                cart_items_str = metadata.get('cart_items', '[]')
+                cart_items_str = metadata.get("cart_items", "[]")
                 cart_items = ast.literal_eval(cart_items_str)
             except (ValueError, SyntaxError) as e:
                 print(f"Error parsing cart items: {str(e)}")
@@ -190,7 +210,9 @@ def stripe_webhook(request):
                 )
             except IntegrityError:
                 # Another process already created this order for this session
-                existing_order = Order.objects.filter(stripe_session_id=session_id).first()
+                existing_order = Order.objects.filter(
+                    stripe_session_id=session_id
+                ).first()
                 if existing_order:
                     print(f"Order already exists for session {session_id}")
                     return HttpResponse(status=200)
@@ -200,12 +222,12 @@ def stripe_webhook(request):
             for item_data in cart_items:
                 try:
                     # Get item details
-                    service_id = item_data.get('id')
-                    total_quantity = int(item_data.get('quantity', 1))
+                    service_id = item_data.get("id")
+                    total_quantity = int(item_data.get("quantity", 1))
 
                     # Get service
                     service = Service.objects.get(id=service_id)
-                    price = float(item_data.get('price', service.price))
+                    price = float(item_data.get("price", service.price))
 
                     order_item = OrderItem.objects.create(
                         order=order,
@@ -225,12 +247,15 @@ def stripe_webhook(request):
                             order_item=order_item,
                             user=user,
                             code=voucher_code,
-                            status="ISSUED"
+                            status="ISSUED",
                         )
 
                         generate_qr_code(voucher)
                         voucher.save()
-                        print(f"Voucher created: {voucher_code} for service {service.name}")
+                        print(
+                            "Voucher created: "
+                            f"{voucher_code} for service {service.name}"
+                        )
 
                 except Service.DoesNotExist:
                     print(f"Service with id {service_id} not found")
@@ -252,7 +277,7 @@ def stripe_webhook(request):
 
 
 def generate_qr_code(voucher, site_url=None):
-    """Generate and attach a QR image for a voucher that points to staff redeem."""
+    """Generate and attach a QR image pointing to the staff redemption page."""
     site_root = site_url or getattr(settings, "SITE_URL", "")
     site_root = (site_root or "http://localhost:8000").rstrip("/")
     redeem_path = reverse("orders:scan_voucher", args=[voucher.code])
@@ -339,47 +364,58 @@ def qr_redirect(request):
 
 def success_view(request):
     """Show the success page; orders/vouchers are created via webhook."""
-    session_id = request.GET.get('session_id')
+    session_id = request.GET.get("session_id")
     if not session_id:
-        messages.error(request, "Missing Stripe session; please try again or contact support.")
-        return redirect('orders:cart')
+        messages.error(
+            request,
+            "Missing Stripe session; please try again or contact support.",
+        )
+        return redirect("orders:cart")
 
     try:
         stripe_session = stripe.checkout.Session.retrieve(session_id)
     except Exception:
         messages.error(request, "Unable to verify payment with Stripe.")
-        return redirect('orders:cart')
+        return redirect("orders:cart")
 
     metadata = getattr(stripe_session, "metadata", None)
     if metadata is None and isinstance(stripe_session, dict):
         metadata = stripe_session.get("metadata")
 
-    user_id = metadata.get('user_id') if metadata else None
+    user_id = metadata.get("user_id") if metadata else None
     if not user_id:
-        messages.error(request, "Missing payment metadata; please contact support.")
-        return redirect('orders:cart')
+        messages.error(
+            request, "Missing payment metadata; please contact support."
+        )
+        return redirect("orders:cart")
 
     try:
         order_user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        messages.error(request, "We could not verify the account for this payment.")
-        return redirect('orders:cart')
+        messages.error(
+            request, "We could not verify the account for this payment."
+        )
+        return redirect("orders:cart")
 
     if request.user.is_authenticated and str(request.user.id) != str(user_id):
-        messages.error(request, "This payment does not belong to your account.")
-        return redirect('orders:cart')
+        messages.error(
+            request, "This payment does not belong to your account."
+        )
+        return redirect("orders:cart")
 
     payment_status = getattr(stripe_session, "payment_status", None)
     if payment_status is None and isinstance(stripe_session, dict):
         payment_status = stripe_session.get("payment_status")
 
-    if payment_status != 'paid':
-        messages.warning(request, "Payment not completed. You have not been charged.")
-        return redirect('orders:cart')
+    if payment_status != "paid":
+        messages.warning(
+            request, "Payment not completed. You have not been charged."
+        )
+        return redirect("orders:cart")
 
     order = Order.objects.filter(
         user=order_user, is_paid=True, stripe_session_id=session_id
-    ).order_by('-created_at').first()
+    ).order_by("-created_at").first()
 
     pending = False
     vouchers = []
@@ -387,7 +423,9 @@ def success_view(request):
     if not order:
         pending = True
         try:
-            order = build_order_from_session(order_user, stripe_session, metadata, session_id)
+            order = build_order_from_session(
+                order_user, stripe_session, metadata, session_id
+            )
             if order:
                 vouchers = Voucher.objects.filter(order_item__order=order)
                 pending = False
@@ -396,17 +434,21 @@ def success_view(request):
     else:
         vouchers = Voucher.objects.filter(order_item__order=order)
 
-    if not pending and 'cart' in request.session:
-        del request.session['cart']
+    if not pending and "cart" in request.session:
+        del request.session["cart"]
         request.session.modified = True
 
-    return render(request, 'orders/success.html', {
-        'order': order,
-        'vouchers': vouchers,
-        'site_root': get_site_root(request),
-        'pending_order': pending,
-        'session_id': session_id,
-    })
+    return render(
+        request,
+        "orders/success.html",
+        {
+            "order": order,
+            "vouchers": vouchers,
+            "site_root": get_site_root(request),
+            "pending_order": pending,
+            "session_id": session_id,
+        },
+    )
 
 
 def cancel_view(request):
@@ -416,13 +458,13 @@ def cancel_view(request):
 
 def build_order_from_session(user, stripe_session, metadata, session_id):
     """
-    Fallback: create order/vouchers from the Stripe session metadata when webhook hasn't completed yet.
-    Returns the order or None.
+    Fallback: create order/vouchers from the Stripe session metadata when
+    webhook hasn't completed yet. Returns the order or None.
     """
     if metadata is None:
         return None
 
-    cart_items_str = metadata.get('cart_items', '[]')
+    cart_items_str = metadata.get("cart_items", "[]")
     try:
         cart_items = ast.literal_eval(cart_items_str)
     except Exception:
@@ -443,10 +485,10 @@ def build_order_from_session(user, stripe_session, metadata, session_id):
 
     for item_data in cart_items:
         try:
-            service_id = item_data.get('id')
-            total_quantity = int(item_data.get('quantity', 1))
+            service_id = item_data.get("id")
+            total_quantity = int(item_data.get("quantity", 1))
             service = Service.objects.get(id=service_id)
-            price = float(item_data.get('price', service.price))
+            price = float(item_data.get("price", service.price))
 
             order_item = OrderItem.objects.create(
                 order=order,
@@ -479,17 +521,20 @@ def voucher_invoice(request, code):
         voucher = Voucher.objects.get(code=code, user=request.user)
     except Voucher.DoesNotExist:
         return render(
-            request, 'orders/vouc_not_found.html', {'code': code}, status=404
+            request,
+            "orders/vouc_not_found.html",
+            {"code": code},
+            status=404,
         )
 
     context = {
-        'voucher': voucher,
-        'user': voucher.user,
-        'service': voucher.service,
-        'site_root': get_site_root(request),
+        "voucher": voucher,
+        "user": voucher.user,
+        "service": voucher.service,
+        "site_root": get_site_root(request),
     }
 
-    return render(request, 'orders/invoice.html', context)
+    return render(request, "orders/invoice.html", context)
 
 
 @login_required
@@ -498,25 +543,29 @@ def voucher_detail(request, code):
     voucher = get_object_or_404(Voucher, code=code)
 
     # Only the voucher owner OR staff/superuser can view it
-    if request.user != voucher.user and not request.user.is_staff and not request.user.is_superuser:
+    if (
+        request.user != voucher.user
+        and not request.user.is_staff
+        and not request.user.is_superuser
+    ):
         messages.error(
             request, "You do not have permission to view this voucher.")
         return redirect("orders:my_wallet")
 
     context = {
-        'voucher': voucher,
-        'page_title': f'Voucher: {voucher.code}',
+        "voucher": voucher,
+        "page_title": f"Voucher: {voucher.code}",
         "MEDIA_URL": settings.MEDIA_URL,
-        'site_root': get_site_root(request),
+        "site_root": get_site_root(request),
     }
 
-    return render(request, 'orders/voucher_detail.html', context)
+    return render(request, "orders/voucher_detail.html", context)
 
 
 def voucher_qr_image(request, code):
     """
-    Serve voucher QR by ensuring it's stored via default storage (Cloudinary in prod)
-    and redirecting to the storage URL.
+    Serve voucher QR by ensuring it's stored via default storage (Cloudinary in
+    prod) and redirecting to the storage URL.
     """
     voucher = get_object_or_404(Voucher, code=code)
     filename = f"vouchers/qr_codes/{voucher.code}.png"
@@ -540,7 +589,8 @@ def redeem_voucher(request, code):
     if request.method == "POST":
         if voucher.status != "ISSUED":
             messages.warning(
-                request, "This voucher cannot be redeemed (already used or expired)."
+                request,
+                "This voucher cannot be redeemed (already used or expired).",
             )
             return redirect("orders:redeem_voucher", code=code)
 
@@ -553,8 +603,12 @@ def redeem_voucher(request, code):
     context = {
         "voucher": voucher,
         "can_redeem": True,
-        "redeem_action_url": reverse("orders:redeem_voucher", args=[voucher.code]),
-        "default_redeem_url": reverse("orders:redeem_voucher", args=[voucher.code]),
+        "redeem_action_url": reverse(
+            "orders:redeem_voucher", args=[voucher.code]
+        ),
+        "default_redeem_url": reverse(
+            "orders:redeem_voucher", args=[voucher.code]
+        ),
         "site_root": get_site_root(request),
     }
     return render(request, "orders/scan_voucher.html", context)
@@ -562,17 +616,22 @@ def redeem_voucher(request, code):
 
 @login_required
 def scan_voucher(request, code):
-    """Staff-facing scan/verify view. Staff can redeem; others only view status."""
+    """
+    Staff-facing scan/verify view. Staff can redeem; others only view status.
+    """
     voucher = get_object_or_404(Voucher, code=code)
 
     if request.method == "POST":
         if not (request.user.is_staff or request.user.is_superuser):
-            messages.error(request, "You do not have permission to redeem vouchers.")
+            messages.error(
+                request, "You do not have permission to redeem vouchers."
+            )
             return redirect("orders:scan_voucher", code=code)
 
         if voucher.status != "ISSUED":
             messages.warning(
-                request, "This voucher cannot be redeemed (already used or expired)."
+                request,
+                "This voucher cannot be redeemed (already used or expired).",
             )
             return redirect("orders:scan_voucher", code=code)
 
@@ -585,7 +644,9 @@ def scan_voucher(request, code):
     context = {
         "voucher": voucher,
         "can_redeem": request.user.is_staff or request.user.is_superuser,
-        "default_redeem_url": reverse("orders:scan_voucher", args=[voucher.code]),
+        "default_redeem_url": reverse(
+            "orders:scan_voucher", args=[voucher.code]
+        ),
         "site_root": get_site_root(request),
     }
     return render(request, "orders/scan_voucher.html", context)
@@ -595,23 +656,17 @@ def scan_voucher(request, code):
 def my_wallet(request):
     """Display all of a user's vouchers grouped by status."""
 
-    # Get active (issued) vouchers
     active_vouchers = Voucher.objects.filter(
-        user=request.user,
-        status="ISSUED"
-    ).order_by('-issued_at')
+        user=request.user, status="ISSUED"
+    ).order_by("-issued_at")
 
-    # Get redeemed vouchers
     redeemed_vouchers = Voucher.objects.filter(
-        user=request.user,
-        status="REDEEMED"
-    ).order_by('-redeemed_at')
+        user=request.user, status="REDEEMED"
+    ).order_by("-redeemed_at")
 
-    # Get expired vouchers
     expired_vouchers = Voucher.objects.filter(
-        user=request.user,
-        status="EXPIRED"
-    ).order_by('-expires_at')
+        user=request.user, status="EXPIRED"
+    ).order_by("-expires_at")
 
     context = {
         'active_vouchers': active_vouchers,
@@ -661,13 +716,12 @@ def add_to_cart(request):
     request.session["cart"] = cart
     request.session.modified = True
 
-    success_message = f"Added {service.name} to your cart."
-    messages.success(request, success_message)
+    messages.success(request, f"Added {service.name} to your cart.")
 
     # Check all messages in the request
     storage = messages.get_messages(request)
     print(f"All messages: {[msg.message for msg in storage]}")
-    storage.used = False  # Important: this resets the iterator so Django can use it again
+    storage.used = False  # reset iterator so Django can use it again
 
     request.session.save()
 

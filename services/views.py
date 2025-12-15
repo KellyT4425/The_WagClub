@@ -20,7 +20,9 @@ def service_list(request):
     ).strip()
 
     # Base queryset
-    services_qs = Service.objects.filter(is_active=True).select_related("category")
+    services_qs = Service.objects.filter(is_active=True).select_related(
+        "category"
+    )
 
     search_results = []
 
@@ -46,7 +48,9 @@ def service_list(request):
                 | Q(category__name__icontains=term)
             )
 
-        search_results = services_qs.filter(search_filter).order_by("category__name", "price")
+        search_results = services_qs.filter(search_filter).order_by(
+            "category__name", "price"
+        )
 
     # Always show full categories, even when searching
     passes = services_qs.filter(category__name="Passes").order_by("price")
@@ -67,6 +71,8 @@ def service_list(request):
 def service_detail(request, slug):
     """Display details for a single service."""
     service = get_object_or_404(
-        Service.objects.select_related("category"), slug=slug, is_active=True
+        Service.objects.select_related("category"),
+        slug=slug,
+        is_active=True,
     )
     return render(request, "services/service_detail.html", {"service": service})

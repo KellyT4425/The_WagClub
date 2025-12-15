@@ -27,22 +27,32 @@ app_name = "orders"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
-    path("newsletter/subscribe/", core_views.newsletter_subscribe, name="newsletter_subscribe"),
+    path(
+        "newsletter/subscribe/",
+        core_views.newsletter_subscribe,
+        name="newsletter_subscribe",
+    ),
     path("", service_views.home, name="home"),
     path("services/", include("services.urls", namespace="services")),
     path("orders/", include("orders.urls", namespace="orders")),
     path(
         "robots.txt",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+        TemplateView.as_view(
+            template_name="robots.txt", content_type="text/plain"
+        ),
     ),
     path(
         "sitemap.xml",
-        TemplateView.as_view(template_name="sitemap.xml", content_type="application/xml"),
+        TemplateView.as_view(
+            template_name="sitemap.xml", content_type="application/xml"
+        ),
     ),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )
 
 handler404 = "core.views.custom_404"
 handler500 = "core.views.custom_500"
