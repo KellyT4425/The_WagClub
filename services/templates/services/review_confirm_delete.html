@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="text-center my-4">
+    <h2 class="heading">Delete Review</h2>
+    <p class="text-muted mb-0">This cannot be undone.</p>
+  </div>
+{% endblock page_header %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <p>Are you sure you want to delete your review "<strong>{{ review.title }}</strong>" for {{ review.service.name }}?</p>
+            <form method="post" class="d-flex gap-2">
+              {% csrf_token %}
+              <button class="btn btn-danger" type="submit">Yes, delete</button>
+              <a class="btn btn-outline-secondary" href="{% url 'services:service_detail' review.service.slug %}">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

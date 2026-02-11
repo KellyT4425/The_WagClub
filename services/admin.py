@@ -1,7 +1,7 @@
 """Admin registrations for services."""
 
 from django.contrib import admin
-from .models import ServiceCategory, Service, ServiceImage
+from .models import ServiceCategory, Service, ServiceImage, Review
 
 
 class ServiceImageInline(admin.TabularInline):
@@ -33,3 +33,10 @@ class ServiceImageAdmin(admin.ModelAdmin):
     list_display = ("service", "is_main", "sort_order")
     list_filter = ("is_main",)
     search_fields = ("service__name",)
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("service", "user", "rating", "title", "created_at")
+    list_filter = ("rating", "service")
+    search_fields = ("service__name", "user__username", "title", "body")

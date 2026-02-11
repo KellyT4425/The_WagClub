@@ -1,6 +1,7 @@
 """Core models and configuration for services."""
 
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 
@@ -119,3 +120,29 @@ class ServiceImage(models.Model):
         if qs.exists():
             raise ValidationError(
                 "Only one main image is allowed per service.")
+
+
+User = get_user_model()
+
+
+class Review(models.Model):
+    """User-submitted review for a service."""
+
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE, related_name="reviews"
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reviews"
+    )
+    rating = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=80)
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        unique_together = ("service", "user", "title")
+
+    def __str__(self):
+        return f"{self.service.name}: {self.title} ({self.rating}/5)"

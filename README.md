@@ -392,6 +392,19 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Closed Must-haves: #1 Browse Services, #2 View Service Details, #3 Search/Filter Services, #4 Add to Cart, #5 Pay with Stripe, #6 Receive Voucher, #7 Order Confirmation, #9 Create Account, #10 Secure Login, #11 View Orders/Wallet, #15 Reset Password, #16 Cart, #17 Admin Manage Services, #19 Admin Manage Vouchers.
 - Deferred/backlog: see Future Enhancements (profile/pet management, downloadable vouchers, reviews/discounts, staff dashboard, favourites/recurring, alerts).
 
+## Reviews feature (customer-facing)
+- What exists: full CRUD for service reviews with validation and permissions.
+- Validation: `services/forms.py::ReviewForm` enforces rating 1–5, title, and body min 20 chars/non-blank.
+- Permissions: create requires login **and** an owned voucher for that service; edit/delete author-only (403 if another user); logged-out users redirected to login.
+- UI: create on the service detail page; edit/delete buttons shown only to the author; delete has a confirm page.
+- Evidence to capture:
+  - Screenshot of the review form.
+  - Screenshot of validation errors (e.g., “Rating must be between 1 and 5” or short body).
+  - Screenshot showing a newly created review on the service page.
+  - Screenshot after editing (updated text visible).
+  - Screenshot after deleting (review disappears).
+  - Manual checks: logged-out hits `/services/reviews/<id>/edit/` → login redirect; other user hits the same → 403.
+
 ## Business Model
 - Revenue: paid daycare/grooming services purchased online; each purchase issues vouchers for on-site redemption.
 - Flow: cart → Stripe Checkout → webhook creates order/vouchers → wallet for customer → staff redeem on scan.

@@ -57,6 +57,85 @@
             </div>
           </div>
         </div>
+        <div class="mt-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="heading mb-0">Customer Reviews</h4>
+            <div class="text-muted small">
+              {% if rating_stats.count %}
+                Average {{ rating_stats.average|floatformat:1 }}/5 • {{ rating_stats.count }} review{% if rating_stats.count|pluralize %}s{% endif %}
+              {% else %}
+                No reviews yet
+              {% endif %}
+            </div>
+          </div>
+
+          {% if reviews %}
+            <div class="list-group mb-4">
+              {% for review in reviews %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                  <div class="d-flex w-100 justify-content-between">
+                    <div>
+                      <strong>{{ review.title }}</strong>
+                      <span class="badge bg-dark ms-2">{{ review.rating }}/5</span>
+                    </div>
+                    <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1 mt-2">{{ review.body }}</p>
+                  <small class="text-muted">by {{ review.user.username }}</small>
+                  {% if user.is_authenticated and review.user_id == user.id %}
+                    <div class="mt-2 d-flex gap-2">
+                      <a class="btn btn-sm btn-outline-primary" href="{% url 'services:review_edit' review.pk %}">Edit</a>
+                      <a class="btn btn-sm btn-outline-danger" href="{% url 'services:review_delete' review.pk %}">Delete</a>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
+          {% endif %}
+
+          {% if user.is_authenticated %}
+            {% if user_can_review %}
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Leave a review</h5>
+                  <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="{{ form.rating.id_for_label }}" class="form-label">Rating (1-5)</label>
+                      {{ form.rating }}
+                      {% for error in form.rating.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                      {{ form.title }}
+                      {% for error in form.title.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="{{ form.body.id_for_label }}" class="form-label">Review</label>
+                      {{ form.body }}
+                      {% for error in form.body.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <button class="btn btn-success" type="submit">Submit review</button>
+                  </form>
+                </div>
+              </div>
+            {% else %}
+              <div class="alert alert-info">Purchase this service to leave a review.</div>
+            {% endif %}
+          {% else %}
+            <div class="alert alert-warning">
+              <a href="{% url 'account_login' %}">Log in</a> to leave a review.
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
