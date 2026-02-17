@@ -30,6 +30,13 @@ MESSAGE_TAGS = {
 # SECURITY WARNING: turn off debug in production
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
+
+def env_bool(key, default=False):
+    """Parse boolean-like environment variables safely."""
+    return os.getenv(key, str(default)).strip().lower() in {
+        "1", "true", "yes", "on"
+    }
+
 # https://github.com/joke2k/django-environ, python-decouple
 
 
@@ -59,6 +66,19 @@ if DEBUG:
         for host in ["127.0.0.1", "localhost", "testserver"]:
             if host not in ALLOWED_HOSTS:
                 ALLOWED_HOSTS.append(host)
+
+# HTTPS/security hardening (production only).
+# Uses env overrides so local development remains unchanged.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
+    SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", True)
+    CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", True)
+    SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool(
+        "SECURE_HSTS_INCLUDE_SUBDOMAINS", True
+    )
+    SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", False)
 # Application definition
 
 
@@ -314,6 +334,9 @@ AXES_CACHE = "default"
 
 if "test" in sys.argv:
     AXES_ENABLED = False  # Disable Axes during tests
+    # Ensure tests do not depend on network/cloud media availability.
+    USE_CLOUDINARY_MEDIA = False
+    STORAGES["default"]["BACKEND"] = "django.core.files.storage.FileSystemStorage"
 
 # Logging to stdout so production errors emit tracebacks to Heroku logs
 LOGGING = {

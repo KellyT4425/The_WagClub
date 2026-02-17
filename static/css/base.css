@@ -197,6 +197,7 @@ main {
 .space-row {
     --bs-gutter-x: 1.5rem;
     --bs-gutter-y: 1.5rem;
+
     padding: 0 10px 30px;
 }
 

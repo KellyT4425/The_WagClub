@@ -1,3 +1,4 @@
+import os
 import shutil
 import tempfile
 from types import SimpleNamespace
@@ -22,7 +23,9 @@ class OrderViewsTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.tmpdir = tempfile.mkdtemp()
+        tmp_root = os.path.join(os.getcwd(), ".tmp_test_media")
+        os.makedirs(tmp_root, exist_ok=True)
+        cls.tmpdir = tempfile.mkdtemp(dir=tmp_root)
         cls.override = override_settings(MEDIA_ROOT=cls.tmpdir)
         cls.override.enable()
 

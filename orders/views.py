@@ -297,8 +297,17 @@ def generate_qr_code(voucher, site_url=None):
     img.save(buffer, format="PNG")
 
     filename = f"vouchers/qr_codes/{voucher.code}.png"
-    if not default_storage.exists(filename):
-        default_storage.save(filename, ContentFile(buffer.getvalue()))
+    try:
+        exists = default_storage.exists(filename)
+    except Exception:
+        exists = False
+
+    if not exists:
+        try:
+            default_storage.save(filename, ContentFile(buffer.getvalue()))
+        except Exception:
+            # Keep voucher generation resilient if storage is unavailable.
+            pass
     voucher.qr_img_path.name = filename
 
 
@@ -570,7 +579,12 @@ def voucher_qr_image(request, code):
     voucher = get_object_or_404(Voucher, code=code)
     filename = f"vouchers/qr_codes/{voucher.code}.png"
 
-    if not default_storage.exists(filename):
+    try:
+        exists = default_storage.exists(filename)
+    except Exception:
+        exists = False
+
+    if not exists:
         # Generate on-demand if missing
         generate_qr_code(voucher)
         voucher.save(update_fields=["qr_img_path"])
