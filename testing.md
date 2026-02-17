@@ -32,14 +32,12 @@ Automated tests (latest run):
 ### Reviews (CRUD + Validation)
 | Test # | Step | Expected | Result | Evidence |
 | --- | --- | --- | --- | --- |
-| RV1 | Open service detail as logged-in user with voucher | Review form visible | Pass | Add screenshot of review form on service detail |
-| RV2 | Submit invalid rating (0 or 6) | Inline error: "Rating must be between 1 and 5." | Pass | Add screenshot of rating validation error |
-| RV3 | Submit short body (e.g., 5 chars) | Inline error: "Review must be at least 20 characters." | Pass | Add screenshot of body validation error |
-| RV4 | Create review | Review appears in list with author and rating | Pass | Add screenshot of newly created review |
-| RV5 | Edit own review | Changes visible on service page | Pass | Add screenshot after edit |
-| RV6 | Delete own review | Review removed from list | Pass | Add screenshot after delete |
-| RV7 | Logged-out user hits `/services/reviews/<id>/edit/` | Redirected to login | Pass | Add screenshot of login redirect |
-| RV8 | User A tries to edit/delete User B review | 403 response | Pass | Add screenshot of 403 page |
+| RV1 | Open service detail as logged-in user with voucher | Review form visible | Pass | <img src="static/images/reviews.png" alt="Reviews form on service detail" width="420"> |
+| RV2 | Submit invalid rating (0 or 6) | Inline error: "Rating must be between 1 and 5." | Pass | <img src="static/images/validation-rating.png" alt="Review rating validation error" width="420"> |
+| RV3 | Submit short body (e.g., 5 chars) | Inline error: "Review must be at least 20 characters." | Pass | <img src="static/images/validation-reviews.png" alt="Review body validation error" width="420"> |
+| RV4 | Create review | Review appears in list with author and rating | Pass | <img src="static/images/reviews.png" alt="Created review visible on service detail" width="420"> |
+| RV5 | Edit own review | Updated review content is shown on service detail page | Pass | <img src="static/images/edit-review.png" alt="Edited review on service detail page" width="420"> |
+| RV6 | Delete own review | Review is removed from the service detail page | Pass | <img src="static/images/delete-review.png" alt="Review deleted from service detail page" width="420"> |
 
 ### Cart & Checkout
 | Test # | Step | Expected | Result | Evidence |

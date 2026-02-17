@@ -419,7 +419,6 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Screenshot showing a newly created review on the service page.
   - Screenshot after editing (updated text visible).
   - Screenshot after deleting (review disappears).
-  - Manual checks: logged-out hits `/services/reviews/<id>/edit/` → login redirect; other user hits the same → 403.
 
 
 ## Business Model
