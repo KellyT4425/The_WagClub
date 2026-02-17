@@ -289,7 +289,7 @@ erDiagram
 - Uses Stripe Checkout Sessions with metadata (`user_id`, cart items) to recreate orders on webhook success.
 - Webhook endpoint: `/orders/checkout/webhook/` (`orders:stripe_webhook`).
 - Success redirect: `/orders/success/?session_id={CHECKOUT_SESSION_ID}`.
-- Requires `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, and `STRIPE_WEBHOOK_SECRET` (signing secret). Optional: a restricted key if you perform server-side API calls elsewhere.
+- Requires `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, and `STRIPE_WEBHOOK` (signing secret). Optional: a restricted key if you perform server-side API calls elsewhere.
 
 ## Deployment (Heroku)
 1) Create Heroku app and add Heroku Postgres.
@@ -300,7 +300,16 @@ erDiagram
    - If you add new apps like `django-axes`, rerun migrations so tables (e.g., `axes_accessattempt`) exist in production.
 6) Create superuser: `heroku run python manage.py createsuperuser`.
 7) Add allowed host and CSRF origins for your Heroku domain.
-8) Set Stripe webhook to `https://<your-app>.herokuapp.com/orders/checkout/webhook/` with the signing secret stored in `STRIPE_WEBHOOK_SECRET`.
+8) Set Stripe webhook to `https://<your-app>.herokuapp.com/orders/checkout/webhook/` with the signing secret stored in `STRIPE_WEBHOOK`.
+9) Run deploy checks: `heroku run python manage.py check --deploy`.
+
+### Post-deploy smoke checklist
+- Homepage, services, cart pages load over HTTPS.
+- Login/logout works for a normal user.
+- Stripe checkout completes and `/orders/success/` renders.
+- Webhook creates order/vouchers; wallet QR links resolve.
+- Password reset email is delivered (production SMTP).
+- Admin login and key CRUD actions work.
 
 ## Local Development
 ```bash
@@ -327,13 +336,19 @@ Set these in `.env` locally and in Heroku config vars for production:
 - `STRIPE_PUBLISHABLE_KEY` — Stripe publishable key.
 - `STRIPE_WEBHOOK` — Stripe webhook signing secret (as used in settings).
 - `SITE_URL` — base URL for building absolute QR links (set to your deployed domain).
+- `SECURE_SSL_REDIRECT` — set `True` in production.
+- `SESSION_COOKIE_SECURE` — set `True` in production.
+- `CSRF_COOKIE_SECURE` — set `True` in production.
+- `SECURE_HSTS_SECONDS` — e.g. `31536000` in production.
+- `SECURE_HSTS_INCLUDE_SUBDOMAINS` — typically `True` in production.
+- `SECURE_HSTS_PRELOAD` — `True` only if you intentionally opt into preload policy.
 - Email (if using SMTP): `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT=587`, `EMAIL_USE_TLS=True`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`.
 
 ## Bugs Encountered
 
 | Bug | Cause | Fix |
 | --- | --- | --- |
-| Stripe webhook 400/500 | Mismatched signing secret/version | Use correct `STRIPE_WEBHOOK_SECRET`; resilient verification; idempotent `stripe_session_id` (migration `0006_order_stripe_session_id`) |
+| Stripe webhook 400/500 | Mismatched signing secret/version | Use correct `STRIPE_WEBHOOK`; resilient verification; idempotent `stripe_session_id` (migration `0006_order_stripe_session_id`) |
 | Duplicate orders/admin delete 500 | Missing `stripe_session_id` column in prod DB | Apply migration; skip duplicates in webhook |
 | Success page 500/302 | Success view forced login/ownership incorrectly | Trust Stripe metadata; render vouchers with ownership checks |
 | QR codes pointing to localhost/404 | Hard-coded media URLs; no SITE_URL | Add QR endpoint `/orders/voucher/<code>/qr/`; use `SITE_URL`; Cloudinary storage |
@@ -358,7 +373,7 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Vouchers: QR endpoint, wallet grouping, owner checks, scan/redeem (staff only, expired blocked, invalid code 404)
   - Services: list categories, search filter, no-results message
   - Update tests as you add features; rerun after migrations/major changes.
-- Latest run: `python manage.py test` (21 tests, pass; system check clean).
+- Latest run: `python manage.py test` (28 tests, pass; system check clean).
 - Manual: key flows exercised on desktop/mobile:
   - Add to cart → Stripe Checkout → success clears cart
   - Vouchers in wallet (Active/Redeemed/Expired) with QR visible for Active
@@ -399,7 +414,7 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Admin login: use Django admin for CRUD on services, categories, images, orders, vouchers, newsletter signups.
 - Vouchers: staff/admin can mark redeemed/expired via admin actions; QR links generate on demand.
 - Media: stored in Cloudinary; use `migrate_media_to_cloudinary` and `check_media_urls` to manage media health.
-- Security: keep secrets in env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `CLOUDINARY_*`, `SECRET_KEY`, etc.), DEBUG off in prod.
+- Security: keep secrets in env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK`, `CLOUDINARY_*`, `SECRET_KEY`, etc.), DEBUG off in prod.
 - CRUD: full CRUD available via Django admin for all models; user-facing flows cover create/read/update where applicable (cart/checkout/vouchers).
 
 ## User Stories & Tracking

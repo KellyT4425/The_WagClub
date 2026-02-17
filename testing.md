@@ -3,7 +3,7 @@
 Manual test cases grouped by area. Columns: step, expected outcome, result, and evidence (screenshots or notes).
 
 Automated tests (latest run):
-- `python manage.py test` — 21 tests passing; covers service search (results and empty), checkout session (empty cart/login), Stripe webhook success/idempotent/bad signature/missing metadata, success view duplication guard, voucher QR/wallet/owner checks, staff scan/redeem (including expired block, invalid code 404).
+- `python manage.py test` — 28 tests passing (latest local run: February 17, 2026); covers service search (results and empty), checkout session (empty cart/login), Stripe webhook success/idempotent/bad signature/missing metadata, success view duplication guard, voucher QR/wallet/owner checks, staff scan/redeem (including expired block, invalid code 404), invoice/detail access control, and admin delete page regression.
 
 ### Homepage & Navigation
 | Test # | Step | Expected | Result | Evidence |
@@ -112,7 +112,7 @@ Automated tests (latest run):
 | L6 | W3C HTML | Validate deployed pages via W3C HTML validator | Pass | Validator results (manual) |
 | L7 | W3C CSS | Validate deployed CSS via W3C CSS validator | Pass | Validator results (manual) |
 | L8 | Lighthouse/WAVE | Accessibility/Best Practices/SEO | Pass | Lighthouse/WAVE runs post-fixes |
-| L9 | Python tests | `python manage.py test` | Pass | 21 tests passing (local run) |
+| L9 | Python tests | `python manage.py test` | Pass | 28 tests passing (latest local run: February 17, 2026) |
 | L10 | Axes in tests | `AXES_ENABLED=False` during tests to allow test logins | Pass | Set in settings for test runs |
 
 ### HTML Validation Evidence
