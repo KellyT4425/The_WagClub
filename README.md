@@ -90,6 +90,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Customer wallet grouped by status: Active, Redeemed, Expired.
 - Voucher detail and printable invoice with QR code.
 - Staff redemption via scan or manual code lookup.
+- Customer reviews with validation (rating 1-5, minimum body length) and author-only edit/delete.
 - Authentication (register, login, logout, password reset) via Django AllAuth with signed-in indicator in the nav.
 - Responsive UI with Bootstrap 5 and custom branding; mobile nav collapses to a single toggle.
 - Newsletter signup + social links (Facebook/Instagram) in footer for marketing/engagement.
@@ -99,8 +100,8 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - Templates: Django templates with Bootstrap 5, custom CSS in `static/css/base.css`.
 - Layout: responsive navbar, footer social links, toast notifications for feedback.
 - Pages: home hero, services list/detail, cart/checkout, wallet, voucher detail/invoice, staff scan/redeem.
-- UX: search/filter on services; status badges for vouchers (Active/Redeemed/Expired); accessible form controls and alt text on imagery.
-- Forms/CRUD: AllAuth signup/login/reset; newsletter signup stored; cart add/update/remove (delete UI for cart items) without admin access.
+- UX: search/filter on services; status badges for vouchers (Active/Redeemed/Expired); reviews with inline validation and author actions; accessible form controls and alt text on imagery.
+- Forms/CRUD: AllAuth signup/login/reset; newsletter signup stored; cart add/update/remove (delete UI for cart items); review create/edit/delete from the service detail page.
 - Icons: Font Awesome for UI glyphs; branded imagery in `static/images`.
 
 ## Backend
@@ -110,6 +111,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
   - Order and order items created only after confirmed payment event.
   - Vouchers generated per quantity with unique codes and QR images, default expiry 18 months.
   - Wallet views filter vouchers by status; staff-only redemption via `scan_voucher`/`redeem_voucher`.
+- Reviews: `Review` model ties users to services with rating, title, body, timestamps; author-only edit/delete.
 - Auth: Django AllAuth for registration/login/logout/password reset.
 - Security: `django-axes` for brute-force protection; secrets in env vars; DEBUG off in production.
 - Media: Cloudinary for images; QR codes stored via ImageField.
@@ -148,6 +150,7 @@ The Wag Club is a Django-powered e-commerce site for a dog daycare and grooming 
 - `ServiceCategory`: Groups services into Passes, Packages, Offers; slugged for URLs.
 - `Service`: A purchasable pass/package/offer with price, duration, imagery, and active toggle.
 - `ServiceImage`: Optional gallery per service; unique main image enforced.
+- `Review`: Customer review tied to a service and user; rating, title, body, timestamps; author-only edits.
 - `Order`: A paid checkout linked to a user.
 - `OrderItem`: Line items within an order, storing service, quantity, and locked-in price.
 - `Voucher`: Generated per order item *and* quantity (multiple vouchers per item when quantity > 1); tracks code, QR image, status (ISSUED, REDEEMED, EXPIRED), issued/redeemed/expiry timestamps, and expiry (default 18 months).
@@ -166,6 +169,8 @@ erDiagram
 
     SERVICECATEGORY ||--o{ SERVICE : groups
     SERVICE ||--o{ SERVICEIMAGE : has
+    SERVICE ||--o{ REVIEW : receives
+    USER ||--o{ REVIEW : writes
     SERVICE ||--o{ ORDERITEM : purchased_as
     SERVICE ||--o{ VOUCHER : redeemed_for
 
@@ -204,6 +209,17 @@ erDiagram
         string alt_text
         bool is_main
         int sort_order
+    }
+
+    REVIEW {
+        int id
+        int service_id
+        int user_id
+        int rating
+        string title
+        string body
+        datetime created_at
+        datetime updated_at
     }
 
     NEWSLETTERSIGNUP {
@@ -246,6 +262,7 @@ erDiagram
 - Search/filters: search bar on the home hero routes to Services with results highlighted above the catalogue; detail pages show gallery + add-to-cart.
 - Vouchers: wallet grouped by Active/Redeemed/Expired; status badges and QR for active.
 - Redemption: staff-only endpoint; customers see status, not redeem controls.
+- Reviews: eligible customers can add a review on the service detail page; authors can edit or delete their own reviews.
 - Feedback: toast messages, form errors visible; success states after checkout/subscription.
 - Styling: Patrick Hand SC for headings, Lato for body; soft palette with status accents.
 - Accessibility: alt text on images, focusable controls, consistent spacing; WAVE checks.
@@ -354,7 +371,6 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Email/SMS notifications for expiring vouchers
   - Customer order history and invoices archive
   - Discount codes and promotional bundles
-  - Reviews/ratings for services
   - Profile and pet management (edit/delete account details and pet info)
   - Downloadable vouchers (PDF/print-ready)
 - Admin/staff:
@@ -365,7 +381,6 @@ Set these in `.env` locally and in Heroku config vars for production:
 - Deferred user stories (future sprints/backlog):
   - Push/email alerts for voucher expiry and order confirmations
   - Discount codes and promo campaigns
-  - Reviews/ratings and richer service discovery
   - Staff dashboard with filters/analytics
   - Saved favourites/recurring bookings
   - Admin-side review management and profile/pet data oversight
@@ -390,7 +405,8 @@ Set these in `.env` locally and in Heroku config vars for production:
 ## User Stories & Tracking
 - Kanban board: https://github.com/users/KellyT4425/projects/10/views/1
 - Closed Must-haves: #1 Browse Services, #2 View Service Details, #3 Search/Filter Services, #4 Add to Cart, #5 Pay with Stripe, #6 Receive Voucher, #7 Order Confirmation, #9 Create Account, #10 Secure Login, #11 View Orders/Wallet, #15 Reset Password, #16 Cart, #17 Admin Manage Services, #19 Admin Manage Vouchers.
-- Deferred/backlog: see Future Enhancements (profile/pet management, downloadable vouchers, reviews/discounts, staff dashboard, favourites/recurring, alerts).
+- Delivered (customer-facing): Reviews CRUD with validation and author-only permissions.
+- Deferred/backlog: see Future Enhancements (profile/pet management, downloadable vouchers, discounts, staff dashboard, favourites/recurring, alerts).
 
 ## Reviews feature (customer-facing)
 - What exists: full CRUD for service reviews with validation and permissions.
@@ -404,6 +420,7 @@ Set these in `.env` locally and in Heroku config vars for production:
   - Screenshot after editing (updated text visible).
   - Screenshot after deleting (review disappears).
   - Manual checks: logged-out hits `/services/reviews/<id>/edit/` → login redirect; other user hits the same → 403.
+
 
 ## Business Model
 - Revenue: paid daycare/grooming services purchased online; each purchase issues vouchers for on-site redemption.

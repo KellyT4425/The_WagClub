@@ -195,10 +195,8 @@ main {
 /* ========== CARDS / GRID ========== */
 
 .space-row {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
     padding: 0 10px 30px;
 }
 
@@ -272,6 +270,11 @@ main {
     font-size: 0.9rem;
     letter-spacing: 0.4px;
     margin-bottom: 0.5rem;
+}
+
+.icon-cart {
+    width: 16px;
+    height: 16px;
 }
 
 /* ========== DISPLAY BOX (MODALS / PANELS) ========== */

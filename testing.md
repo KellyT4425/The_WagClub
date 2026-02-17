@@ -29,6 +29,18 @@ Automated tests (latest run):
 | S1 | Search "groom" from home | Services page highlights matching cards | Pass | <img src="static/images/search-results.png" alt="Search results" width="420"> |
 | S2 | Open service detail | Shows description, price, image, add-to-cart | Pass | <img src="static/images/service-detail-page.png" alt="Service detail" width="420"> |
 
+### Reviews (CRUD + Validation)
+| Test # | Step | Expected | Result | Evidence |
+| --- | --- | --- | --- | --- |
+| RV1 | Open service detail as logged-in user with voucher | Review form visible | Pass | Add screenshot of review form on service detail |
+| RV2 | Submit invalid rating (0 or 6) | Inline error: "Rating must be between 1 and 5." | Pass | Add screenshot of rating validation error |
+| RV3 | Submit short body (e.g., 5 chars) | Inline error: "Review must be at least 20 characters." | Pass | Add screenshot of body validation error |
+| RV4 | Create review | Review appears in list with author and rating | Pass | Add screenshot of newly created review |
+| RV5 | Edit own review | Changes visible on service page | Pass | Add screenshot after edit |
+| RV6 | Delete own review | Review removed from list | Pass | Add screenshot after delete |
+| RV7 | Logged-out user hits `/services/reviews/<id>/edit/` | Redirected to login | Pass | Add screenshot of login redirect |
+| RV8 | User A tries to edit/delete User B review | 403 response | Pass | Add screenshot of 403 page |
+
 ### Cart & Checkout
 | Test # | Step | Expected | Result | Evidence |
 | --- | --- | --- | --- | --- |
